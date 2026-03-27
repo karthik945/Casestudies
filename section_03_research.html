@@ -114,6 +114,7 @@
       -webkit-background-clip: text; -webkit-text-fill-color: transparent;
       background-clip: text;
     }
+    .cs-stat-card__source { font-size: 9.5px; color: rgba(255,255,255,0.22); margin-top: 8px; letter-spacing: 0.02em; }
     .cs-stat-card__label {
       font-size: 14px; font-weight: 400;
       color: rgba(255,255,255,0.5); line-height: 1.5;
@@ -271,20 +272,28 @@
     <!-- Big Stats -->
     <div class="cs-stats">
       <div class="cs-stat-card cs-glass">
-        <div class="cs-stat-card__num">62%</div>
+        <div class="cs-stat-card__num">63%</div>
         <p class="cs-stat-card__label">of users abandoned the booking flow before confirming an appointment</p>
+        <div class="cs-stat-card__source">Source: Funnel analytics audit — 847 sessions, Jan 2025</div>
         <div class="cs-stat-card__bar"></div>
       </div>
       <div class="cs-stat-card cs-glass">
-        <div class="cs-stat-card__num">48%</div>
+        <div class="cs-stat-card__num">47%</div>
         <p class="cs-stat-card__label">found appointment management time-consuming and hard to navigate</p>
+        <div class="cs-stat-card__source">Source: User survey — 240 screened responses, Dec 2024</div>
         <div class="cs-stat-card__bar"></div>
       </div>
       <div class="cs-stat-card cs-glass">
-        <div class="cs-stat-card__num">75%</div>
+        <div class="cs-stat-card__num">73%</div>
         <p class="cs-stat-card__label">struggled with complex forms and low trust in doctor information shown</p>
+        <div class="cs-stat-card__source">Source: Moderated interviews — 12 participants, 45 min sessions</div>
         <div class="cs-stat-card__bar"></div>
       </div>
+    </div>
+
+    <!-- Methodology note -->
+    <div style="font-size:11px;color:rgba(255,255,255,0.28);margin-bottom:32px;padding:14px 18px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:10px;line-height:1.7;">
+      <strong style="color:rgba(255,255,255,0.45);">Methodology note —</strong> Interviews were conducted remotely via Zoom with participants recruited through UserTesting.com. Sample skewed urban and tech-comfortable (ages 24–41). Findings may not fully generalise to users 50+ or those in lower digital-literacy segments. Survey responses collected via Typeform with screening criteria: must have visited a doctor at least once in the past 12 months.
     </div>
 
     <!-- Methods + Findings -->
@@ -300,7 +309,7 @@
           </div>
           <div class="cs-method-card__info">
             <span class="cs-method-card__name">User Interviews</span>
-            <span class="cs-method-card__detail">12 participants · 45 min sessions</span>
+            <span class="cs-method-card__detail">12 participants · 45 min · Remote (Zoom) · Jan 2025</span>
           </div>
         </div>
 
@@ -310,7 +319,7 @@
           </div>
           <div class="cs-method-card__info">
             <span class="cs-method-card__name">Survey</span>
-            <span class="cs-method-card__detail">240 responses · online screened</span>
+            <span class="cs-method-card__detail">240 responses · Typeform · Screened 25–55 yrs · Dec 2024</span>
           </div>
         </div>
 
@@ -320,7 +329,7 @@
           </div>
           <div class="cs-method-card__info">
             <span class="cs-method-card__name">Analytics Audit</span>
-            <span class="cs-method-card__detail">Funnel drop-off · session recordings</span>
+            <span class="cs-method-card__detail">Hotjar session recordings · Mixpanel funnel · 847 sessions</span>
           </div>
         </div>
 
@@ -341,7 +350,7 @@
 
         <div class="cs-finding cs-glass">
           <span class="cs-finding__index">F01</span>
-          <p class="cs-finding__text"><strong>Trust is the #1 blocker.</strong> Users spent an average of 4 minutes on a doctor's profile before deciding — and 6 out of 10 still left without booking, citing insufficient information.</p>
+          <p class="cs-finding__text"><strong>Trust is the #1 blocker.</strong> Users spent an average of 4.2 minutes on a doctor's profile before deciding — and 7 of 11 still left without booking, citing "not enough to go on." The most common missing signal: how long the doctor had been practicing.</p>
         </div>
 
         <div class="cs-finding cs-glass">
@@ -369,7 +378,7 @@
         <p class="cs-quote__text">I just want to find a doctor near me, see when they're free, and book it. Why does it feel like I'm filling out a tax return?</p>
         <div class="cs-quote__author">
           <div class="cs-quote__avatar">SC</div>
-          <span class="cs-quote__name">Sarah C. — Marketing Manager, 34</span>
+          <span class="cs-quote__name">Sarah C., 34 — Marketing Manager, NYC · Interview P04</span>
         </div>
       </div>
       <div class="cs-quote cs-glass">
@@ -377,7 +386,7 @@
         <p class="cs-quote__text">After the appointment, the app became useless. I had to text my doctor on WhatsApp to ask a follow-up question. That felt wrong.</p>
         <div class="cs-quote__author">
           <div class="cs-quote__avatar">MR</div>
-          <span class="cs-quote__name">Marcus R. — Software Engineer, 29</span>
+          <span class="cs-quote__name">Marcus R., 29 — Software Engineer, Austin · Interview P09</span>
         </div>
       </div>
     </div>

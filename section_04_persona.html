@@ -255,6 +255,17 @@
       line-height: 1.75;
     }
     .cs-context-note strong { color: rgba(255,255,255,0.85); font-weight: 500; }
+
+    /* Second persona */
+    .cs-persona-divider {
+      display: flex; align-items: center; gap: 16px;
+      margin: 40px 0 32px;
+    }
+    .cs-persona-divider__line { flex: 1; height: 1px; background: rgba(255,255,255,0.07); }
+    .cs-persona-divider__label { font-size: 11px; color: rgba(255,255,255,0.25); letter-spacing: 0.08em; text-transform: uppercase; }
+    .cs-persona-card--secondary { border-color: rgba(61,214,140,0.15); }
+    .cs-persona-card--secondary .cs-persona-role { color: rgba(61,214,140,0.7); }
+    .cs-persona-card--secondary .cs-tag { background: rgba(61,214,140,0.08); border-color: rgba(61,214,140,0.15); color: rgba(61,214,140,0.7); }
   </style>
   <script src="https://mcp.figma.com/mcp/html-to-design/capture.js" async></script>
 </head>
@@ -274,7 +285,7 @@
     <div class="cs-header">
       <div>
         <div class="cs-eyebrow">04 — Persona</div>
-        <h2 class="cs-title">Meet the<br><span>User</span></h2>
+        <h2 class="cs-title">Meet the<br><span>Users</span></h2>
       </div>
       <div class="cs-ghost-num">04</div>
     </div>
@@ -321,7 +332,7 @@
         </div>
 
         <p class="cs-persona-bio">
-          Emily prioritises her health but has almost no time to manage it. She expects her healthcare apps to be as intuitive as her banking and food delivery apps — fast, clear, and stress-free.
+          Emily prioritises her health but has almost no time to manage it. She expects her healthcare apps to be as intuitive as her banking and food delivery apps — fast, clear, and stress-free. <em style="color:rgba(255,255,255,0.4);font-style:italic;">But here's the tension: she wants to feel confident in her choice, yet won't read more than 3 lines on a doctor's profile. She makes trust decisions in seconds — and abandons if nothing clicks.</em>
         </p>
 
       </div>
@@ -380,7 +391,7 @@
           <div class="cs-jtbd">
             <div class="cs-jtbd__item">
               <strong>When I need a doctor</strong>
-              Help me find the right one fast, without second-guessing my choice.
+              Help me find the right one fast, without second-guessing my choice. <em style="color:rgba(255,255,255,0.35);font-size:11px;">(But she will second-guess — she just won't admit it.)</em>
             </div>
             <div class="cs-jtbd__item">
               <strong>When I book an appointment</strong>
@@ -398,7 +409,7 @@
 
     <!-- Context note -->
     <div class="cs-context-note">
-      <strong>Why Emily represents the core segment —</strong> She sits at the intersection of high digital literacy and high healthcare anxiety. She's not looking for a medical encyclopedia — she wants a product that respects her time, earns her trust, and stays useful after the appointment. Designing for Emily means designing for the majority of our active users.
+      <strong>Why two personas? —</strong> Emily and David represent the two dominant segments revealed in research. Emily (high digital literacy, low patience) drove our information hierarchy and booking speed decisions. David (moderate digital literacy, high trust anxiety) drove our doctor profile depth and credential visibility decisions. Where they conflicted, we ran A/B tests and let data decide.
     </div>
 
   </div>

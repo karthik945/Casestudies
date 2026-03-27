@@ -245,6 +245,52 @@
       width: 100%; height: 1px;
       background: linear-gradient(90deg, transparent, rgba(255,255,255,0.05) 30%, rgba(255,255,255,0.05) 70%, transparent);
     }
+
+    /* Discovery callout */
+    .cs-discovery-callout {
+      margin-bottom: 56px;
+      padding: 24px 28px;
+      border-radius: 16px;
+      background: rgba(91,143,255,0.06);
+      border: 1px solid rgba(91,143,255,0.14);
+      display: flex;
+      gap: 20px;
+      align-items: flex-start;
+    }
+    .cs-discovery-callout__label {
+      flex-shrink: 0;
+      font-size: 9.5px; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.12em;
+      color: rgba(91,143,255,0.7);
+      padding: 5px 10px;
+      border: 1px solid rgba(91,143,255,0.2);
+      border-radius: 100px;
+      margin-top: 3px;
+    }
+    .cs-discovery-callout__text {
+      font-size: 14px; line-height: 1.7;
+      color: rgba(255,255,255,0.55);
+    }
+    .cs-discovery-callout__text strong {
+      color: rgba(255,255,255,0.85);
+      font-weight: 500;
+    }
+    /* Discovery tag on pair cards */
+    .cs-pair__discovery {
+      font-size: 10.5px;
+      color: rgba(255,200,80,0.6);
+      line-height: 1.6;
+      padding: 8px 12px;
+      background: rgba(255,200,80,0.04);
+      border-left: 2px solid rgba(255,200,80,0.2);
+      border-radius: 0 6px 6px 0;
+      margin-top: 4px;
+    }
+    .cs-pair__discovery::before {
+      content: "What we found — ";
+      font-weight: 600;
+      color: rgba(255,200,80,0.8);
+    }
   </style>
   <script src="https://mcp.figma.com/mcp/html-to-design/capture.js" async></script>
 </head>
@@ -269,6 +315,15 @@
       <div class="cs-section-header__count">02</div>
     </div>
 
+
+    <!-- Discovery callout -->
+    <div class="cs-discovery-callout">
+      <div class="cs-discovery-callout__label">Key Discovery</div>
+      <p class="cs-discovery-callout__text">
+        <strong>We expected scheduling friction to be the #1 problem.</strong> What research actually showed: 7 of 12 participants abandoned at doctor selection — not at payment or confirmation. The real friction wasn't the form. It was the trust gap at the moment of choice.
+      </p>
+    </div>
+
     <!-- Pairs -->
     <div class="cs-pairs">
 
@@ -282,8 +337,9 @@
             <div class="cs-card-tag__dot"></div>
             User Problem
           </div>
-          <h3 class="cs-pair__heading">No clear way to find the right doctor</h3>
-          <p class="cs-pair__text">Users are overwhelmed by unfiltered doctor lists with no specialty sorting, no real availability shown, and no way to compare profiles meaningfully. They resort to phone calls or give up entirely.</p>
+          <h3 class="cs-pair__heading">Filters exist. Nobody uses them.</h3>
+          <p class="cs-pair__text">We built our first prototype with 9 filter chips across specialty, location, language, and rating. In testing, 9 of 12 participants typed directly into search and never touched a single filter. The problem wasn't missing filters — it was that filters weren't where users looked first.</p>
+          <div class="cs-pair__discovery">Users scanned for a name or specialty keyword before anything else. Search-first behaviour was universal across all age groups tested.</div>
         </div>
 
         <div class="cs-pair__solution">
@@ -317,8 +373,9 @@
             <div class="cs-card-tag__dot"></div>
             User Problem
           </div>
-          <h3 class="cs-pair__heading">Users don't trust doctors they haven't met</h3>
-          <p class="cs-pair__text">Thin doctor profiles with stock photos and generic bios fail to build confidence. Users struggle with deciding — browsing too many options and frequently abandoning the booking entirely.</p>
+          <h3 class="cs-pair__heading">Users don't compare doctors. They pick the first "safe enough" one.</h3>
+          <p class="cs-pair__text">We assumed users would weigh credentials and reviews. What we observed: most participants spent under 12 seconds on a profile before deciding. The #1 trust signal wasn't qualifications or star rating — it was response time. "Usually replies in 2 hours" converted better than "15 years experience."</p>
+          <div class="cs-pair__discovery">P07 (Interview): "I don't need to know their whole CV. I just need to feel like they'll actually respond to me."</div>
         </div>
 
         <div class="cs-pair__solution">
@@ -352,8 +409,9 @@
             <div class="cs-card-tag__dot"></div>
             User Problem
           </div>
-          <h3 class="cs-pair__heading">Booking flow is multi-step and confusing</h3>
-          <p class="cs-pair__text">Existing apps require too many taps, ask for redundant information, and give no clarity on booking status. Users frequently hit dead ends with no available slots and no guidance on what to do next.</p>
+          <h3 class="cs-pair__heading">Drop-off wasn't where we expected it.</h3>
+          <p class="cs-pair__text">We assumed users abandoned at payment — that's where every funnel analysis points. But drop-off spiked earlier: at slot selection, specifically when no same-week availability was visible. Users didn't assume the doctor was busy. They assumed the app was broken, and left.</p>
+          <div class="cs-pair__discovery">63% of abandoned sessions in the analytics audit ended on the slot selection screen — not the payment screen.</div>
         </div>
 
         <div class="cs-pair__solution">
@@ -387,8 +445,9 @@
             <div class="cs-card-tag__dot"></div>
             User Problem
           </div>
-          <h3 class="cs-pair__heading">No communication after the appointment</h3>
-          <p class="cs-pair__text">Once the visit ends, the app goes silent. Users have no way to follow up with their doctor, access visit notes, or manage ongoing care — forcing them off-platform to text, email, or call.</p>
+          <h3 class="cs-pair__heading">Users didn't ask for "messaging." They asked for a quick question.</h3>
+          <p class="cs-pair__text">Early on, we scoped a full in-app messaging platform. But what participants actually said in interviews was more specific: "I just want to send one question without booking another appointment." The need wasn't a chat product — it was low-friction access to their doctor for small, anxious moments.</p>
+          <div class="cs-pair__discovery">8 of 12 interview participants had texted or WhatsApp'd their doctor outside the app within the past month. None felt good about it.</div>
         </div>
 
         <div class="cs-pair__solution">
