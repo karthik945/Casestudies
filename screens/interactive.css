@@ -1,0 +1,178 @@
+/* ═══════════════════════════════════════════════
+   PulseCare — Interactive Layer
+   Hover states, focus rings, press animations,
+   editable fields, ripple, card lifts
+═══════════════════════════════════════════════ */
+
+/* ── Universal ── */
+*, *::before, *::after { -webkit-tap-highlight-color: transparent; }
+
+/* ── Cursor on anything clickable ── */
+.btn-primary, .btn-secondary, .btn-google, .sticky-cta,
+.signin-link span, .signin-link a,
+[class*="tab"], [class*="nav-item"],
+[class*="card"], [class*="doctor-card"], [class*="appt"],
+[class*="book"], [class*="slot"],
+[class*="method"], [class*="chip"],
+[class*="cta"], [class*="back"],
+a { cursor: pointer; }
+
+/* ── Primary buttons ── */
+.btn-primary {
+  transition: transform 0.12s ease, filter 0.15s ease, box-shadow 0.15s ease !important;
+  will-change: transform;
+}
+.btn-primary:hover {
+  filter: brightness(1.12);
+  box-shadow: 0 8px 28px rgba(91,143,255,0.35) !important;
+}
+.btn-primary:active { transform: scale(0.96) !important; filter: brightness(0.95); }
+
+/* ── Secondary / Ghost buttons ── */
+.btn-secondary, .btn-google {
+  transition: transform 0.12s ease, background 0.15s ease, border-color 0.15s ease !important;
+}
+.btn-secondary:hover  { background: rgba(255,255,255,0.06) !important; }
+.btn-secondary:active { transform: scale(0.96) !important; }
+.btn-google:hover     { background: rgba(255,255,255,0.08) !important; }
+.btn-google:active    { transform: scale(0.97) !important; }
+
+/* ── Sticky CTA ── */
+.sticky-cta {
+  transition: transform 0.1s ease, filter 0.15s ease !important;
+  cursor: pointer;
+}
+.sticky-cta:hover  { filter: brightness(1.1); }
+.sticky-cta:active { transform: scale(0.98) !important; }
+
+/* ── Field inputs (fake divs → editable) ── */
+.field-input {
+  cursor: text !important;
+  transition: border-color 0.2s, box-shadow 0.2s, background 0.2s !important;
+  outline: none;
+}
+.field-input:focus,
+.field-input.focused {
+  border-color: rgba(91,143,255,0.55) !important;
+  box-shadow: 0 0 0 3px rgba(91,143,255,0.12) !important;
+  background: rgba(255,255,255,0.06) !important;
+}
+.field-value { pointer-events: none; }
+
+/* Real inputs (password etc) */
+input, textarea {
+  background: transparent;
+  border: none;
+  outline: none;
+  color: rgba(255,255,255,0.85);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  width: 100%;
+  caret-color: #5B8FFF;
+}
+input::placeholder, textarea::placeholder {
+  color: rgba(255,255,255,0.25);
+}
+
+/* ── Search bar ── */
+[class*="search"]:focus-within,
+[class*="search-bar"]:focus-within {
+  border-color: rgba(91,143,255,0.45) !important;
+  box-shadow: 0 0 0 3px rgba(91,143,255,0.10) !important;
+}
+
+/* ── Cards — lift on hover ── */
+[class*="doctor-card"],
+[class*="appt-card"],
+[class*="card-sm"],
+[class*="method-card"],
+[class*="finding"] {
+  transition: transform 0.18s ease, box-shadow 0.18s ease !important;
+}
+[class*="doctor-card"]:hover,
+[class*="appt-card"]:hover,
+[class*="card-sm"]:hover,
+[class*="method-card"]:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 12px 32px rgba(0,0,0,0.4) !important;
+}
+[class*="doctor-card"]:active,
+[class*="appt-card"]:active { transform: scale(0.98) !important; }
+
+/* ── Slot / time chips ── */
+[class*="slot"]:not([class*="slot-label"]):not([class*="slot-grid"]) {
+  transition: background 0.15s, border-color 0.15s, transform 0.1s !important;
+  cursor: pointer !important;
+}
+[class*="slot"]:hover { filter: brightness(1.2); }
+[class*="slot"]:active { transform: scale(0.95) !important; }
+
+/* ── Tab bar ── */
+[class*="tab-item"],
+[class*="tab-btn"],
+[class*="nav-item"] {
+  transition: opacity 0.15s, transform 0.1s !important;
+  cursor: pointer !important;
+}
+[class*="tab-item"]:active,
+[class*="nav-item"]:active { transform: scale(0.88) !important; }
+
+/* ── Back button ── */
+[class*="back"] {
+  transition: transform 0.1s, opacity 0.15s !important;
+  cursor: pointer !important;
+}
+[class*="back"]:hover  { opacity: 0.7; }
+[class*="back"]:active { transform: scale(0.88) translateX(-2px) !important; }
+
+/* ── Inline "Book" / action buttons ── */
+[style*="gradient(135deg,#5B8FFF"],
+[style*="gradient(135deg, #5B8FFF"] {
+  transition: filter 0.15s, transform 0.1s !important;
+  cursor: pointer !important;
+}
+[style*="gradient(135deg,#5B8FFF"]:hover  { filter: brightness(1.15); }
+[style*="gradient(135deg,#5B8FFF"]:active { transform: scale(0.94) !important; }
+
+/* ── Ripple ── */
+.pc-ripple {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.25);
+  transform: scale(0);
+  animation: pc-ripple-anim 0.45s ease-out forwards;
+  pointer-events: none;
+  z-index: 999;
+}
+@keyframes pc-ripple-anim {
+  to { transform: scale(4); opacity: 0; }
+}
+
+/* ── Inline star rating tap ── */
+[class*="star"] {
+  cursor: pointer !important;
+  transition: transform 0.1s !important;
+}
+[class*="star"]:hover  { transform: scale(1.2); }
+[class*="star"]:active { transform: scale(0.9); }
+
+/* ── Messages / chat input ── */
+[class*="chat-input"],
+[class*="msg-input"],
+[class*="compose"] {
+  cursor: text !important;
+}
+
+/* ── Checkbox / toggle ── */
+[class*="check"],
+[class*="toggle"] {
+  cursor: pointer !important;
+  transition: transform 0.1s !important;
+}
+[class*="check"]:active { transform: scale(0.85) !important; }
+
+/* ── Smooth scroll inside phone ── */
+.phone, [class*="content"], [class*="scroll"] {
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+}

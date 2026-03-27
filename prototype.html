@@ -81,8 +81,14 @@
     .phone iframe{
       width:340px;height:736px;
       border:none;display:block;
-      position:relative;z-index:1;
+      position:absolute;top:0;left:0;z-index:1;
+      transition:opacity 0.22s ease, transform 0.22s ease;
     }
+    .phone iframe.slide-out-left  { opacity:0; transform:translateX(-28px); }
+    .phone iframe.slide-out-right { opacity:0; transform:translateX(28px); }
+    .phone iframe.slide-in-left   { opacity:0; transform:translateX(28px); }
+    .phone iframe.slide-in-right  { opacity:0; transform:translateX(-28px); }
+    .phone iframe.slide-in-active { opacity:1; transform:translateX(0); }
 
     /* Nav controls */
     .nav-controls{
@@ -162,7 +168,7 @@
 
   <div style="display:flex;align-items:center;gap:16px;">
     <div class="screen-label" id="screenCount"></div>
-    <button class="restart-btn" onclick="goToScreen(0)">
+    <button class="restart-btn" onclick="goToScreen(0,true)">
       <svg viewBox="0 0 24 24"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.41"/></svg>
       Restart
     </button>
@@ -192,6 +198,7 @@ const SCREENS = [
 ];
 
 let current = 0;
+let transitioning = false;
 
 // Read hash on load
 const hash = location.hash.replace('#','');
@@ -200,15 +207,48 @@ if(hash){
   if(idx>=0) current = idx;
 }
 
-function goToScreen(idx){
-  if(idx<0||idx>=SCREENS.length)return;
-  current = idx;
-  const s = SCREENS[current];
-  document.getElementById('screen').src = s.file;
-  document.getElementById('screenLabel').textContent = s.label;
-  document.getElementById('screenCount').textContent = `${current+1} / ${SCREENS.length}`;
-  location.hash = s.file.split('/').pop().replace('.html','');
-  renderDots();
+function goToScreen(idx, skipAnim){
+  if(idx<0||idx>=SCREENS.length||transitioning) return;
+  const dir = idx > current ? 1 : -1;
+  const frame = document.getElementById('screen');
+  const s = SCREENS[idx];
+
+  if(skipAnim || idx === current){
+    current = idx;
+    frame.src = s.file;
+    document.getElementById('screenLabel').textContent = s.label;
+    document.getElementById('screenCount').textContent = `${current+1} / ${SCREENS.length}`;
+    location.hash = s.file.split('/').pop().replace('.html','');
+    renderDots();
+    return;
+  }
+
+  transitioning = true;
+
+  // Slide old frame out
+  frame.classList.add(dir > 0 ? 'slide-out-left' : 'slide-out-right');
+
+  setTimeout(function(){
+    current = idx;
+    frame.className = dir > 0 ? 'slide-in-left' : 'slide-in-right';
+    frame.src = s.file;
+    document.getElementById('screenLabel').textContent = s.label;
+    document.getElementById('screenCount').textContent = `${current+1} / ${SCREENS.length}`;
+    location.hash = s.file.split('/').pop().replace('.html','');
+    renderDots();
+
+    // Force reflow then slide in
+    requestAnimationFrame(function(){
+      requestAnimationFrame(function(){
+        frame.classList.remove('slide-in-left','slide-in-right');
+        frame.classList.add('slide-in-active');
+        setTimeout(function(){
+          frame.className = '';
+          transitioning = false;
+        }, 240);
+      });
+    });
+  }, 200);
 }
 
 function navigate(dir){
@@ -243,7 +283,7 @@ document.addEventListener('keydown', e => {
   if(e.key==='ArrowLeft'||e.key==='ArrowUp') navigate(-1);
 });
 
-goToScreen(current);
+goToScreen(current, true);
 </script>
 </body>
 </html>
