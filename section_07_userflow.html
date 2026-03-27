@@ -163,7 +163,9 @@
         Action
       </div>
       <div class="cs-legend__item">
-        <div class="cs-legend__swatch" style="background:#1e1040;border:1px solid #7B5FD0;"></div>
+        <svg width="24" height="14" viewBox="0 0 24 14" fill="none" style="flex-shrink:0;">
+          <polygon points="12,1 23,7 12,13 1,7" fill="#1e1040" stroke="#7B5FD0" stroke-width="1.5"/>
+        </svg>
         Decision
       </div>
       <div class="cs-legend__item">
@@ -183,9 +185,12 @@ flowchart LR
     C -->|"No"| ERR1["Suggest\nAlternatives"]:::error
     C -->|"Yes"| D["View\nProfile"] --> E{"Slot\nFree?"}
     E -->|"No"| ERR2["Notify\nMe"]:::error
-    E -->|"Yes"| F["Book\nSlot"] --> G{"Payment\nOK?"}
+    E -->|"Yes"| F["Book\nSlot"] --> G{"Payment\nStatus"}
     G -->|"Fail"| ERR3["Retry"]:::error
-    G -->|"OK"| H(["Confirmed"]):::success --> I["Attend\nVisit"] --> J["Message\nDoctor"] --> K(["Re-book"]):::success
+    G -->|"Success"| H(["Confirmed"]):::success --> I{"Attend\nVisit?"}
+    I -->|"No-show"| ERR4["Reschedule\nPrompt"]:::error
+    I -->|"Cancel"| ERR5["Cancellation\n+ Refund"]:::error
+    I -->|"Attended"| J["Message\nDoctor"] --> K(["Re-book"]):::success
 
     classDef default fill:#131d36,stroke:#3a5a99,stroke-width:1.5px,color:#c0d0f0,rx:6
     classDef error fill:#2a1008,stroke:#CC4030,stroke-width:1.5px,color:#FF9080
@@ -211,7 +216,7 @@ flowchart LR
       <div class="cs-fstat cs-glass">
         <div class="cs-fstat__num">6</div>
         <div class="cs-fstat__label">Edge cases designed for</div>
-        <div class="cs-fstat__sub">No slots &middot; Payment fail &middot; Slot conflict &middot; Session timeout &middot; Cancel &middot; Rebook</div>
+        <div class="cs-fstat__sub">No slots &middot; Payment fail &middot; Slot conflict &middot; No-show &middot; Cancellation + refund &middot; Session timeout</div>
         <div class="cs-fstat__bar"><div class="cs-fstat__fill" style="width:60%"></div></div>
       </div>
       <div class="cs-fstat cs-glass">

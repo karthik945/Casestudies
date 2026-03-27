@@ -89,6 +89,40 @@
       user-select: none;
     }
 
+    /* ══ SHARP INSIGHT ══ */
+    .cs-insight {
+      border-radius: 20px; padding: 40px 48px;
+      position: relative; overflow: hidden;
+      background: rgba(91,143,255,0.05);
+      border: 1px solid rgba(91,143,255,0.15);
+    }
+    .cs-insight::before {
+      content: '';
+      position: absolute; top: 0; left: 0; bottom: 0; width: 3px;
+      background: linear-gradient(180deg, #5B8FFF, #A78BFA);
+    }
+    .cs-insight__label {
+      font-size: 10px; font-weight: 600; text-transform: uppercase;
+      letter-spacing: 0.14em; color: rgba(91,143,255,0.7);
+      margin-bottom: 16px; display: block;
+    }
+    .cs-insight__quote {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 26px; font-weight: 700; line-height: 1.3;
+      letter-spacing: -0.5px; color: #fff;
+      margin-bottom: 20px;
+    }
+    .cs-insight__quote em {
+      font-style: normal;
+      background: linear-gradient(135deg, #6FA3FF 0%, #A78BFA 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .cs-insight__body {
+      font-size: 14px; color: rgba(255,255,255,0.45); line-height: 1.75;
+      max-width: 820px;
+    }
+
     /* ══ BIG STATS ══ */
     .cs-stats {
       display: grid;
@@ -245,6 +279,49 @@
       font-size: 12px; font-weight: 500;
       color: rgba(255,255,255,0.45);
     }
+
+    /* ══ SCOPED OVERRIDES — prevent later sections from clobbering S03 layout ══ */
+    #cs-research .cs-stats {
+      display: grid !important;
+      grid-template-columns: repeat(3, 1fr) !important;
+      gap: 16px !important;
+    }
+    /* prevent S10 from clobbering S03 finding layout */
+    #cs-research .cs-findings {
+      display: flex !important;
+      flex-direction: column !important;
+      gap: 14px !important;
+    }
+    #cs-research .cs-finding {
+      border-radius: 14px !important;
+      padding: 18px 22px !important;
+      display: flex !important;
+      flex-direction: row !important;
+      gap: 16px !important;
+      align-items: flex-start !important;
+      flex: unset !important;
+    }
+    #cs-research .cs-finding::before {
+      display: none !important;
+    }
+    #cs-research .cs-finding__index {
+      font-family: 'Space Grotesk', sans-serif !important;
+      font-size: 11px !important;
+      font-weight: 700 !important;
+      color: rgba(91,143,255,0.6) !important;
+      padding-top: 2px !important;
+      flex-shrink: 0 !important;
+    }
+    #cs-research .cs-finding__text {
+      font-size: 13px !important;
+      font-weight: 400 !important;
+      color: rgba(255,255,255,0.60) !important;
+      line-height: 1.65 !important;
+    }
+    #cs-research .cs-finding__text strong {
+      color: rgba(255,255,255,0.85) !important;
+      font-weight: 500 !important;
+    }
   </style>
   <script src="https://mcp.figma.com/mcp/html-to-design/capture.js" async></script>
 </head>
@@ -369,6 +446,13 @@
         </div>
 
       </div>
+    </div>
+
+    <!-- Sharp Insight -->
+    <div class="cs-insight">
+      <span class="cs-insight__label">Key Research Insight</span>
+      <p class="cs-insight__quote">Location gets users to the list.<br><em>Trust decides who they book.</em></p>
+      <p class="cs-insight__body">Users do filter by location first — they won't travel 2 hours for a GP visit. But once the results are within a reasonable radius, location stops being the deciding factor. Across 12 interviews, no participant chose the closest doctor available. They scrolled until one profile cleared a personal credibility threshold — a recognisable hospital name, a photo, enough reviews to feel real. The closest doctor with a sparse profile was skipped. A doctor 3km further with 47 reviews was booked. This shifted the design brief: proximity gets you into the list, but trust signals are what close the booking.</p>
     </div>
 
     <!-- User Quotes -->

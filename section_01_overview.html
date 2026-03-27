@@ -298,6 +298,77 @@
       height: 1px;
       background: linear-gradient(90deg, transparent, rgba(255,255,255,0.07) 30%, rgba(255,255,255,0.07) 70%, transparent);
     }
+
+    /* ══ SCOPED OVERRIDES — prevent later sections from clobbering S01 layout ══ */
+    #cs-overview .cs-hero__inner {
+      display: grid !important;
+      grid-template-columns: 1fr 1fr !important;
+      gap: 80px !important;
+      align-items: center !important;
+    }
+    #cs-overview .cs-hero__right {
+      position: relative !important;
+      display: flex !important;
+      justify-content: center !important;
+      align-items: center !important;
+      min-height: 560px !important;
+    }
+    #cs-overview .cs-phone {
+      position: relative !important;
+      z-index: 1 !important;
+      width: 260px !important;
+      height: 530px !important;
+      border-radius: 40px !important;
+      overflow: hidden !important;
+      display: block !important;
+      flex-direction: unset !important;
+    }
+    #cs-overview .cs-phone iframe {
+      width: 340px !important;
+      height: 736px !important;
+      border: none !important;
+      display: block !important;
+      transform: scale(0.7647) !important;
+      transform-origin: top left !important;
+    }
+    #cs-overview .cs-hero__left {
+      display: flex !important;
+      flex-direction: column !important;
+      gap: 32px !important;
+    }
+    /* Floating stat cards — must stay absolute */
+    #cs-overview .cs-stat {
+      position: absolute !important;
+      border-radius: 14px !important;
+      padding: 14px 18px !important;
+      min-width: 130px !important;
+      z-index: 2 !important;
+      display: block !important;
+      flex-direction: unset !important;
+      gap: unset !important;
+    }
+    #cs-overview .cs-stat--1 { top: 14% !important; right: -20px !important; bottom: auto !important; left: auto !important; }
+    #cs-overview .cs-stat--2 { bottom: 20% !important; left: -30px !important; top: auto !important; right: auto !important; }
+    #cs-overview .cs-stat--3 { bottom: 42% !important; right: -24px !important; top: auto !important; left: auto !important; }
+    #cs-overview .cs-stat__bar {
+      width: 24px !important; height: 2px !important;
+      position: static !important; overflow: visible !important;
+      margin-bottom: 8px !important; margin-top: 0 !important;
+      background: linear-gradient(90deg, #5B8FFF, #A78BFA) !important;
+      border-radius: 2px !important;
+    }
+    #cs-overview .cs-stat__num {
+      font-family: 'Space Grotesk', sans-serif !important;
+      font-size: 26px !important; font-weight: 700 !important;
+      line-height: 1 !important; color: #fff !important;
+      margin-bottom: 4px !important;
+      background: none !important;
+      -webkit-text-fill-color: #fff !important;
+    }
+    #cs-overview .cs-stat__label {
+      font-size: 11px !important;
+      color: rgba(255,255,255,0.35) !important;
+    }
   </style>
   <script src="https://mcp.figma.com/mcp/html-to-design/capture.js" async></script>
 </head>

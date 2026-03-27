@@ -18,17 +18,16 @@
     .phone {
       width: 340px; height: 736px;
       border-radius: 36px; position: relative; overflow: hidden;
-      background: linear-gradient(160deg, #061a10 0%, #040f08 50%, #091a10 100%);
+      background: #0a0a1a;
       box-shadow:
-        0 0 0 1px rgba(255,255,255,0.12),
+        0 0 0 1px rgba(255,255,255,0.10),
         0 0 0 2.5px rgba(0,0,0,0.8),
-        0 48px 96px rgba(0,0,0,0.8),
-        inset 0 1px 0 rgba(255,255,255,0.08);
+        0 48px 96px rgba(0,0,0,0.8);
     }
-    .notch {
-      position: absolute; top: 0; left: 50%; transform: translateX(-50%);
-      width: 90px; height: 24px; background: #000;
-      border-radius: 0 0 16px 16px; z-index: 20;
+    .pill {
+      position: absolute; top: 12px; left: 50%; transform: translateX(-50%);
+      width: 100px; height: 6px; background: rgba(255,255,255,0.15);
+      border-radius: 10px; z-index: 20;
     }
     .status {
       position: absolute; top: 0; left: 0; right: 0; height: 44px;
@@ -40,28 +39,23 @@
     .battery {
       width: 22px; height: 10px;
       border: 1.5px solid rgba(255,255,255,0.45); border-radius: 2.5px;
-      padding: 1.5px; position: relative; display: flex; align-items: center;
-    }
-    .battery::after {
-      content: ''; position: absolute; right: -4px; top: 50%; transform: translateY(-50%);
-      width: 2.5px; height: 5px; background: rgba(255,255,255,0.45);
-      border-radius: 0 1.5px 1.5px 0;
+      padding: 1.5px; display: flex; align-items: center;
     }
     .battery-fill { width: 65%; height: 100%; background: #3DD68C; border-radius: 1px; }
   </style>
 </head>
 <body>
 <div class="phone">
-  <div class="notch"></div>
+  <div class="pill"></div>
 
   <!-- Status bar -->
   <div class="status">
-    <div class="status-time">9:58</div>
+    <div class="status-time">9:41</div>
     <div class="status-icons">
       <svg width="30" height="10" viewBox="0 0 30 10" fill="none">
         <rect x="0" y="6" width="2.5" height="4" rx="0.4" fill="rgba(255,255,255,0.75)"/>
         <rect x="3.8" y="3.5" width="2.5" height="6.5" rx="0.4" fill="rgba(255,255,255,0.75)"/>
-        <rect x="7.6" y="1.5" width="2.5" height="8.5" rx="0.4" fill="rgba(255,255,255,0.55)"/>
+        <rect x="7.6" y="1.5" width="2.5" height="8.5" rx="0.4" fill="rgba(255,255,255,0.75)"/>
         <rect x="11.4" y="0" width="2.5" height="10" rx="0.4" fill="rgba(255,255,255,0.38)"/>
         <circle cx="23" cy="9" r="1.2" fill="rgba(255,255,255,0.7)"/>
         <path d="M20.2 6.5a3.8 3.8 0 015.6 0" stroke="rgba(255,255,255,0.7)" stroke-width="1.2" stroke-linecap="round"/>
@@ -71,122 +65,59 @@
     </div>
   </div>
 
-  <!-- X close — top right only, no back button -->
-  <div style="position:absolute;top:52px;right:18px;z-index:20;width:32px;height:32px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.1);border-radius:50%;display:flex;align-items:center;justify-content:center;">
-    <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
-      <path d="M2 2l9 9M11 2l-9 9" stroke="rgba(255,255,255,0.5)" stroke-width="1.5" stroke-linecap="round"/>
-    </svg>
-  </div>
+  <!-- Content -->
+  <div style="position:absolute;top:44px;left:0;right:0;bottom:0;display:flex;flex-direction:column;align-items:center;padding:32px 24px 28px;">
 
-  <!-- Background glow -->
-  <div style="position:absolute;top:80px;left:50%;transform:translateX(-50%);width:280px;height:280px;background:radial-gradient(circle,rgba(61,214,140,0.18) 0%,transparent 65%);border-radius:50%;pointer-events:none;"></div>
-  <div style="position:absolute;bottom:100px;left:50%;transform:translateX(-50%);width:200px;height:200px;background:radial-gradient(circle,rgba(61,214,140,0.08) 0%,transparent 65%);border-radius:50%;pointer-events:none;"></div>
-
-  <!-- Full content — centered layout -->
-  <div style="position:absolute;top:44px;left:0;right:0;bottom:0;display:flex;flex-direction:column;align-items:center;padding:24px 24px 32px;">
-
-    <!-- ① Success icon -->
-    <div style="margin-top:40px;margin-bottom:24px;position:relative;">
-      <!-- Outer ring glow -->
-      <div style="position:absolute;inset:-14px;border-radius:50%;background:rgba(61,214,140,0.08);border:1px solid rgba(61,214,140,0.15);"></div>
-      <!-- Middle ring -->
-      <div style="position:absolute;inset:-6px;border-radius:50%;background:rgba(61,214,140,0.1);border:1px solid rgba(61,214,140,0.2);"></div>
-      <!-- Icon circle -->
-      <div style="width:76px;height:76px;border-radius:50%;background:linear-gradient(135deg,rgba(61,214,140,0.25),rgba(34,197,94,0.2));border:2px solid rgba(61,214,140,0.5);display:flex;align-items:center;justify-content:center;position:relative;">
-        <svg width="36" height="36" viewBox="0 0 36 36" fill="none">
-          <path d="M8 18l7 7 13-14" stroke="#3DD68C" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>
+    <!-- Success icon — outline only, no fill -->
+    <div style="margin-top:28px;margin-bottom:22px;position:relative;">
+      <div style="width:76px;height:76px;border-radius:50%;background:rgba(61,214,140,0.06);border:1.5px solid rgba(61,214,140,0.35);display:flex;align-items:center;justify-content:center;">
+        <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+          <path d="M7 16l6 6 12-12" stroke="#3DD68C" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
       </div>
     </div>
 
-    <!-- ② Heading -->
-    <div style="font-family:'Space Grotesk',sans-serif;font-size:26px;font-weight:700;color:#fff;letter-spacing:-0.5px;text-align:center;margin-bottom:6px;">Appointment Confirmed!</div>
-    <div style="font-size:13px;color:rgba(255,255,255,0.42);text-align:center;line-height:1.5;margin-bottom:28px;">
-      You're all set, Emily. A confirmation has<br>been sent to emily@example.com
+    <!-- Heading -->
+    <div style="font-family:'Space Grotesk',sans-serif;font-size:24px;font-weight:700;color:#fff;letter-spacing:-0.5px;text-align:center;margin-bottom:6px;">Booking Confirmed!</div>
+    <div style="font-size:13px;color:rgba(255,255,255,0.38);text-align:center;line-height:1.5;margin-bottom:28px;">
+      Your appointment has been booked.<br>A confirmation was sent to your email.
     </div>
 
-    <!-- ③ Booking summary card -->
-    <div style="width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(61,214,140,0.2);border-radius:18px;padding:16px;margin-bottom:20px;">
-
-      <!-- Doctor row -->
-      <div style="display:flex;align-items:center;gap:11px;margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid rgba(255,255,255,0.06);">
-        <div style="width:44px;height:44px;border-radius:12px;overflow:hidden;flex-shrink:0;border:1.5px solid rgba(61,214,140,0.25);">
-          <img src="https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=200&h=200&fit=crop&q=80" style="width:100%;height:100%;object-fit:cover;display:block;" />
-        </div>
-        <div style="flex:1;">
-          <div style="font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:700;color:#fff;">Dr. James Mitchell</div>
-          <div style="font-size:11px;color:rgba(255,255,255,0.4);margin-top:2px;">Cardiologist · NYU Langone</div>
-        </div>
-        <div style="padding:4px 9px;background:rgba(61,214,140,0.12);border:1px solid rgba(61,214,140,0.25);border-radius:8px;font-size:10px;font-weight:600;color:rgba(61,214,140,0.9);">Confirmed</div>
+    <!-- Details table -->
+    <div style="width:100%;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:16px;overflow:hidden;margin-bottom:12px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:13px 16px;border-bottom:1px solid rgba(255,255,255,0.05);">
+        <span style="font-size:13px;color:rgba(255,255,255,0.38);">Doctor</span>
+        <span style="font-size:13px;font-weight:600;color:#fff;">Dr. James Mitchell</span>
       </div>
-
-      <!-- Details grid -->
-      <div style="display:flex;flex-direction:column;gap:9px;">
-        <div style="display:flex;align-items:center;justify-content:space-between;">
-          <div style="display:flex;align-items:center;gap:7px;">
-            <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
-              <rect x="1" y="1.5" width="11" height="10" rx="1.5" stroke="rgba(61,214,140,0.55)" stroke-width="1.2"/>
-              <path d="M1 4.5h11M4 1v2M9 1v2" stroke="rgba(61,214,140,0.55)" stroke-width="1.2" stroke-linecap="round"/>
-            </svg>
-            <span style="font-size:12px;color:rgba(255,255,255,0.38);">Date & Time</span>
-          </div>
-          <span style="font-size:12px;font-weight:500;color:rgba(255,255,255,0.75);">Wed, 20 Mar · 2:00 PM</span>
-        </div>
-        <div style="display:flex;align-items:center;justify-content:space-between;">
-          <div style="display:flex;align-items:center;gap:7px;">
-            <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
-              <path d="M6.5 1a3 3 0 013 3C9.5 6.5 6.5 11 6.5 11S3.5 6.5 3.5 4a3 3 0 013-3z" stroke="rgba(61,214,140,0.55)" stroke-width="1.2"/>
-              <circle cx="6.5" cy="4" r="1" fill="rgba(61,214,140,0.55)"/>
-            </svg>
-            <span style="font-size:12px;color:rgba(255,255,255,0.38);">Location</span>
-          </div>
-          <span style="font-size:12px;font-weight:500;color:rgba(255,255,255,0.75);">550 1st Ave, NYC</span>
-        </div>
-        <div style="display:flex;align-items:center;justify-content:space-between;">
-          <div style="display:flex;align-items:center;gap:7px;">
-            <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
-              <rect x="1" y="3" width="8" height="6" rx="1.2" stroke="rgba(61,214,140,0.55)" stroke-width="1.2"/>
-              <path d="M9 5l3-2v6l-3-2" stroke="rgba(61,214,140,0.55)" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-            <span style="font-size:12px;color:rgba(255,255,255,0.38);">Visit Type</span>
-          </div>
-          <span style="font-size:12px;font-weight:500;color:rgba(255,255,255,0.75);">In-Person</span>
-        </div>
-        <div style="display:flex;align-items:center;justify-content:space-between;">
-          <div style="display:flex;align-items:center;gap:7px;">
-            <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
-              <circle cx="6.5" cy="6.5" r="5" stroke="rgba(61,214,140,0.55)" stroke-width="1.2"/>
-              <path d="M6.5 4v2.5l1.5 1.5" stroke="rgba(61,214,140,0.55)" stroke-width="1.2" stroke-linecap="round"/>
-            </svg>
-            <span style="font-size:12px;color:rgba(255,255,255,0.38);">Amount Paid</span>
-          </div>
-          <span style="font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:700;color:#3DD68C;">$120.00</span>
-        </div>
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:13px 16px;border-bottom:1px solid rgba(255,255,255,0.05);">
+        <span style="font-size:13px;color:rgba(255,255,255,0.38);">Date</span>
+        <span style="font-size:13px;font-weight:600;color:#fff;">Wed, 20 March 2026</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:13px 16px;border-bottom:1px solid rgba(255,255,255,0.05);">
+        <span style="font-size:13px;color:rgba(255,255,255,0.38);">Time</span>
+        <span style="font-size:13px;font-weight:600;color:#fff;">2:00 PM</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:13px 16px;border-bottom:1px solid rgba(255,255,255,0.05);">
+        <span style="font-size:13px;color:rgba(255,255,255,0.38);">Visit type</span>
+        <span style="font-size:13px;font-weight:600;color:#fff;">In-Person</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:13px 16px;">
+        <span style="font-size:13px;color:rgba(255,255,255,0.38);">Location</span>
+        <span style="font-size:13px;font-weight:600;color:#fff;">NYU Langone, NY</span>
       </div>
     </div>
 
-    <!-- ④ Action buttons -->
-    <div style="width:100%;display:flex;gap:8px;margin-bottom:14px;">
-      <div style="flex:1;padding:12px;background:rgba(61,214,140,0.12);border:1px solid rgba(61,214,140,0.25);border-radius:13px;display:flex;align-items:center;justify-content:center;gap:6px;cursor:pointer;">
-        <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-          <rect x="1.5" y="2" width="11" height="10" rx="1.5" stroke="rgba(61,214,140,0.8)" stroke-width="1.3"/>
-          <path d="M1.5 5.5h11M4.5 1v2.5M9.5 1v2.5" stroke="rgba(61,214,140,0.8)" stroke-width="1.3" stroke-linecap="round"/>
-          <path d="M4.5 8.5l1 1 3-3" stroke="rgba(61,214,140,0.8)" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-        <span style="font-size:12px;font-weight:600;color:rgba(61,214,140,0.85);">Add to Calendar</span>
-      </div>
-      <div style="flex:1;padding:12px;background:rgba(91,143,255,0.1);border:1px solid rgba(91,143,255,0.22);border-radius:13px;display:flex;align-items:center;justify-content:center;gap:6px;cursor:pointer;">
-        <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-          <rect x="1.5" y="2" width="11" height="10" rx="1.5" stroke="rgba(110,163,255,0.7)" stroke-width="1.3"/>
-          <path d="M1.5 5.5h11M4.5 1v2.5M9.5 1v2.5" stroke="rgba(110,163,255,0.7)" stroke-width="1.3" stroke-linecap="round"/>
-        </svg>
-        <span style="font-size:12px;font-weight:600;color:rgba(110,163,255,0.85);">View Booking</span>
-      </div>
+    <!-- Booking ref -->
+    <div style="font-size:11px;color:rgba(255,255,255,0.22);margin-bottom:24px;">Booking ref: PC-2026-03-8841</div>
+
+    <!-- Primary CTA -->
+    <div style="width:100%;padding:15px;background:linear-gradient(135deg,#5B8FFF,#7B6FFF);border-radius:14px;font-size:15px;font-weight:600;color:#fff;text-align:center;margin-bottom:10px;">
+      Add to Calendar
     </div>
 
-    <!-- ⑤ Back to Home -->
-    <div style="width:100%;padding:14px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.09);border-radius:14px;font-size:14px;font-weight:500;color:rgba(255,255,255,0.55);text-align:center;cursor:pointer;">
-      Back to Home
+    <!-- Secondary CTA -->
+    <div style="width:100%;padding:15px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.09);border-radius:14px;font-size:15px;font-weight:500;color:rgba(255,255,255,0.6);text-align:center;">
+      Message Dr. Mitchell
     </div>
 
   </div>

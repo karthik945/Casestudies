@@ -238,6 +238,39 @@
     .cs-detail-card--4 .cs-detail-card__item::before { background: rgba(100,160,255,0.6); }
     .cs-detail-card--5 .cs-detail-card__item::before { background: rgba(80,200,140,0.6); }
 
+    /* ══ DESIGN PRINCIPLES BLOCK ══ */
+    .cs-principles {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;
+    }
+    .cs-principle {
+      border-radius: 16px; padding: 26px 24px;
+      display: flex; flex-direction: column; gap: 12px;
+      position: relative; overflow: hidden;
+    }
+    .cs-principle::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    }
+    .cs-principle--1::before { background: linear-gradient(90deg, #5B8FFF, transparent); }
+    .cs-principle--2::before { background: linear-gradient(90deg, #A78BFA, transparent); }
+    .cs-principle--3::before { background: linear-gradient(90deg, #5BC98A, transparent); }
+    .cs-principle__num {
+      font-size: 10px; font-weight: 600; text-transform: uppercase;
+      letter-spacing: 0.12em; color: rgba(160,190,255,0.45);
+    }
+    .cs-principle__name {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 17px; font-weight: 700; color: rgba(255,255,255,0.90);
+      letter-spacing: -0.4px; line-height: 1.25;
+    }
+    .cs-principle__why {
+      font-size: 13px; color: rgba(255,255,255,0.40); line-height: 1.7;
+    }
+    .cs-principle__from {
+      font-size: 11px; color: rgba(255,255,255,0.28); line-height: 1.5;
+      border-left: 2px solid rgba(255,255,255,0.08);
+      padding-left: 10px; margin-top: 2px;
+    }
+
     /* ══ TIMELINE STRIP ══ */
     .cs-timeline {
       border-radius: 16px;
@@ -441,6 +474,32 @@
           <div class="cs-detail-card__item">A/B tested booking flow</div>
           <div class="cs-detail-card__item">Final handoff to dev</div>
         </div>
+      </div>
+
+    </div>
+
+    <!-- Design Principles (north stars before any design started) -->
+    <div class="cs-principles">
+
+      <div class="cs-principle cs-glass cs-principle--1">
+        <span class="cs-principle__num">Principle 01</span>
+        <span class="cs-principle__name">Trust is the first gate — not speed</span>
+        <p class="cs-principle__why">A user will not book a doctor they don't yet trust, no matter how fast the flow is. Every screen must earn credibility before it asks for commitment. Speed is a secondary concern.</p>
+        <p class="cs-principle__from">From research: 63% of users said they needed social proof — ratings, credentials, or a review — before they would even consider booking.</p>
+      </div>
+
+      <div class="cs-principle cs-glass cs-principle--2">
+        <span class="cs-principle__num">Principle 02</span>
+        <span class="cs-principle__name">Reduce decisions, not options</span>
+        <p class="cs-principle__why">Healthcare already feels overwhelming. The design job is not to hide options — it's to surface the right one at the right moment. Choice overload at the wrong point causes abandonment.</p>
+        <p class="cs-principle__from">From persona: Emily won't read more than 3 lines. David needs to scan quickly between meetings. Neither has patience for menus inside menus.</p>
+      </div>
+
+      <div class="cs-principle cs-glass cs-principle--3">
+        <span class="cs-principle__num">Principle 03</span>
+        <span class="cs-principle__name">Booking is the middle, not the end</span>
+        <p class="cs-principle__why">The confirmed appointment is not the finish line. What happens after — reminders, follow-ups, messaging — is where trust either deepens or disappears. The design must keep the care loop alive.</p>
+        <p class="cs-principle__from">From journey map: the biggest emotional drop-off happened after confirmation, when users felt "left on their own" before the actual visit.</p>
       </div>
 
     </div>

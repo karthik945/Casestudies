@@ -102,91 +102,91 @@
     }
 
     /* Stats row */
-    .cs-stats {
+    .ut-stats {
       display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px;
     }
-    .cs-stat {
+    .ut-stat {
       border-radius: 16px; padding: 24px;
       display: flex; flex-direction: column; gap: 6px;
     }
-    .cs-stat__num {
+    .ut-stat__num {
       font-family: 'Space Grotesk', sans-serif;
       font-size: 36px; font-weight: 700; letter-spacing: -1.5px;
       background: linear-gradient(135deg, #fff 40%, rgba(200,180,255,0.7) 100%);
       -webkit-background-clip: text; -webkit-text-fill-color: transparent;
       background-clip: text;
     }
-    .cs-stat__label { font-size: 12px; color: rgba(255,255,255,0.38); line-height: 1.5; }
-    .cs-stat__bar {
+    .ut-stat__label { font-size: 12px; color: rgba(255,255,255,0.38); line-height: 1.5; }
+    .ut-stat__bar {
       height: 2px; border-radius: 2px;
       background: rgba(255,255,255,0.05); margin-top: 6px;
       position: relative; overflow: hidden;
     }
-    .cs-stat__fill {
+    .ut-stat__fill {
       position: absolute; top: 0; left: 0; height: 100%;
       border-radius: 2px;
       background: linear-gradient(90deg, #FF6B4A, #FF9F8A);
     }
 
     /* Findings grid */
-    .cs-findings {
+    .ut-findings {
       display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px;
     }
-    .cs-finding {
+    .ut-finding {
       border-radius: 20px; padding: 28px;
       display: flex; flex-direction: column; gap: 16px;
       position: relative; overflow: hidden;
     }
-    .cs-finding::before {
+    .ut-finding::before {
       content: '';
       position: absolute; top: 0; left: 0; right: 0; height: 2px;
     }
-    .cs-finding--critical::before { background: linear-gradient(90deg, #FF4040, transparent); }
-    .cs-finding--moderate::before { background: linear-gradient(90deg, #FF9F2E, transparent); }
+    .ut-finding--critical::before { background: linear-gradient(90deg, #FF4040, transparent); }
+    .ut-finding--moderate::before { background: linear-gradient(90deg, #FF9F2E, transparent); }
 
-    .cs-finding__top { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
-    .cs-finding__icon {
+    .ut-finding__top { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+    .ut-finding__icon {
       width: 40px; height: 40px; border-radius: 12px;
       display: flex; align-items: center; justify-content: center;
       flex-shrink: 0;
     }
-    .cs-finding__icon--critical { background: rgba(255,64,64,0.12); border: 1px solid rgba(255,64,64,0.2); }
-    .cs-finding__icon--moderate { background: rgba(255,159,46,0.12); border: 1px solid rgba(255,159,46,0.2); }
+    .ut-finding__icon--critical { background: rgba(255,64,64,0.12); border: 1px solid rgba(255,64,64,0.2); }
+    .ut-finding__icon--moderate { background: rgba(255,159,46,0.12); border: 1px solid rgba(255,159,46,0.2); }
 
-    .cs-badge {
+    .ut-badge {
       padding: 4px 10px; border-radius: 100px;
       font-size: 10px; font-weight: 600;
       text-transform: uppercase; letter-spacing: 0.1em;
       flex-shrink: 0;
     }
-    .cs-badge--critical { background: rgba(255,64,64,0.12); color: #FF8080; border: 1px solid rgba(255,64,64,0.2); }
-    .cs-badge--moderate { background: rgba(255,159,46,0.12); color: #FFBA6E; border: 1px solid rgba(255,159,46,0.2); }
-    .cs-badge--resolved { background: rgba(80,200,140,0.12); color: #7DDBA5; border: 1px solid rgba(80,200,140,0.2); }
+    .ut-badge--critical { background: rgba(255,64,64,0.12); color: #FF8080; border: 1px solid rgba(255,64,64,0.2); }
+    .ut-badge--moderate { background: rgba(255,159,46,0.12); color: #FFBA6E; border: 1px solid rgba(255,159,46,0.2); }
+    .ut-badge--resolved { background: rgba(80,200,140,0.12); color: #7DDBA5; border: 1px solid rgba(80,200,140,0.2); }
 
-    .cs-finding__title {
+    .ut-finding__title {
       font-family: 'Space Grotesk', sans-serif;
       font-size: 17px; font-weight: 600; color: rgba(255,255,255,0.88);
       line-height: 1.3;
     }
-    .cs-finding__desc {
+    .ut-finding__desc {
       font-size: 13px; color: rgba(255,255,255,0.45); line-height: 1.7;
     }
-    .cs-finding__users {
+    .ut-finding__users {
       display: flex; align-items: center; gap: 8px;
     }
-    .cs-finding__avatars { display: flex; }
-    .cs-finding__avatar {
+    .ut-finding__avatars { display: flex; }
+    .ut-finding__avatar {
       width: 22px; height: 22px; border-radius: 50%;
       background: rgba(255,255,255,0.10);
       border: 1.5px solid #05050E;
       margin-left: -6px;
     }
-    .cs-finding__avatar:first-child { margin-left: 0; }
-    .cs-finding__user-text {
+    .ut-finding__avatar:first-child { margin-left: 0; }
+    .ut-finding__user-text {
       font-size: 11px; color: rgba(255,255,255,0.30);
     }
 
-    .cs-finding__fix {
+    .ut-finding__fix {
       border-radius: 10px; padding: 12px 14px;
       background: rgba(80,200,140,0.05);
       border: 1px solid rgba(80,200,140,0.12);
@@ -194,7 +194,7 @@
       line-height: 1.6;
       display: flex; gap: 8px;
     }
-    .cs-finding__fix-icon { flex-shrink: 0; margin-top: 1px; }
+    .ut-finding__fix-icon { flex-shrink: 0; margin-top: 1px; }
 
     /* Before / After comparison */
     .cs-compare {
@@ -292,48 +292,64 @@
     .sk-chip-sm { height: 16px; border-radius: 100px; background: rgba(91,143,255,0.12); border: 1px solid rgba(91,143,255,0.18); }
 
     /* Quote */
-    .cs-quote {
+    .ut-quote {
       border-radius: 20px; padding: 32px 36px;
       position: relative;
       border-left: 3px solid rgba(255,159,46,0.4);
       background: rgba(255,159,46,0.04);
     }
-    .cs-quote__mark {
+    .ut-quote__mark {
       font-family: 'Space Grotesk', sans-serif;
       font-size: 64px; line-height: 0.5;
       color: rgba(255,159,46,0.2);
       margin-bottom: 16px; display: block;
     }
-    .cs-quote__text {
+    .ut-quote__text {
       font-size: 18px; font-weight: 400;
       color: rgba(255,255,255,0.65); line-height: 1.7;
       font-style: italic;
     }
-    .cs-quote__text strong { color: rgba(255,255,255,0.88); font-style: normal; font-weight: 500; }
-    .cs-quote__attr {
+    .ut-quote__text strong { color: rgba(255,255,255,0.88); font-style: normal; font-weight: 500; }
+    .ut-quote__attr {
       margin-top: 20px;
       font-size: 12px; color: rgba(255,255,255,0.30);
       display: flex; align-items: center; gap: 8px;
     }
-    .cs-quote__attr::before {
+    .ut-quote__attr::before {
       content: ''; display: block; width: 20px; height: 1px;
       background: rgba(255,255,255,0.15);
     }
 
     /* Methodology strip */
     .cs-method-strip {
-      border-radius: 14px; padding: 20px 24px;
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 12px;
+    }
+    .cs-method-strip__item {
+      border-radius: 14px; padding: 18px 20px;
       background: rgba(255,255,255,0.03);
       border: 1px solid rgba(255,255,255,0.07);
-      display: flex; flex-wrap: wrap; gap: 24px;
+      display: flex; flex-direction: column; gap: 10px;
     }
-    .cs-method-strip__item { display: flex; flex-direction: column; gap: 4px; }
+    .cs-method-strip__icon {
+      width: 32px; height: 32px; border-radius: 9px;
+      background: rgba(91,143,255,0.1);
+      border: 1px solid rgba(91,143,255,0.15);
+      display: flex; align-items: center; justify-content: center;
+    }
     .cs-method-strip__key {
       font-size: 9.5px; font-weight: 600; text-transform: uppercase;
-      letter-spacing: 0.1em; color: rgba(255,255,255,0.25);
+      letter-spacing: 0.1em; color: rgba(255,255,255,0.28);
+      margin-top: 2px;
     }
     .cs-method-strip__val {
-      font-size: 12px; color: rgba(255,255,255,0.6); line-height: 1.5;
+      font-size: 12.5px; color: rgba(255,255,255,0.7);
+      line-height: 1.55; font-weight: 400;
+    }
+    .cs-method-strip__val strong {
+      color: rgba(255,255,255,0.9); font-weight: 600; display: block;
+      font-size: 14px; margin-bottom: 2px;
     }
 
     /* Task completion table */
@@ -406,6 +422,45 @@
     .cs-surprise__text { font-size: 13px; color: rgba(255,255,255,0.55); line-height: 1.7; }
     .cs-surprise__text strong { color: rgba(255,255,255,0.82); font-weight: 500; }
 
+    /* ══ SCOPED OVERRIDES — S01 sets .ut-stat to position:absolute; reset for S10 ══ */
+    #cs-usability .ut-stat {
+      position: relative !important;
+      border-radius: 16px !important;
+      padding: 24px !important;
+      display: flex !important;
+      flex-direction: column !important;
+      gap: 6px !important;
+      min-width: unset !important;
+      z-index: auto !important;
+      top: auto !important; right: auto !important;
+      bottom: auto !important; left: auto !important;
+    }
+    #cs-usability .ut-stat__bar {
+      width: 100% !important;
+      height: 2px !important;
+      position: relative !important;
+      overflow: hidden !important;
+      border-radius: 2px !important;
+      background: rgba(255,255,255,0.05) !important;
+      margin-top: 6px !important;
+      margin-bottom: 0 !important;
+    }
+    #cs-usability .ut-stat__num {
+      font-family: 'Space Grotesk', sans-serif !important;
+      font-size: 36px !important;
+      font-weight: 700 !important;
+      letter-spacing: -1.5px !important;
+      -webkit-text-fill-color: transparent !important;
+      background: linear-gradient(135deg, #fff 40%, rgba(200,180,255,0.7) 100%) !important;
+      -webkit-background-clip: text !important;
+      background-clip: text !important;
+    }
+    #cs-usability .ut-stat__label {
+      font-size: 12px !important;
+      color: rgba(255,255,255,0.38) !important;
+      line-height: 1.5 !important;
+    }
+
   </style>
   <script src="https://mcp.figma.com/mcp/html-to-design/capture.js" async></script>
 </head>
@@ -439,49 +494,80 @@
 
     <!-- Methodology strip -->
     <div class="cs-method-strip">
+
       <div class="cs-method-strip__item">
-        <div class="cs-method-strip__key">Testing Method</div>
-        <div class="cs-method-strip__val">Moderated remote sessions · Zoom screen share</div>
+        <div class="cs-method-strip__icon">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M2 4h12M2 8h8M2 12h5" stroke="rgba(91,143,255,0.8)" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </div>
+        <div>
+          <div class="cs-method-strip__key">Method</div>
+          <div class="cs-method-strip__val"><strong>Moderated Remote</strong>Zoom screen share · think-aloud protocol</div>
+        </div>
       </div>
+
       <div class="cs-method-strip__item">
-        <div class="cs-method-strip__key">Tool</div>
-        <div class="cs-method-strip__val">Maze (task recording) · Lookback (session capture)</div>
+        <div class="cs-method-strip__icon">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="2" y="2" width="12" height="12" rx="3" stroke="rgba(91,143,255,0.8)" stroke-width="1.5"/><path d="M5 8h6M8 5v6" stroke="rgba(91,143,255,0.8)" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </div>
+        <div>
+          <div class="cs-method-strip__key">Tools Used</div>
+          <div class="cs-method-strip__val"><strong>Maze + Lookback</strong>Task recording · session capture</div>
+        </div>
       </div>
+
       <div class="cs-method-strip__item">
-        <div class="cs-method-strip__key">Participants</div>
-        <div class="cs-method-strip__val">6 · Ages 26–48 · 4 patients, 2 caregivers · Recruited via UserTesting.com</div>
+        <div class="cs-method-strip__icon">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="5" r="2.5" stroke="rgba(91,143,255,0.8)" stroke-width="1.5"/><path d="M2.5 13.5c0-3 2.5-5 5.5-5s5.5 2 5.5 5" stroke="rgba(91,143,255,0.8)" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </div>
+        <div>
+          <div class="cs-method-strip__key">Participants</div>
+          <div class="cs-method-strip__val"><strong>6 people</strong>Ages 26–48 · 4 patients, 2 caregivers</div>
+        </div>
       </div>
+
       <div class="cs-method-strip__item">
-        <div class="cs-method-strip__key">Rounds</div>
-        <div class="cs-method-strip__val">2 rounds · Round 1 (n=6, Feb 2025) → iterate → Round 2 (n=6, Mar 2025)</div>
+        <div class="cs-method-strip__icon">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="rgba(91,143,255,0.8)" stroke-width="1.5"/><path d="M8 5v3.5l2.5 1.5" stroke="rgba(91,143,255,0.8)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div>
+          <div class="cs-method-strip__key">Duration</div>
+          <div class="cs-method-strip__val"><strong>22 min avg</strong>5 tasks per session</div>
+        </div>
       </div>
+
       <div class="cs-method-strip__item">
-        <div class="cs-method-strip__key">Avg Session Length</div>
-        <div class="cs-method-strip__val">38 minutes · 5 scenario-based tasks per session</div>
+        <div class="cs-method-strip__icon">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="rgba(91,143,255,0.8)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div>
+          <div class="cs-method-strip__key">Testing Rounds</div>
+          <div class="cs-method-strip__val"><strong>2 rounds</strong>Feb 2025 → fix → Mar 2025</div>
+        </div>
       </div>
+
     </div>
 
     <!-- Testing stats -->
-    <div class="cs-stats">
-      <div class="cs-stat cs-glass">
-        <div class="cs-stat__num">6</div>
-        <div class="cs-stat__label">Participants across 2 rounds · UserTesting.com panel</div>
-        <div class="cs-stat__bar"><div class="cs-stat__fill" style="width:60%"></div></div>
+    <div class="ut-stats">
+      <div class="ut-stat cs-glass">
+        <div class="ut-stat__num">6</div>
+        <div class="ut-stat__label">Participants across 2 rounds · UserTesting.com panel</div>
+        <div class="ut-stat__bar"><div class="ut-stat__fill" style="width:60%"></div></div>
       </div>
-      <div class="cs-stat cs-glass">
-        <div class="cs-stat__num">5</div>
-        <div class="cs-stat__label">Scenario-based tasks · avg 38 min per session</div>
-        <div class="cs-stat__bar"><div class="cs-stat__fill" style="width:50%"></div></div>
+      <div class="ut-stat cs-glass">
+        <div class="ut-stat__num">5</div>
+        <div class="ut-stat__label">Scenario-based tasks · avg 22 min per session</div>
+        <div class="ut-stat__bar"><div class="ut-stat__fill" style="width:50%"></div></div>
       </div>
-      <div class="cs-stat cs-glass">
-        <div class="cs-stat__num">17</div>
-        <div class="cs-stat__label">Issues identified via Maze task recordings + session notes</div>
-        <div class="cs-stat__bar"><div class="cs-stat__fill" style="width:100%"></div></div>
+      <div class="ut-stat cs-glass">
+        <div class="ut-stat__num">17</div>
+        <div class="ut-stat__label">Issues identified via Maze task recordings + session notes</div>
+        <div class="ut-stat__bar"><div class="ut-stat__fill" style="width:100%"></div></div>
       </div>
-      <div class="cs-stat cs-glass">
-        <div class="cs-stat__num">14</div>
-        <div class="cs-stat__label">Issues resolved before hi-fi handoff · 3 deprioritised</div>
-        <div class="cs-stat__bar"><div class="cs-stat__fill" style="width:82%;background:linear-gradient(90deg,#3a9060,#7DDBA5)"></div></div>
+      <div class="ut-stat cs-glass">
+        <div class="ut-stat__num">14</div>
+        <div class="ut-stat__label">Issues resolved before hi-fi handoff · 3 deprioritised</div>
+        <div class="ut-stat__bar"><div class="ut-stat__fill" style="width:82%;background:linear-gradient(90deg,#3a9060,#7DDBA5)"></div></div>
       </div>
     </div>
 
@@ -539,148 +625,148 @@
     </div>
 
     <!-- Key findings -->
-    <div class="cs-findings">
+    <div class="ut-findings">
 
       <!-- Finding 1 -->
-      <div class="cs-finding cs-glass cs-finding--critical">
-        <div class="cs-finding__top">
-          <div class="cs-finding__icon cs-finding__icon--critical">
+      <div class="ut-finding cs-glass ut-finding--critical">
+        <div class="ut-finding__top">
+          <div class="ut-finding__icon ut-finding__icon--critical">
             <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M9 3v7M9 13v1" stroke="#FF6060" stroke-width="2" stroke-linecap="round"/><circle cx="9" cy="9" r="7.5" stroke="#FF6060" stroke-width="1.2" opacity=".5"/></svg>
           </div>
-          <div class="cs-badge cs-badge--critical">Critical</div>
+          <div class="ut-badge ut-badge--critical">Critical</div>
         </div>
         <div>
-          <div class="cs-finding__title">Filter chips were invisible on load</div>
-          <div class="cs-finding__desc" style="margin-top:8px;">5 of 6 users scrolled straight past the filter chips and dove into doctor cards, missing specialty and location filters entirely. The chips sat flush to the search bar with no visual separation or label to indicate they were interactive.</div>
+          <div class="ut-finding__title">Filter chips were invisible on load</div>
+          <div class="ut-finding__desc" style="margin-top:8px;">5 of 6 users scrolled straight past the filter chips and dove into doctor cards, missing specialty and location filters entirely. The chips sat flush to the search bar with no visual separation or label to indicate they were interactive.</div>
         </div>
-        <div class="cs-finding__users">
-          <div class="cs-finding__avatars">
-            <div class="cs-finding__avatar"></div><div class="cs-finding__avatar"></div><div class="cs-finding__avatar"></div><div class="cs-finding__avatar"></div><div class="cs-finding__avatar"></div>
+        <div class="ut-finding__users">
+          <div class="ut-finding__avatars">
+            <div class="ut-finding__avatar"></div><div class="ut-finding__avatar"></div><div class="ut-finding__avatar"></div><div class="ut-finding__avatar"></div><div class="ut-finding__avatar"></div>
           </div>
-          <div class="cs-finding__user-text">5 of 6 users affected</div>
+          <div class="ut-finding__user-text">5 of 6 users affected</div>
         </div>
-        <div class="cs-finding__fix">
-          <div class="cs-finding__fix-icon"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7l3.5 3.5L12 3" stroke="#7DDBA5" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="ut-finding__fix">
+          <div class="ut-finding__fix-icon"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7l3.5 3.5L12 3" stroke="#7DDBA5" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
           Fixed: Added a labelled "Filter by" header above the chips with clear visual separation from the search bar.
         </div>
       </div>
 
       <!-- Finding 2 -->
-      <div class="cs-finding cs-glass cs-finding--critical">
-        <div class="cs-finding__top">
-          <div class="cs-finding__icon cs-finding__icon--critical">
+      <div class="ut-finding cs-glass ut-finding--critical">
+        <div class="ut-finding__top">
+          <div class="ut-finding__icon ut-finding__icon--critical">
             <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><rect x="3" y="4" width="12" height="10" rx="2" stroke="#FF6060" stroke-width="1.2" opacity=".5"/><path d="M3 7h12M7 4v3M11 4v3" stroke="#FF6060" stroke-width="1.4" stroke-linecap="round"/></svg>
           </div>
-          <div class="cs-badge cs-badge--critical">Critical</div>
+          <div class="ut-badge ut-badge--critical">Critical</div>
         </div>
         <div>
-          <div class="cs-finding__title">Date and time selection caused drop-offs</div>
-          <div class="cs-finding__desc" style="margin-top:8px;">4 users tapped a date and immediately tried to confirm — not realising they still needed to pick a time slot below. The calendar and slot grid were visually separate with no indication of a two-step sequence.</div>
+          <div class="ut-finding__title">Date and time selection caused drop-offs</div>
+          <div class="ut-finding__desc" style="margin-top:8px;">4 users tapped a date and immediately tried to confirm — not realising they still needed to pick a time slot below. The calendar and slot grid were visually separate with no indication of a two-step sequence.</div>
         </div>
-        <div class="cs-finding__users">
-          <div class="cs-finding__avatars">
-            <div class="cs-finding__avatar"></div><div class="cs-finding__avatar"></div><div class="cs-finding__avatar"></div><div class="cs-finding__avatar"></div>
+        <div class="ut-finding__users">
+          <div class="ut-finding__avatars">
+            <div class="ut-finding__avatar"></div><div class="ut-finding__avatar"></div><div class="ut-finding__avatar"></div><div class="ut-finding__avatar"></div>
           </div>
-          <div class="cs-finding__user-text">4 of 6 users affected</div>
+          <div class="ut-finding__user-text">4 of 6 users affected</div>
         </div>
-        <div class="cs-finding__fix">
-          <div class="cs-finding__fix-icon"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7l3.5 3.5L12 3" stroke="#7DDBA5" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="ut-finding__fix">
+          <div class="ut-finding__fix-icon"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7l3.5 3.5L12 3" stroke="#7DDBA5" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
           Fixed: Added a 2-step indicator "1 · Select Date → 2 · Pick Time" above the calendar so users always know where they are in the flow.
         </div>
       </div>
 
       <!-- Finding 3 -->
-      <div class="cs-finding cs-glass cs-finding--critical">
-        <div class="cs-finding__top">
-          <div class="cs-finding__icon cs-finding__icon--critical">
+      <div class="ut-finding cs-glass ut-finding--critical">
+        <div class="ut-finding__top">
+          <div class="ut-finding__icon ut-finding__icon--critical">
             <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="6" r="3" stroke="#FF6060" stroke-width="1.2" opacity=".5"/><path d="M3 16c0-3.3 2.7-6 6-6s6 2.7 6 6" stroke="#FF6060" stroke-width="1.4" stroke-linecap="round"/><path d="M13 3l2 2M15 3l-2 2" stroke="#FF6060" stroke-width="1.3" stroke-linecap="round"/></svg>
           </div>
-          <div class="cs-badge cs-badge--critical">Critical</div>
+          <div class="ut-badge ut-badge--critical">Critical</div>
         </div>
         <div>
-          <div class="cs-finding__title">Doctor profiles didn't build enough trust</div>
-          <div class="cs-finding__desc" style="margin-top:8px;">4 users spent over 3 minutes on a doctor's profile but still left without booking. They couldn't quickly verify credentials, see how many people had rated the doctor, or confirm the doctor was legitimate — leading to hesitation and abandonment.</div>
+          <div class="ut-finding__title">Doctor profiles didn't build enough trust</div>
+          <div class="ut-finding__desc" style="margin-top:8px;">4 users spent over 3 minutes on a doctor's profile but still left without booking. They couldn't quickly verify credentials, see how many people had rated the doctor, or confirm the doctor was legitimate — leading to hesitation and abandonment.</div>
         </div>
-        <div class="cs-finding__users">
-          <div class="cs-finding__avatars">
-            <div class="cs-finding__avatar"></div><div class="cs-finding__avatar"></div><div class="cs-finding__avatar"></div><div class="cs-finding__avatar"></div>
+        <div class="ut-finding__users">
+          <div class="ut-finding__avatars">
+            <div class="ut-finding__avatar"></div><div class="ut-finding__avatar"></div><div class="ut-finding__avatar"></div><div class="ut-finding__avatar"></div>
           </div>
-          <div class="cs-finding__user-text">4 of 6 users affected</div>
+          <div class="ut-finding__user-text">4 of 6 users affected</div>
         </div>
-        <div class="cs-finding__fix">
-          <div class="cs-finding__fix-icon"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7l3.5 3.5L12 3" stroke="#7DDBA5" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="ut-finding__fix">
+          <div class="ut-finding__fix-icon"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7l3.5 3.5L12 3" stroke="#7DDBA5" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
           Fixed: Added a verified badge, rating with review count, years of experience, and hospital affiliation — all visible above the fold on the doctor profile.
         </div>
       </div>
 
       <!-- Finding 4 -->
-      <div class="cs-finding cs-glass cs-finding--moderate">
-        <div class="cs-finding__top">
-          <div class="cs-finding__icon cs-finding__icon--moderate">
+      <div class="ut-finding cs-glass ut-finding--moderate">
+        <div class="ut-finding__top">
+          <div class="ut-finding__icon ut-finding__icon--moderate">
             <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="7.5" stroke="#FF9F2E" stroke-width="1.2" opacity=".5"/><path d="M9 5v5l3 3" stroke="#FF9F2E" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
           </div>
-          <div class="cs-badge cs-badge--moderate">Moderate</div>
+          <div class="ut-badge ut-badge--moderate">Moderate</div>
         </div>
         <div>
-          <div class="cs-finding__title">Post-booking screen felt like a dead end</div>
-          <div class="cs-finding__desc" style="margin-top:8px;">3 users who completed a booking didn't know what to do next. Several tapped the back button to check if the appointment had actually saved. There was no indication of next steps or what to expect before the visit.</div>
+          <div class="ut-finding__title">Post-booking screen felt like a dead end</div>
+          <div class="ut-finding__desc" style="margin-top:8px;">3 users who completed a booking didn't know what to do next. Several tapped the back button to check if the appointment had actually saved. There was no indication of next steps or what to expect before the visit.</div>
         </div>
-        <div class="cs-finding__users">
-          <div class="cs-finding__avatars">
-            <div class="cs-finding__avatar"></div><div class="cs-finding__avatar"></div><div class="cs-finding__avatar"></div>
+        <div class="ut-finding__users">
+          <div class="ut-finding__avatars">
+            <div class="ut-finding__avatar"></div><div class="ut-finding__avatar"></div><div class="ut-finding__avatar"></div>
           </div>
-          <div class="cs-finding__user-text">3 of 6 users affected</div>
+          <div class="ut-finding__user-text">3 of 6 users affected</div>
         </div>
-        <div class="cs-finding__fix">
-          <div class="cs-finding__fix-icon"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7l3.5 3.5L12 3" stroke="#7DDBA5" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="ut-finding__fix">
+          <div class="ut-finding__fix-icon"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7l3.5 3.5L12 3" stroke="#7DDBA5" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
           Fixed: Confirmation screen now shows a clear success state with appointment details, a pre-visit checklist teaser, and a prompt to view the upcoming appointment.
         </div>
       </div>
 
       <!-- Finding 5 -->
-      <div class="cs-finding cs-glass cs-finding--moderate">
-        <div class="cs-finding__top">
-          <div class="cs-finding__icon cs-finding__icon--moderate">
+      <div class="ut-finding cs-glass ut-finding--moderate">
+        <div class="ut-finding__top">
+          <div class="ut-finding__icon ut-finding__icon--moderate">
             <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><rect x="2" y="12" width="14" height="4" rx="1" stroke="#FF9F2E" stroke-width="1.2" opacity=".5"/><path d="M5 8.5h8M5 5.5h8" stroke="#FF9F2E" stroke-width="1.4" stroke-linecap="round"/><rect x="2" y="2" width="14" height="4" rx="1" stroke="#FF9F2E" stroke-width="1.2" opacity=".5"/></svg>
           </div>
-          <div class="cs-badge cs-badge--moderate">Moderate</div>
+          <div class="ut-badge ut-badge--moderate">Moderate</div>
         </div>
         <div>
-          <div class="cs-finding__title">Home screen didn't adapt after booking</div>
-          <div class="cs-finding__desc" style="margin-top:8px;">3 users who returned to the home screen after booking were confused to see the same empty state. There was no sign their appointment existed unless they navigated into the Appointments tab — the home screen had no awareness of their context.</div>
+          <div class="ut-finding__title">Home screen didn't adapt after booking</div>
+          <div class="ut-finding__desc" style="margin-top:8px;">3 users who returned to the home screen after booking were confused to see the same empty state. There was no sign their appointment existed unless they navigated into the Appointments tab — the home screen had no awareness of their context.</div>
         </div>
-        <div class="cs-finding__users">
-          <div class="cs-finding__avatars">
-            <div class="cs-finding__avatar"></div><div class="cs-finding__avatar"></div><div class="cs-finding__avatar"></div>
+        <div class="ut-finding__users">
+          <div class="ut-finding__avatars">
+            <div class="ut-finding__avatar"></div><div class="ut-finding__avatar"></div><div class="ut-finding__avatar"></div>
           </div>
-          <div class="cs-finding__user-text">3 of 6 users affected</div>
+          <div class="ut-finding__user-text">3 of 6 users affected</div>
         </div>
-        <div class="cs-finding__fix">
-          <div class="cs-finding__fix-icon"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7l3.5 3.5L12 3" stroke="#7DDBA5" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="ut-finding__fix">
+          <div class="ut-finding__fix-icon"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7l3.5 3.5L12 3" stroke="#7DDBA5" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
           Fixed: Home now surfaces the upcoming appointment as a contextual card with doctor info, date, time, and a quick-action pre-visit checklist strip.
         </div>
       </div>
 
       <!-- Finding 6 -->
-      <div class="cs-finding cs-glass cs-finding--moderate">
-        <div class="cs-finding__top">
-          <div class="cs-finding__icon cs-finding__icon--moderate">
+      <div class="ut-finding cs-glass ut-finding--moderate">
+        <div class="ut-finding__top">
+          <div class="ut-finding__icon ut-finding__icon--moderate">
             <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M2 3h14a1 1 0 011 1v8a1 1 0 01-1 1H6l-4 4V4a1 1 0 011-1z" stroke="#FF9F2E" stroke-width="1.2" opacity=".5" stroke-linejoin="round"/><path d="M6 8h6M6 11h3" stroke="#FF9F2E" stroke-width="1.4" stroke-linecap="round"/></svg>
           </div>
-          <div class="cs-badge cs-badge--moderate">Moderate</div>
+          <div class="ut-badge ut-badge--moderate">Moderate</div>
         </div>
         <div>
-          <div class="cs-finding__title">No way to prepare or reach the doctor before a visit</div>
-          <div class="cs-finding__desc" style="margin-top:8px;">2 users felt anxious in the days before their appointment — unsure what to bring, how to prepare, or if they could ask the doctor a quick question without calling the clinic. The app offered no pre-visit touchpoint.</div>
+          <div class="ut-finding__title">No way to prepare or reach the doctor before a visit</div>
+          <div class="ut-finding__desc" style="margin-top:8px;">2 users felt anxious in the days before their appointment — unsure what to bring, how to prepare, or if they could ask the doctor a quick question without calling the clinic. The app offered no pre-visit touchpoint.</div>
         </div>
-        <div class="cs-finding__users">
-          <div class="cs-finding__avatars">
-            <div class="cs-finding__avatar"></div><div class="cs-finding__avatar"></div>
+        <div class="ut-finding__users">
+          <div class="ut-finding__avatars">
+            <div class="ut-finding__avatar"></div><div class="ut-finding__avatar"></div>
           </div>
-          <div class="cs-finding__user-text">2 of 6 users affected</div>
+          <div class="ut-finding__user-text">2 of 6 users affected</div>
         </div>
-        <div class="cs-finding__fix">
-          <div class="cs-finding__fix-icon"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7l3.5 3.5L12 3" stroke="#7DDBA5" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="ut-finding__fix">
+          <div class="ut-finding__fix-icon"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7l3.5 3.5L12 3" stroke="#7DDBA5" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
           Fixed: Added a pre-visit checklist with doctor-specific notes and a direct message CTA — giving users a way to prepare and communicate before arriving.
         </div>
       </div>
@@ -979,19 +1065,19 @@
 
     <!-- User quotes -->
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
-      <div class="cs-quote">
-        <span class="cs-quote__mark">"</span>
-        <div class="cs-quote__text">
+      <div class="ut-quote">
+        <span class="ut-quote__mark">"</span>
+        <div class="ut-quote__text">
           I didn't realise I had to pick a time — I thought choosing the date <strong>was</strong> the booking. Once I saw the little step bar it all made sense immediately.
         </div>
-        <div class="cs-quote__attr">Participant 3, Round 1 — Marketing professional, 31</div>
+        <div class="ut-quote__attr">Participant 3, Round 1 — Marketing professional, 31</div>
       </div>
-      <div class="cs-quote">
-        <span class="cs-quote__mark">"</span>
-        <div class="cs-quote__text">
+      <div class="ut-quote">
+        <span class="ut-quote__mark">"</span>
+        <div class="ut-quote__text">
           I kept looking between those four icons in the middle and the ones at the bottom — I wasn't sure which one actually took me places. They looked <strong>exactly the same</strong>.
         </div>
-        <div class="cs-quote__attr">Participant 5, Round 1 — Nurse, 28</div>
+        <div class="ut-quote__attr">Participant 5, Round 1 — Nurse, 28</div>
       </div>
     </div>
 

@@ -156,6 +156,66 @@
     }
     .fd-fix__text strong { color: rgba(180,210,255,0.8); font-weight: 600; }
 
+    /* ══ OUTCOMES BLOCK ══ */
+    .fd-outcomes {
+      margin-top: 80px;
+      border-top: 1px solid rgba(255,255,255,0.06);
+      padding-top: 64px;
+    }
+    .fd-outcomes__eyebrow {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-size: 11px; font-weight: 500; text-transform: uppercase;
+      letter-spacing: 0.12em; color: rgba(160,190,255,0.7); margin-bottom: 40px;
+    }
+    .fd-outcomes__eyebrow::before {
+      content: ''; display: block; width: 24px; height: 1px;
+      background: rgba(91,143,255,0.6);
+    }
+    .fd-outcomes__grid {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px;
+      margin-bottom: 40px;
+    }
+    .fd-outcome {
+      border-radius: 16px; padding: 28px 24px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.07);
+      display: flex; flex-direction: column; gap: 8px;
+      position: relative; overflow: hidden;
+    }
+    .fd-outcome::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+      background: linear-gradient(90deg, #5B8FFF, #A78BFA);
+    }
+    .fd-outcome__num {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 36px; font-weight: 700; letter-spacing: -1.5px;
+      background: linear-gradient(135deg, #fff 40%, rgba(160,185,255,0.7) 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .fd-outcome__label {
+      font-size: 13px; color: rgba(255,255,255,0.55); line-height: 1.5;
+    }
+    .fd-outcome__delta {
+      font-size: 11px; color: rgba(91,200,140,0.7); margin-top: 4px;
+    }
+    .fd-reflection {
+      border-radius: 16px; padding: 32px 36px;
+      background: rgba(91,143,255,0.04);
+      border: 1px solid rgba(91,143,255,0.12);
+      display: flex; gap: 24px; align-items: flex-start;
+    }
+    .fd-reflection__bar {
+      width: 3px; border-radius: 3px; flex-shrink: 0; align-self: stretch;
+      background: linear-gradient(180deg, #5B8FFF, #A78BFA);
+    }
+    .fd-reflection__text {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 18px; font-weight: 500; line-height: 1.6;
+      color: rgba(255,255,255,0.70); letter-spacing: -0.2px;
+    }
+    .fd-reflection__text strong { color: #fff; font-weight: 700; }
+
     /* Flow arrow between phases */
     .fd-flow-arrow {
       display: flex; align-items: center; justify-content: center;
@@ -391,7 +451,7 @@
         <!-- S11 Confirmed -->
         <div class="fd-card">
           <div class="fd-card__frame">
-            <iframe src="screens/s11_confirmed.html" scrolling="no" data-screen></iframe>
+            <iframe src="screens/s11_confirmed.html?v=2" scrolling="no" data-screen></iframe>
           </div>
           <div class="fd-card__meta">
             <div class="fd-card__num">S11</div>
@@ -526,6 +586,39 @@
           </div>
         </div>
 
+      </div>
+    </div>
+
+    <!-- Outcomes -->
+    <div class="fd-outcomes">
+      <div class="fd-outcomes__eyebrow">What changed</div>
+
+      <div class="fd-outcomes__grid">
+        <div class="fd-outcome">
+          <div class="fd-outcome__num">90%</div>
+          <div class="fd-outcome__label">Task completion rate after Round 2 testing</div>
+          <div class="fd-outcome__delta">↑ from 60% in Round 1</div>
+        </div>
+        <div class="fd-outcome">
+          <div class="fd-outcome__num">2</div>
+          <div class="fd-outcome__label">Taps to confirm a booking slot</div>
+          <div class="fd-outcome__delta">↓ from 5 steps in initial flow</div>
+        </div>
+        <div class="fd-outcome">
+          <div class="fd-outcome__num">17</div>
+          <div class="fd-outcome__label">Usability issues identified and resolved across 2 rounds</div>
+          <div class="fd-outcome__delta">0 critical issues remaining at handoff</div>
+        </div>
+        <div class="fd-outcome">
+          <div class="fd-outcome__num">18</div>
+          <div class="fd-outcome__label">Screens designed across 6 user journey phases</div>
+          <div class="fd-outcome__delta">Auth · Search · Profile · Book · Visit · Post-visit</div>
+        </div>
+      </div>
+
+      <div class="fd-reflection">
+        <div class="fd-reflection__bar"></div>
+        <p class="fd-reflection__text">The biggest lesson from this project wasn't about UI. It was about <strong>where trust actually breaks.</strong> Users don't abandon because booking is hard — they abandon because they don't feel confident enough to commit. Designing for credibility first, and friction second, changed every decision that followed.</p>
       </div>
     </div>
 
