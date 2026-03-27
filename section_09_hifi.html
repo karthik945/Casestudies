@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PulseCare — Section 09: Hi-Fi Design</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: #05050E; color: #fff; font-family: 'DM Sans', sans-serif; -webkit-font-smoothing: antialiased; }
+    .cs-glass { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); backdrop-filter: blur(24px); }
+    .cs-hifi { position: relative; padding: 120px 72px; overflow: hidden; }
+    .cs-glows { position: absolute; inset: 0; pointer-events: none; z-index: 0; }
+    .cs-glow { position: absolute; border-radius: 50%; filter: blur(120px); }
+    .cs-glow--1 { width: 700px; height: 500px; background: radial-gradient(circle, rgba(55,100,255,0.14) 0%, transparent 65%); top: -60px; right: -100px; }
+    .cs-glow--2 { width: 400px; height: 400px; background: radial-gradient(circle, rgba(110,60,255,0.10) 0%, transparent 65%); bottom: 100px; left: 0; }
+    .cs-grid { position: absolute; inset: 0; z-index: 0; background-image: linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px); background-size: 64px 64px; }
+    .cs-inner { position: relative; z-index: 1; max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; gap: 64px; }
+    .cs-header { display: flex; align-items: flex-end; justify-content: space-between; }
+    .cs-eyebrow { display: inline-flex; align-items: center; gap: 8px; font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.12em; color: rgba(160,190,255,0.7); margin-bottom: 12px; }
+    .cs-eyebrow::before { content: ''; display: block; width: 24px; height: 1px; background: rgba(91,143,255,0.6); }
+    .cs-title { font-family: 'Space Grotesk', sans-serif; font-size: 52px; font-weight: 700; letter-spacing: -2px; line-height: 1; color: #fff; }
+    .cs-title span { background: linear-gradient(135deg, #6FA3FF 0%, #A78BFA 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .cs-ghost-num { font-family: 'Space Grotesk', sans-serif; font-size: 80px; font-weight: 700; color: rgba(255,255,255,0.04); letter-spacing: -4px; user-select: none; }
+
+    /* Fidelity strip */
+    .cs-fidelity { display: flex; border-radius: 100px; overflow: hidden; border: 1px solid rgba(255,255,255,0.08); }
+    .cs-fidelity__step { flex: 1; padding: 10px 0; text-align: center; font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.1em; color: rgba(255,255,255,0.22); background: rgba(255,255,255,0.02); border-right: 1px solid rgba(255,255,255,0.06); }
+    .cs-fidelity__step:last-child { border-right: none; }
+    .cs-fidelity__step--done { background: rgba(91,143,255,0.06); color: rgba(91,143,255,0.5); }
+    .cs-fidelity__step--active { background: rgba(91,143,255,0.14); color: rgba(160,190,255,0.9); }
+
+    /* ── Screen grid: 3 per row, all same fixed size ── */
+    .cs-screen-row {
+      display: flex;
+      justify-content: center;
+      gap: 28px;
+    }
+
+    /* Every phone card is IDENTICAL width */
+    .cs-screen-card {
+      width: 340px;
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .cs-screen-meta { text-align: center; }
+    .cs-screen-num { font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(91,143,255,0.6); margin-bottom: 5px; }
+    .cs-screen-label { font-size: 14px; font-weight: 600; color: rgba(255,255,255,0.65); }
+
+    /* ── Phone frame — FIXED 340×736px on every screen ── */
+    .cs-phone {
+      width: 340px;
+      height: 736px;         /* 340 × 844/390 ≈ 736 */
+      border-radius: 36px;
+      border: 1.5px solid rgba(255,255,255,0.14);
+      background: #0d0d1f;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 32px 80px rgba(0,0,0,0.55), 0 0 0 1px rgba(255,255,255,0.04), inset 0 1px 0 rgba(255,255,255,0.07);
+    }
+
+    /* Status bar */
+    .p-status { display: flex; justify-content: space-between; align-items: center; padding: 13px 22px 6px; flex-shrink: 0; }
+    .p-time { font-size: 14px; font-weight: 700; color: rgba(255,255,255,0.82); letter-spacing: -0.2px; }
+    .p-notch { width: 100px; height: 10px; border-radius: 10px; background: rgba(255,255,255,0.06); }
+    .p-icons { display: flex; gap: 4px; align-items: center; }
+    .p-sig { width: 13px; height: 9px; border-radius: 2px; background: rgba(255,255,255,0.55); }
+    .p-bat { width: 20px; height: 10px; border-radius: 2.5px; border: 1.5px solid rgba(255,255,255,0.4); position: relative; display: flex; align-items: center; padding: 1.5px; }
+    .p-bat::after { content:''; position: absolute; right: -3.5px; top: 50%; transform: translateY(-50%); width: 2px; height: 5px; border-radius: 1px; background: rgba(255,255,255,0.35); }
+    .p-bat-fill { background: rgba(255,255,255,0.7); border-radius: 1px; height: 100%; width: 72%; }
+
+    /* Scrollable body — clips at phone bottom */
+    .p-body { flex: 1; overflow: hidden; display: flex; flex-direction: column; min-height: 0; }
+
+    /* Tab bar */
+    .p-tabbar { display: flex; justify-content: space-around; align-items: center; padding: 10px 24px 16px; border-top: 1px solid rgba(255,255,255,0.07); background: rgba(13,13,31,0.98); flex-shrink: 0; }
+    .p-tab { display: flex; flex-direction: column; align-items: center; gap: 3px; color: rgba(255,255,255,0.22); }
+    .p-tab--on { color: #5B8FFF; }
+    .p-tab-dot { width: 4px; height: 4px; border-radius: 50%; background: #5B8FFF; }
+
+    /* Home indicator */
+    .p-home { height: 24px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .p-home-bar { width: 120px; height: 5px; border-radius: 3px; background: rgba(255,255,255,0.18); }
+
+    /* ════════════════════════════
+       S1 — SEARCH & FILTER
+    ════════════════════════════ */
+    .s1-header { padding: 6px 18px 14px; background: linear-gradient(180deg,#131330 0%,#0d0d1f 100%); flex-shrink: 0; }
+    .s1-greet { font-size: 12px; color: rgba(255,255,255,0.38); margin-bottom: 2px; }
+    .s1-name { font-size: 24px; font-weight: 700; color: #fff; letter-spacing: -0.5px; }
+    .s1-search { margin-top: 14px; display: flex; align-items: center; gap: 9px; background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.10); border-radius: 12px; padding: 11px 14px; }
+    .s1-search-ph { font-size: 13px; color: rgba(255,255,255,0.26); }
+    .s1-chips { display: flex; gap: 7px; margin-top: 11px; }
+    .s1-chip { padding: 5px 13px; border-radius: 100px; font-size: 12px; font-weight: 500; white-space: nowrap; }
+    .s1-chip-on { background: #5B8FFF; color: #fff; }
+    .s1-chip-off { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.10); color: rgba(255,255,255,0.42); }
+    .s1-sec { font-size: 11px; font-weight: 600; color: rgba(255,255,255,0.28); text-transform: uppercase; letter-spacing: 0.09em; padding: 12px 18px 6px; }
+    .s1-cards { padding: 0 14px; display: flex; flex-direction: column; gap: 9px; }
+    .s1-card { border-radius: 14px; padding: 13px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); }
+    .s1-row { display: flex; gap: 11px; align-items: flex-start; }
+    .s1-av { width: 48px; height: 48px; border-radius: 13px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 700; color: #fff; overflow: hidden; }
+    .av-blue { background: linear-gradient(135deg,#3A6FFF,#7B5FD0); }
+    .av-teal { background: linear-gradient(135deg,#1A8A6F,#3ABFA0); }
+    .s1-name2 { font-size: 14px; font-weight: 700; color: rgba(255,255,255,0.88); }
+    .s1-spec { font-size: 11px; color: rgba(255,255,255,0.38); margin-top: 2px; }
+    .s1-meta { display: flex; align-items: center; gap: 7px; margin-top: 5px; }
+    .s1-stars { font-size: 11px; font-weight: 600; color: #FFB547; }
+    .s1-avail { font-size: 10px; color: rgba(80,200,140,0.85); background: rgba(80,200,140,0.10); border: 1px solid rgba(80,200,140,0.18); border-radius: 100px; padding: 2px 7px; }
+    .s1-btn { margin-top: 10px; padding: 11px 0; border-radius: 10px; font-size: 13px; font-weight: 600; background: linear-gradient(135deg,#3A6FFF,#5B8FFF); color: #fff; text-align: center; }
+
+    /* ════════════════════════════
+       S2 — DOCTOR PROFILE
+    ════════════════════════════ */
+    .s2-body { padding: 0 18px 14px; flex: 1; overflow: hidden; }
+    .s2-id { display: flex; align-items: center; gap: 10px; margin-top: 6px; margin-bottom: 14px; }
+    .s2-av { width: 56px; height: 56px; border-radius: 16px; flex-shrink: 0; background: linear-gradient(135deg,#3A6FFF,#7B5FD0); display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: 700; color: #fff; overflow: hidden; }
+    .s2-dname { font-size: 16px; font-weight: 700; color: #fff; line-height: 1.2; }
+    .s2-dspec { font-size: 12px; color: rgba(255,255,255,0.38); margin-top: 2px; }
+    .s2-badge { margin-left: auto; margin-bottom: 4px; padding: 3px 9px; border-radius: 100px; font-size: 10px; font-weight: 600; background: rgba(80,200,140,0.12); border: 1px solid rgba(80,200,140,0.22); color: #7DDBA5; white-space: nowrap; flex-shrink: 0; }
+    .s2-stats { display: grid; grid-template-columns: repeat(3,1fr); gap: 7px; margin-bottom: 14px; }
+    .s2-stat { border-radius: 11px; padding: 10px 7px; text-align: center; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.07); }
+    .s2-sv { font-size: 18px; font-weight: 700; background: linear-gradient(135deg,#6FA3FF,#A78BFA); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .s2-sl { font-size: 9px; color: rgba(255,255,255,0.28); margin-top: 2px; }
+    .s2-div { height: 1px; background: rgba(255,255,255,0.07); margin: 10px 0; }
+    .s2-stitle { font-size: 10px; font-weight: 600; color: rgba(255,255,255,0.26); text-transform: uppercase; letter-spacing: 0.09em; margin-bottom: 7px; }
+    .s2-bio { font-size: 12px; color: rgba(255,255,255,0.46); line-height: 1.65; }
+    .s2-rev { display: flex; gap: 9px; align-items: flex-start; background: rgba(255,255,255,0.03); border-radius: 11px; padding: 11px; border: 1px solid rgba(255,255,255,0.06); }
+    .s2-rav { width: 32px; height: 32px; border-radius: 9px; flex-shrink: 0; background: linear-gradient(135deg,#FF6B6B,#FF8E53); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: #fff; overflow: hidden; }
+    .s2-rname { font-size: 12px; font-weight: 600; color: rgba(255,255,255,0.72); }
+    .s2-rstars { font-size: 10px; color: #FFB547; margin-top: 1px; }
+    .s2-rtext { font-size: 11px; color: rgba(255,255,255,0.38); margin-top: 3px; line-height: 1.5; }
+    .s2-cta { margin-top: 12px; background: linear-gradient(135deg,#3A6FFF,#5B8FFF); border-radius: 12px; padding: 14px 0; text-align: center; font-size: 14px; font-weight: 700; color: #fff; }
+
+    /* ════════════════════════════
+       S3 — SLOT SELECTION
+    ════════════════════════════ */
+    .s3-wrap { padding: 6px 18px 14px; display: flex; flex-direction: column; flex: 1; overflow: hidden; }
+    .s3-topbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+    .s3-back { width: 34px; height: 34px; border-radius: 9px; background: rgba(255,255,255,0.07); display: flex; align-items: center; justify-content: center; }
+    .s3-title { font-size: 16px; font-weight: 700; color: #fff; }
+    .s3-steps { display: flex; border-radius: 9px; overflow: hidden; border: 1px solid rgba(255,255,255,0.08); margin-bottom: 16px; }
+    .s3-step { flex: 1; padding: 9px 0; text-align: center; font-size: 11px; font-weight: 600; }
+    .s3-step-on { background: rgba(91,143,255,0.2); color: #8BB4FF; border-right: 1px solid rgba(255,255,255,0.08); }
+    .s3-step-off { background: rgba(255,255,255,0.02); color: rgba(255,255,255,0.24); }
+    .s3-monnav { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+    .s3-monarr { width: 30px; height: 30px; border-radius: 8px; background: rgba(255,255,255,0.06); display: flex; align-items: center; justify-content: center; font-size: 14px; color: rgba(255,255,255,0.45); }
+    .s3-monname { font-size: 13px; font-weight: 600; color: rgba(255,255,255,0.72); }
+    .s3-cal { display: grid; grid-template-columns: repeat(5,1fr); gap: 5px; margin-bottom: 16px; }
+    .s3-day { border-radius: 10px; padding: 7px 0; display: flex; flex-direction: column; align-items: center; gap: 3px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.07); }
+    .s3-dn { font-size: 9px; color: rgba(255,255,255,0.28); font-weight: 500; }
+    .s3-dd { font-size: 14px; font-weight: 700; color: rgba(255,255,255,0.62); }
+    .s3-day-on { background: linear-gradient(135deg,rgba(58,111,255,0.3),rgba(91,143,255,0.2)); border-color: rgba(91,143,255,0.52); }
+    .s3-day-on .s3-dn { color: rgba(91,143,255,0.82); }
+    .s3-day-on .s3-dd { color: #fff; }
+    .s3-tsec { font-size: 10px; font-weight: 600; color: rgba(255,255,255,0.28); text-transform: uppercase; letter-spacing: 0.09em; display: flex; align-items: center; gap: 7px; margin-bottom: 8px; }
+    .s3-tsec::after { content:''; flex:1; height:1px; background: rgba(91,143,255,0.18); }
+    .s3-slots { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; margin-bottom: 14px; }
+    .s3-slot { border-radius: 9px; padding: 11px 0; text-align: center; font-size: 12px; font-weight: 500; }
+    .s3-slot-free { background: rgba(91,143,255,0.07); border: 1px solid rgba(91,143,255,0.17); color: rgba(160,190,255,0.72); }
+    .s3-slot-sel { background: linear-gradient(135deg,#3A6FFF,#5B8FFF); border: 1px solid #5B8FFF; color: #fff; font-weight: 600; }
+    .s3-slot-gone { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06); color: rgba(255,255,255,0.17); text-decoration: line-through; }
+    .s3-vsec { font-size: 10px; font-weight: 600; color: rgba(255,255,255,0.28); text-transform: uppercase; letter-spacing: 0.09em; margin-bottom: 8px; }
+    .s3-toggle { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; margin-bottom: 16px; }
+    .s3-tog { border-radius: 9px; padding: 11px 0; text-align: center; font-size: 12px; font-weight: 600; }
+    .s3-tog-on { background: linear-gradient(135deg,#3A6FFF,#5B8FFF); color: #fff; }
+    .s3-tog-off { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.09); color: rgba(255,255,255,0.33); }
+    .s3-cta { background: linear-gradient(135deg,#3A6FFF,#5B8FFF); border-radius: 12px; padding: 14px 0; text-align: center; font-size: 14px; font-weight: 700; color: #fff; margin-top: auto; }
+
+    /* ════════════════════════════
+       S4 — PAYMENT
+    ════════════════════════════ */
+    .s4-wrap { padding: 6px 18px 14px; display: flex; flex-direction: column; flex: 1; overflow: hidden; }
+    .s4-title { font-size: 17px; font-weight: 700; color: #fff; text-align: center; margin-bottom: 16px; }
+    .s4-summary { border-radius: 14px; padding: 14px; background: rgba(91,143,255,0.07); border: 1px solid rgba(91,143,255,0.18); margin-bottom: 16px; }
+    .s4-sumrow { display: flex; gap: 11px; align-items: center; margin-bottom: 12px; }
+    .s4-sumav { width: 44px; height: 44px; border-radius: 13px; flex-shrink: 0; background: linear-gradient(135deg,#3A6FFF,#7B5FD0); display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; color: #fff; overflow: hidden; }
+    .s4-sumname { font-size: 14px; font-weight: 700; color: rgba(255,255,255,0.86); }
+    .s4-sumspec { font-size: 11px; color: rgba(255,255,255,0.38); margin-top: 2px; }
+    .s4-div { height: 1px; background: rgba(91,143,255,0.18); margin: 8px 0; }
+    .s4-row { display: flex; justify-content: space-between; align-items: center; font-size: 12px; padding: 3px 0; }
+    .s4-rk { color: rgba(255,255,255,0.38); }
+    .s4-rv { color: rgba(255,255,255,0.76); font-weight: 500; }
+    .s4-rv-blue { color: #6FA3FF; font-weight: 700; font-size: 14px; }
+    .s4-sec { font-size: 10px; font-weight: 600; color: rgba(255,255,255,0.26); text-transform: uppercase; letter-spacing: 0.09em; margin-bottom: 9px; }
+    .s4-methods { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; margin-bottom: 16px; }
+    .s4-method { border-radius: 11px; padding: 12px 8px; display: flex; flex-direction: column; align-items: center; gap: 5px; }
+    .s4-method-on { background: rgba(91,143,255,0.12); border: 2px solid rgba(91,143,255,0.52); }
+    .s4-method-off { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); }
+    .s4-mlbl { font-size: 12px; font-weight: 600; }
+    .s4-method-on .s4-mlbl { color: #8BB4FF; }
+    .s4-method-off .s4-mlbl { color: rgba(255,255,255,0.28); }
+    .s4-msub { font-size: 10px; color: rgba(255,255,255,0.24); }
+    .s4-totalrow { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 14px; margin-bottom: 14px; }
+    .s4-totlbl { font-size: 13px; color: rgba(255,255,255,0.42); }
+    .s4-totamt { font-size: 26px; font-weight: 700; color: #fff; letter-spacing: -1px; }
+    .s4-cta { background: linear-gradient(135deg,#1A8A6F,#3ABFA0); border-radius: 12px; padding: 14px 0; text-align: center; font-size: 14px; font-weight: 700; color: #fff; margin-top: auto; }
+
+    /* ════════════════════════════
+       S5 — BOOKING CONFIRMED
+    ════════════════════════════ */
+    .s5-wrap { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 24px 22px; gap: 0; overflow: hidden; }
+    .s5-icon-ring {
+      width: 88px; height: 88px; border-radius: 50%; flex-shrink: 0;
+      background: radial-gradient(circle, rgba(80,200,140,0.2) 0%, rgba(80,200,140,0.05) 70%);
+      border: 2px solid rgba(80,200,140,0.35);
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 0 32px rgba(80,200,140,0.2);
+      margin-bottom: 20px;
+    }
+    .s5-heading { font-size: 22px; font-weight: 700; color: #fff; letter-spacing: -0.5px; text-align: center; margin-bottom: 6px; }
+    .s5-subhead { font-size: 13px; color: rgba(255,255,255,0.40); text-align: center; line-height: 1.6; margin-bottom: 24px; }
+    .s5-card { width: 100%; border-radius: 14px; padding: 16px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); display: flex; flex-direction: column; gap: 9px; margin-bottom: 20px; }
+    .s5-card-row { display: flex; justify-content: space-between; align-items: center; font-size: 12px; }
+    .s5-ck { color: rgba(255,255,255,0.36); }
+    .s5-cv { color: rgba(255,255,255,0.78); font-weight: 500; }
+    .s5-divider { height: 1px; background: rgba(255,255,255,0.07); }
+    .s5-ref { font-size: 10px; color: rgba(255,255,255,0.24); text-align: center; letter-spacing: 0.06em; margin-bottom: 20px; }
+    .s5-cta-main { width: 100%; background: linear-gradient(135deg,#3A6FFF,#5B8FFF); border-radius: 12px; padding: 14px 0; text-align: center; font-size: 14px; font-weight: 700; color: #fff; margin-bottom: 10px; }
+    .s5-cta-sec { width: 100%; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.09); border-radius: 12px; padding: 13px 0; text-align: center; font-size: 14px; font-weight: 600; color: rgba(255,255,255,0.55); }
+
+    /* ════════════════════════════
+       S6 — CHAT
+    ════════════════════════════ */
+    .s6-header { padding: 8px 18px 12px; border-bottom: 1px solid rgba(255,255,255,0.07); flex-shrink: 0; }
+    .s6-hrow { display: flex; align-items: center; gap: 9px; }
+    .s6-back { width: 34px; height: 34px; border-radius: 9px; background: rgba(255,255,255,0.06); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .s6-dav { width: 38px; height: 38px; border-radius: 11px; flex-shrink: 0; background: linear-gradient(135deg,#3A6FFF,#7B5FD0); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: #fff; position: relative; overflow: hidden; }
+    .s6-online { position: absolute; bottom: -1px; right: -1px; width: 10px; height: 10px; border-radius: 50%; background: #5BC98A; border: 2px solid #0d0d1f; }
+    .s6-dname { font-size: 14px; font-weight: 700; color: rgba(255,255,255,0.86); }
+    .s6-dstatus { font-size: 10px; color: rgba(80,200,140,0.8); margin-top: 1px; }
+    .s6-callbtn { margin-left: auto; width: 34px; height: 34px; border-radius: 9px; background: rgba(91,143,255,0.12); border: 1px solid rgba(91,143,255,0.22); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .s6-msgs { flex: 1; padding: 14px 18px; display: flex; flex-direction: column; gap: 9px; overflow: hidden; min-height: 0; }
+    .s6-bubble { border-radius: 14px; padding: 9px 12px; font-size: 12px; line-height: 1.55; max-width: 80%; }
+    .s6-recv { background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.09); color: rgba(255,255,255,0.70); align-self: flex-start; border-bottom-left-radius: 4px; }
+    .s6-sent { background: linear-gradient(135deg,#3A6FFF,#5B8FFF); color: #fff; align-self: flex-end; border-bottom-right-radius: 4px; }
+    .s6-btime { font-size: 9px; margin-top: 3px; color: rgba(255,255,255,0.26); }
+    .s6-btime-sent { text-align: right; color: rgba(255,255,255,0.46); }
+    .s6-inputrow { padding: 9px 18px 4px; border-top: 1px solid rgba(255,255,255,0.07); display: flex; gap: 9px; align-items: center; flex-shrink: 0; }
+    .s6-input { flex: 1; height: 42px; border-radius: 11px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.10); display: flex; align-items: center; padding: 0 13px; font-size: 13px; color: rgba(255,255,255,0.28); }
+    .s6-send { width: 42px; height: 42px; border-radius: 11px; background: linear-gradient(135deg,#3A6FFF,#5B8FFF); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+
+    /* ── Design principles ── */
+    .cs-principles { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+    .cs-principle { border-radius: 16px; padding: 24px; display: flex; flex-direction: column; gap: 10px; }
+    .cs-principle__num { font-family: 'Space Grotesk', sans-serif; font-size: 11px; font-weight: 700; color: rgba(91,143,255,0.5); letter-spacing: 0.08em; }
+    .cs-principle__title { font-family: 'Space Grotesk', sans-serif; font-size: 14px; font-weight: 600; color: rgba(255,255,255,0.85); line-height: 1.3; }
+    .cs-principle__text { font-size: 12px; color: rgba(255,255,255,0.38); line-height: 1.65; }
+    .cs-principle__bar { height: 2px; border-radius: 2px; margin-top: auto; background: linear-gradient(90deg,#5B8FFF,#A78BFA); }
+  </style>
+  <script src="https://mcp.figma.com/mcp/html-to-design/capture.js" async></script>
+</head>
+<body>
+<section class="cs-hifi">
+  <div class="cs-glows"><div class="cs-glow cs-glow--1"></div><div class="cs-glow cs-glow--2"></div></div>
+  <div class="cs-grid"></div>
+  <div class="cs-inner">
+
+    <div class="cs-header">
+      <div>
+        <div class="cs-eyebrow">09 — Hi-Fi Design</div>
+        <h2 class="cs-title">Screens Come<br><span>to Life</span></h2>
+      </div>
+      <div class="cs-ghost-num">09</div>
+    </div>
+
+    <div class="cs-fidelity">
+      <div class="cs-fidelity__step cs-fidelity__step--done">01 — Lo-Fi Wireframes</div>
+      <div class="cs-fidelity__step cs-fidelity__step--active">02 — Hi-Fi Design</div>
+      <div class="cs-fidelity__step">03 — Usability Testing</div>
+      <div class="cs-fidelity__step">04 — Final Design</div>
+    </div>
+
+    <!-- ROW 1 -->
+    <div class="cs-screen-row">
+
+      <!-- S01 Search -->
+      <div class="cs-screen-card">
+        <div class="cs-phone">
+          <div class="p-status"><div class="p-time">9:41</div><div class="p-notch"></div><div class="p-icons"><svg width="30" height="10" viewBox="0 0 30 10" fill="none"><rect x="0" y="6" width="2.5" height="4" rx="0.4" fill="rgba(255,255,255,0.75)"/><rect x="3.8" y="3.5" width="2.5" height="6.5" rx="0.4" fill="rgba(255,255,255,0.75)"/><rect x="7.6" y="1.5" width="2.5" height="8.5" rx="0.4" fill="rgba(255,255,255,0.55)"/><rect x="11.4" y="0" width="2.5" height="10" rx="0.4" fill="rgba(255,255,255,0.38)"/><circle cx="23" cy="9" r="1.2" fill="rgba(255,255,255,0.7)"/><path d="M20.2 6.5a3.8 3.8 0 015.6 0" stroke="rgba(255,255,255,0.7)" stroke-width="1.2" stroke-linecap="round"/><path d="M17.8 4a7.2 7.2 0 0110.4 0" stroke="rgba(255,255,255,0.7)" stroke-width="1.2" stroke-linecap="round"/></svg><div class="p-bat"><div class="p-bat-fill"></div></div></div></div>
+          <div class="p-body">
+            <div class="s1-header">
+              <div class="s1-greet">Good morning 👋</div>
+              <div class="s1-name">Emily</div>
+              <div class="s1-search">
+                <svg width="15" height="15" viewBox="0 0 15 15" fill="none" style="opacity:.32;flex-shrink:0;"><circle cx="6.5" cy="6.5" r="5" stroke="#fff" stroke-width="1.4"/><line x1="10.5" y1="10.5" x2="13.5" y2="13.5" stroke="#fff" stroke-width="1.4" stroke-linecap="round"/></svg>
+                <div class="s1-search-ph">Search doctors, specialties…</div>
+              </div>
+              <div class="s1-chips">
+                <div class="s1-chip s1-chip-on">Cardiology</div>
+                <div class="s1-chip s1-chip-off">Near me</div>
+                <div class="s1-chip s1-chip-off">Today</div>
+              </div>
+            </div>
+            <div class="s1-sec">Recommended</div>
+            <div class="s1-cards">
+              <div class="s1-card">
+                <div class="s1-row">
+                  <div class="s1-av av-blue"><img src="https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=200&h=200&fit=crop&q=80" style="width:100%;height:100%;object-fit:cover;" alt="Dr. Mitchell"/></div>
+                  <div style="flex:1;">
+                    <div class="s1-name2">Dr. James Mitchell</div>
+                    <div class="s1-spec">Cardiologist · 14 yrs exp</div>
+                    <div class="s1-meta"><div class="s1-stars">★ 4.9</div><div class="s1-avail">Today 2pm</div></div>
+                  </div>
+                </div>
+                <div class="s1-btn">Book Appointment</div>
+              </div>
+              <div class="s1-card">
+                <div class="s1-row">
+                  <div class="s1-av av-teal"><img src="https://images.unsplash.com/photo-1594824476967-48c8b964273f?w=200&h=200&fit=crop&q=80" style="width:100%;height:100%;object-fit:cover;" alt="Dr. Reyes"/></div>
+                  <div style="flex:1;">
+                    <div class="s1-name2">Dr. Sophia Reyes</div>
+                    <div class="s1-spec">Cardiologist · 9 yrs exp</div>
+                    <div class="s1-meta"><div class="s1-stars">★ 4.7</div><div class="s1-avail">Tomorrow</div></div>
+                  </div>
+                </div>
+                <div class="s1-btn">Book Appointment</div>
+              </div>
+            </div>
+          </div>
+          <div class="p-tabbar">
+            <div class="p-tab p-tab--on">
+              <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M3 10.5L11 3l8 7.5V19a1 1 0 01-1 1H4a1 1 0 01-1-1v-8.5z" stroke="currentColor" stroke-width="1.6" fill="currentColor" fill-opacity="0.12" stroke-linecap="round" stroke-linejoin="round"/><path d="M8 20v-6h6v6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              <div class="p-tab-dot"></div>
+            </div>
+            <div class="p-tab">
+              <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><rect x="2.5" y="3.5" width="17" height="16" rx="2.5" stroke="currentColor" stroke-width="1.6"/><path d="M7 1.5v4M15 1.5v4M2.5 8.5h17" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+            </div>
+            <div class="p-tab">
+              <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M2 5a2 2 0 012-2h14a2 2 0 012 2v9a2 2 0 01-2 2H8l-6 4V5z" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+            <div class="p-tab">
+              <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><circle cx="11" cy="7.5" r="4" stroke="currentColor" stroke-width="1.6"/><path d="M3 20c0-4.418 3.582-8 8-8s8 3.582 8 8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+            </div>
+          </div>
+          <div class="p-home"><div class="p-home-bar"></div></div>
+        </div>
+        <div class="cs-screen-meta"><div class="cs-screen-num">Screen 01</div><div class="cs-screen-label">Search & Filter</div></div>
+      </div>
+
+      <!-- S02 Profile -->
+      <div class="cs-screen-card">
+        <div class="cs-phone">
+          <div class="p-status"><div class="p-time">9:41</div><div class="p-notch"></div><div class="p-icons"><svg width="30" height="10" viewBox="0 0 30 10" fill="none"><rect x="0" y="6" width="2.5" height="4" rx="0.4" fill="rgba(255,255,255,0.75)"/><rect x="3.8" y="3.5" width="2.5" height="6.5" rx="0.4" fill="rgba(255,255,255,0.75)"/><rect x="7.6" y="1.5" width="2.5" height="8.5" rx="0.4" fill="rgba(255,255,255,0.55)"/><rect x="11.4" y="0" width="2.5" height="10" rx="0.4" fill="rgba(255,255,255,0.38)"/><circle cx="23" cy="9" r="1.2" fill="rgba(255,255,255,0.7)"/><path d="M20.2 6.5a3.8 3.8 0 015.6 0" stroke="rgba(255,255,255,0.7)" stroke-width="1.2" stroke-linecap="round"/><path d="M17.8 4a7.2 7.2 0 0110.4 0" stroke="rgba(255,255,255,0.7)" stroke-width="1.2" stroke-linecap="round"/></svg><div class="p-bat"><div class="p-bat-fill"></div></div></div></div>
+          <div class="p-body">
+            <div class="s2-body">
+              <div class="s2-id">
+                <div class="s2-av"><img src="https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=200&h=200&fit=crop&q=80" style="width:100%;height:100%;object-fit:cover;" alt="Dr. Mitchell"/></div>
+                <div style="flex:1;"><div class="s2-dname">Dr. James Mitchell</div><div class="s2-dspec">Cardiologist · NYU Langone</div></div>
+                <div class="s2-badge">✓ Verified</div>
+              </div>
+              <div class="s2-stats">
+                <div class="s2-stat"><div class="s2-sv">4.9</div><div class="s2-sl">★ Rating</div></div>
+                <div class="s2-stat"><div class="s2-sv">14</div><div class="s2-sl">Yrs exp</div></div>
+                <div class="s2-stat"><div class="s2-sv">312</div><div class="s2-sl">Reviews</div></div>
+              </div>
+              <div class="s2-div"></div>
+              <div class="s2-stitle">About</div>
+              <div class="s2-bio">Board-certified cardiologist specialising in preventive care and non-invasive imaging. Available for in-person and video consults.</div>
+              <div class="s2-div"></div>
+              <div class="s2-stitle">Recent Review</div>
+              <div class="s2-rev">
+                <div class="s2-rav"><img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=200&h=200&fit=crop&q=80" style="width:100%;height:100%;object-fit:cover;" alt="Emily C."/></div>
+                <div><div class="s2-rname">Emily C.</div><div class="s2-rstars">★★★★★</div><div class="s2-rtext">"Incredibly thorough and easy to talk to. Booked a follow-up immediately."</div></div>
+              </div>
+              <div class="s2-cta">Book Appointment</div>
+            </div>
+          </div>
+          <div class="p-home"><div class="p-home-bar"></div></div>
+        </div>
+        <div class="cs-screen-meta"><div class="cs-screen-num">Screen 02</div><div class="cs-screen-label">Doctor Profile</div></div>
+      </div>
+
+      <!-- S03 Slot -->
+      <div class="cs-screen-card">
+        <div class="cs-phone">
+          <div class="p-status"><div class="p-time">9:41</div><div class="p-notch"></div><div class="p-icons"><svg width="30" height="10" viewBox="0 0 30 10" fill="none"><rect x="0" y="6" width="2.5" height="4" rx="0.4" fill="rgba(255,255,255,0.75)"/><rect x="3.8" y="3.5" width="2.5" height="6.5" rx="0.4" fill="rgba(255,255,255,0.75)"/><rect x="7.6" y="1.5" width="2.5" height="8.5" rx="0.4" fill="rgba(255,255,255,0.55)"/><rect x="11.4" y="0" width="2.5" height="10" rx="0.4" fill="rgba(255,255,255,0.38)"/><circle cx="23" cy="9" r="1.2" fill="rgba(255,255,255,0.7)"/><path d="M20.2 6.5a3.8 3.8 0 015.6 0" stroke="rgba(255,255,255,0.7)" stroke-width="1.2" stroke-linecap="round"/><path d="M17.8 4a7.2 7.2 0 0110.4 0" stroke="rgba(255,255,255,0.7)" stroke-width="1.2" stroke-linecap="round"/></svg><div class="p-bat"><div class="p-bat-fill"></div></div></div></div>
+          <div class="p-body">
+            <div class="s3-wrap">
+              <div class="s3-topbar">
+                <div class="s3-back"><svg width="9" height="15" viewBox="0 0 9 15" fill="none"><path d="M7.5 1.5L2 7.5l5.5 6" stroke="rgba(255,255,255,0.6)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+                <div class="s3-title">Select Appointment</div>
+                <div style="width:34px;"></div>
+              </div>
+              <div class="s3-steps"><div class="s3-step s3-step-on">1 · Select Date</div><div class="s3-step s3-step-off">2 · Pick Time</div></div>
+              <div class="s3-monnav"><div class="s3-monarr">‹</div><div class="s3-monname">March 2026</div><div class="s3-monarr">›</div></div>
+              <div class="s3-cal">
+                <div class="s3-day"><div class="s3-dn">Mon</div><div class="s3-dd">18</div></div>
+                <div class="s3-day"><div class="s3-dn">Tue</div><div class="s3-dd">19</div></div>
+                <div class="s3-day s3-day-on"><div class="s3-dn">Wed</div><div class="s3-dd">20</div></div>
+                <div class="s3-day"><div class="s3-dn">Thu</div><div class="s3-dd">21</div></div>
+                <div class="s3-day"><div class="s3-dn">Fri</div><div class="s3-dd">22</div></div>
+              </div>
+              <div class="s3-tsec">Available Times</div>
+              <div class="s3-slots">
+                <div class="s3-slot s3-slot-free">9:00 AM</div>
+                <div class="s3-slot s3-slot-sel">2:00 PM ✓</div>
+                <div class="s3-slot s3-slot-gone">10:30 AM</div>
+                <div class="s3-slot s3-slot-free">4:00 PM</div>
+                <div class="s3-slot s3-slot-free">11:00 AM</div>
+                <div class="s3-slot s3-slot-free">5:30 PM</div>
+              </div>
+              <div class="s3-vsec">Visit Type</div>
+              <div class="s3-toggle"><div class="s3-tog s3-tog-on">In-Person</div><div class="s3-tog s3-tog-off">Video Call</div></div>
+              <div class="s3-cta">Confirm Slot</div>
+            </div>
+          </div>
+          <div class="p-home"><div class="p-home-bar"></div></div>
+        </div>
+        <div class="cs-screen-meta"><div class="cs-screen-num">Screen 03</div><div class="cs-screen-label">Slot Selection</div></div>
+      </div>
+
+    </div><!-- /row 1 -->
+
+    <!-- ROW 2 -->
+    <div class="cs-screen-row">
+
+      <!-- S04 Payment -->
+      <div class="cs-screen-card">
+        <div class="cs-phone">
+          <div class="p-status"><div class="p-time">9:41</div><div class="p-notch"></div><div class="p-icons"><svg width="30" height="10" viewBox="0 0 30 10" fill="none"><rect x="0" y="6" width="2.5" height="4" rx="0.4" fill="rgba(255,255,255,0.75)"/><rect x="3.8" y="3.5" width="2.5" height="6.5" rx="0.4" fill="rgba(255,255,255,0.75)"/><rect x="7.6" y="1.5" width="2.5" height="8.5" rx="0.4" fill="rgba(255,255,255,0.55)"/><rect x="11.4" y="0" width="2.5" height="10" rx="0.4" fill="rgba(255,255,255,0.38)"/><circle cx="23" cy="9" r="1.2" fill="rgba(255,255,255,0.7)"/><path d="M20.2 6.5a3.8 3.8 0 015.6 0" stroke="rgba(255,255,255,0.7)" stroke-width="1.2" stroke-linecap="round"/><path d="M17.8 4a7.2 7.2 0 0110.4 0" stroke="rgba(255,255,255,0.7)" stroke-width="1.2" stroke-linecap="round"/></svg><div class="p-bat"><div class="p-bat-fill"></div></div></div></div>
+          <div class="p-body">
+            <div class="s4-wrap">
+              <div class="s4-title">Confirm & Pay</div>
+              <div class="s4-summary">
+                <div class="s4-sumrow"><div class="s4-sumav"><img src="https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=200&h=200&fit=crop&q=80" style="width:100%;height:100%;object-fit:cover;" alt="Dr. Mitchell"/></div><div><div class="s4-sumname">Dr. James Mitchell</div><div class="s4-sumspec">Cardiologist · NYU Langone</div></div></div>
+                <div class="s4-div"></div>
+                <div class="s4-row"><div class="s4-rk">Date</div><div class="s4-rv">Wed, 20 March 2026</div></div>
+                <div class="s4-row"><div class="s4-rk">Time</div><div class="s4-rv">2:00 PM · In-Person</div></div>
+                <div class="s4-row"><div class="s4-rk">Consultation fee</div><div class="s4-rv-blue">$120.00</div></div>
+              </div>
+              <div class="s4-sec">Payment Method</div>
+              <div class="s4-methods">
+                <div class="s4-method s4-method-on">
+                  <svg width="20" height="15" viewBox="0 0 20 15" fill="none"><rect x="1" y="1" width="18" height="13" rx="2.5" stroke="#5B8FFF" stroke-width="1.4"/><line x1="1" y1="5.5" x2="19" y2="5.5" stroke="#5B8FFF" stroke-width="1.4"/><rect x="3" y="8" width="4" height="2" rx="1" fill="#5B8FFF" opacity=".5"/></svg>
+                  <div class="s4-mlbl">Credit Card</div><div class="s4-msub">·· 4242</div>
+                </div>
+                <div class="s4-method s4-method-off">
+                  <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="8.5" stroke="rgba(255,255,255,0.2)" stroke-width="1.4"/><path d="M10 6v8M7 10h6" stroke="rgba(255,255,255,0.2)" stroke-width="1.4" stroke-linecap="round"/></svg>
+                  <div class="s4-mlbl">Wallet</div><div class="s4-msub">$0.00</div>
+                </div>
+              </div>
+              <div class="s4-totalrow"><div class="s4-totlbl">Total due today</div><div class="s4-totamt">$120</div></div>
+              <div class="s4-cta">Pay & Confirm Booking</div>
+            </div>
+          </div>
+          <div class="p-home"><div class="p-home-bar"></div></div>
+        </div>
+        <div class="cs-screen-meta"><div class="cs-screen-num">Screen 04</div><div class="cs-screen-label">Payment & Confirm</div></div>
+      </div>
+
+      <!-- S05 Booking Confirmed -->
+      <div class="cs-screen-card">
+        <div class="cs-phone">
+          <div class="p-status"><div class="p-time">9:41</div><div class="p-notch"></div><div class="p-icons"><svg width="30" height="10" viewBox="0 0 30 10" fill="none"><rect x="0" y="6" width="2.5" height="4" rx="0.4" fill="rgba(255,255,255,0.75)"/><rect x="3.8" y="3.5" width="2.5" height="6.5" rx="0.4" fill="rgba(255,255,255,0.75)"/><rect x="7.6" y="1.5" width="2.5" height="8.5" rx="0.4" fill="rgba(255,255,255,0.55)"/><rect x="11.4" y="0" width="2.5" height="10" rx="0.4" fill="rgba(255,255,255,0.38)"/><circle cx="23" cy="9" r="1.2" fill="rgba(255,255,255,0.7)"/><path d="M20.2 6.5a3.8 3.8 0 015.6 0" stroke="rgba(255,255,255,0.7)" stroke-width="1.2" stroke-linecap="round"/><path d="M17.8 4a7.2 7.2 0 0110.4 0" stroke="rgba(255,255,255,0.7)" stroke-width="1.2" stroke-linecap="round"/></svg><div class="p-bat"><div class="p-bat-fill"></div></div></div></div>
+          <div class="p-body">
+            <div class="s5-wrap">
+              <div class="s5-icon-ring">
+                <svg width="38" height="38" viewBox="0 0 38 38" fill="none"><path d="M8 19l7 7L30 12" stroke="#5BC98A" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </div>
+              <div class="s5-heading">Booking Confirmed!</div>
+              <div class="s5-subhead">Your appointment has been booked.<br>A confirmation was sent to your email.</div>
+              <div class="s5-card">
+                <div class="s5-card-row"><div class="s5-ck">Doctor</div><div class="s5-cv">Dr. James Mitchell</div></div>
+                <div class="s5-divider"></div>
+                <div class="s5-card-row"><div class="s5-ck">Date</div><div class="s5-cv">Wed, 20 March 2026</div></div>
+                <div class="s5-divider"></div>
+                <div class="s5-card-row"><div class="s5-ck">Time</div><div class="s5-cv">2:00 PM</div></div>
+                <div class="s5-divider"></div>
+                <div class="s5-card-row"><div class="s5-ck">Visit type</div><div class="s5-cv">In-Person</div></div>
+                <div class="s5-divider"></div>
+                <div class="s5-card-row"><div class="s5-ck">Location</div><div class="s5-cv">NYU Langone, NY</div></div>
+              </div>
+              <div class="s5-ref">Booking ref: PC-2026-03-8841</div>
+              <div class="s5-cta-main">Add to Calendar</div>
+              <div class="s5-cta-sec">Message Dr. Mitchell</div>
+            </div>
+          </div>
+          <div class="p-home"><div class="p-home-bar"></div></div>
+        </div>
+        <div class="cs-screen-meta"><div class="cs-screen-num">Screen 05</div><div class="cs-screen-label">Booking Confirmed</div></div>
+      </div>
+
+      <!-- S06 Chat -->
+      <div class="cs-screen-card">
+        <div class="cs-phone">
+          <div class="p-status"><div class="p-time">9:41</div><div class="p-notch"></div><div class="p-icons"><svg width="30" height="10" viewBox="0 0 30 10" fill="none"><rect x="0" y="6" width="2.5" height="4" rx="0.4" fill="rgba(255,255,255,0.75)"/><rect x="3.8" y="3.5" width="2.5" height="6.5" rx="0.4" fill="rgba(255,255,255,0.75)"/><rect x="7.6" y="1.5" width="2.5" height="8.5" rx="0.4" fill="rgba(255,255,255,0.55)"/><rect x="11.4" y="0" width="2.5" height="10" rx="0.4" fill="rgba(255,255,255,0.38)"/><circle cx="23" cy="9" r="1.2" fill="rgba(255,255,255,0.7)"/><path d="M20.2 6.5a3.8 3.8 0 015.6 0" stroke="rgba(255,255,255,0.7)" stroke-width="1.2" stroke-linecap="round"/><path d="M17.8 4a7.2 7.2 0 0110.4 0" stroke="rgba(255,255,255,0.7)" stroke-width="1.2" stroke-linecap="round"/></svg><div class="p-bat"><div class="p-bat-fill"></div></div></div></div>
+          <div class="p-body" style="display:flex;flex-direction:column;">
+            <div class="s6-header">
+              <div class="s6-hrow">
+                <div class="s6-back"><svg width="9" height="15" viewBox="0 0 9 15" fill="none"><path d="M7.5 1.5L2 7.5l5.5 6" stroke="rgba(255,255,255,0.6)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+                <div class="s6-dav"><img src="https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=200&h=200&fit=crop&q=80" style="width:100%;height:100%;object-fit:cover;" alt="Dr. Mitchell"/><div class="s6-online"></div></div>
+                <div style="flex:1;"><div class="s6-dname">Dr. James Mitchell</div><div class="s6-dstatus">● Online now</div></div>
+                <div class="s6-callbtn"><svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M2.5 3C2.5 3 3.5 5.5 5.5 7.5C7.5 9.5 10 10.5 10 10.5L11.5 9C11.5 9 9.5 7.5 9.5 7C9.5 6.5 11.5 4.5 11.5 4L9.5 2C9.5 2 7.5 3.5 7 3.5C6.5 3.5 2.5 3 2.5 3Z" stroke="#5B8FFF" stroke-width="1.1"/></svg></div>
+              </div>
+            </div>
+            <div class="s6-msgs">
+              <div class="s6-bubble s6-recv">Hi Emily! How are you feeling after yesterday's visit?<div class="s6-btime">2:14 PM</div></div>
+              <div class="s6-bubble s6-sent">Much better, thanks! Quick question on the medication dosage.<div class="s6-btime s6-btime-sent">2:16 PM</div></div>
+              <div class="s6-bubble s6-recv">Take 10mg once daily with food. Let me know if you notice any side effects.<div class="s6-btime">2:18 PM</div></div>
+              <div class="s6-bubble s6-sent">Got it. Will do. Thanks so much!<div class="s6-btime s6-btime-sent">2:19 PM</div></div>
+              <div class="s6-bubble s6-recv">Happy to help. See you at your next visit 🙌<div class="s6-btime">2:20 PM</div></div>
+            </div>
+            <div class="s6-inputrow">
+              <div class="s6-input">Type a message…</div>
+              <div class="s6-send"><svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M2 7.5h11M8.5 3l4.5 4.5L8.5 12" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+            </div>
+          </div>
+          <div class="p-home"><div class="p-home-bar"></div></div>
+        </div>
+        <div class="cs-screen-meta"><div class="cs-screen-num">Screen 06</div><div class="cs-screen-label">Post-Visit Chat</div></div>
+      </div>
+
+    </div><!-- /row 2 -->
+
+    <!-- Design principles -->
+    <div class="cs-principles">
+      <div class="cs-principle cs-glass">
+        <div class="cs-principle__num">01</div>
+        <div class="cs-principle__title">Dark-first, high contrast</div>
+        <div class="cs-principle__text">Deep navy backgrounds reduce eye strain. Blue-purple gradients signal trust, not urgency.</div>
+        <div class="cs-principle__bar" style="width:90%;"></div>
+      </div>
+      <div class="cs-principle cs-glass">
+        <div class="cs-principle__num">02</div>
+        <div class="cs-principle__title">Colour as status</div>
+        <div class="cs-principle__text">Blue = action, green = success, amber = alerts. Users understand state without reading labels.</div>
+        <div class="cs-principle__bar" style="width:75%;background:linear-gradient(90deg,#5B8FFF,#7DDBA5);"></div>
+      </div>
+      <div class="cs-principle cs-glass">
+        <div class="cs-principle__num">03</div>
+        <div class="cs-principle__title">44px minimum touch targets</div>
+        <div class="cs-principle__text">Every button, slot, and chip meets WCAG 2.1 AA tap target requirements — no accidental taps.</div>
+        <div class="cs-principle__bar" style="width:100%;background:linear-gradient(90deg,#A78BFA,#5B8FFF);"></div>
+      </div>
+      <div class="cs-principle cs-glass">
+        <div class="cs-principle__num">04</div>
+        <div class="cs-principle__title">One primary CTA per screen</div>
+        <div class="cs-principle__text">Each screen has exactly one gradient button. The next step is always clear — no competing actions.</div>
+        <div class="cs-principle__bar" style="width:60%;"></div>
+      </div>
+    </div>
+
+  </div>
+</section>
+</body>
+</html>

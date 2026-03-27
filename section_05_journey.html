@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PulseCare — Section 05: Customer Journey Map</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: #05050E;
+      color: #fff;
+      font-family: 'DM Sans', sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+    .cs-glass {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+    }
+
+    .cs-journey {
+      position: relative;
+      padding: 120px 72px;
+      overflow: hidden;
+    }
+
+    .cs-glows { position: absolute; inset: 0; pointer-events: none; z-index: 0; }
+    .cs-glow { position: absolute; border-radius: 50%; filter: blur(120px); }
+    .cs-glow--1 {
+      width: 600px; height: 400px;
+      background: radial-gradient(circle, rgba(55,100,255,0.13) 0%, transparent 65%);
+      top: 0; right: -100px;
+    }
+    .cs-glow--2 {
+      width: 400px; height: 400px;
+      background: radial-gradient(circle, rgba(110,60,255,0.09) 0%, transparent 65%);
+      bottom: 0; left: 0;
+    }
+    .cs-grid {
+      position: absolute; inset: 0; z-index: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+      background-size: 64px 64px;
+    }
+
+    .cs-inner {
+      position: relative; z-index: 1;
+      max-width: 1300px; margin: 0 auto;
+      display: flex; flex-direction: column; gap: 64px;
+    }
+
+    /* Header */
+    .cs-header { display: flex; align-items: flex-end; justify-content: space-between; }
+    .cs-eyebrow {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-size: 11px; font-weight: 500;
+      text-transform: uppercase; letter-spacing: 0.12em;
+      color: rgba(160,190,255,0.7); margin-bottom: 12px;
+    }
+    .cs-eyebrow::before {
+      content: ''; display: block; width: 24px; height: 1px;
+      background: rgba(91,143,255,0.6);
+    }
+    .cs-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 52px; font-weight: 700;
+      letter-spacing: -2px; line-height: 1; color: #fff;
+    }
+    .cs-title span {
+      background: linear-gradient(135deg, #6FA3FF 0%, #A78BFA 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .cs-ghost-num {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 80px; font-weight: 700;
+      color: rgba(255,255,255,0.04);
+      letter-spacing: -4px; user-select: none;
+    }
+
+    /* ══ JOURNEY TABLE ══ */
+    .cs-table-wrap { overflow-x: auto; }
+
+    .cs-table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      border-radius: 20px;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.07);
+    }
+
+    /* Column headers — stages */
+    .cs-table thead tr th {
+      padding: 0;
+      background: rgba(255,255,255,0.03);
+    }
+    .cs-stage-header {
+      padding: 20px 20px 18px;
+      display: flex; flex-direction: column; gap: 6px;
+      border-right: 1px solid rgba(255,255,255,0.05);
+    }
+    .cs-stage-header:last-child { border-right: none; }
+
+    .cs-stage-num {
+      font-size: 10px; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.12em;
+      color: rgba(91,143,255,0.5);
+    }
+    .cs-stage-name {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 14px; font-weight: 700;
+      color: rgba(255,255,255,0.85);
+      letter-spacing: -0.3px;
+    }
+
+    /* Row label column */
+    .cs-row-label {
+      padding: 18px 20px;
+      background: rgba(255,255,255,0.025);
+      border-right: 1px solid rgba(255,255,255,0.06);
+      border-top: 1px solid rgba(255,255,255,0.04);
+      min-width: 130px;
+    }
+    .cs-row-label span {
+      font-size: 10px; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.10em;
+      color: rgba(255,255,255,0.25);
+      writing-mode: horizontal-tb;
+    }
+
+    /* Cells */
+    .cs-table tbody tr td {
+      padding: 18px 20px;
+      border-top: 1px solid rgba(255,255,255,0.04);
+      border-right: 1px solid rgba(255,255,255,0.04);
+      vertical-align: top;
+      min-width: 160px;
+    }
+    .cs-table tbody tr td:last-child { border-right: none; }
+
+    .cs-cell-text {
+      font-size: 12px; font-weight: 400;
+      color: rgba(255,255,255,0.50);
+      line-height: 1.6;
+    }
+
+    /* Emotion row — emoji + label */
+    .cs-emotion {
+      display: flex; flex-direction: column;
+      align-items: flex-start; gap: 6px;
+    }
+    .cs-emotion__face {
+      font-size: 24px; line-height: 1;
+    }
+    .cs-emotion__label {
+      font-size: 11px; font-weight: 500;
+      padding: 3px 10px; border-radius: 100px;
+    }
+    .cs-emotion--neutral .cs-emotion__label { background: rgba(255,200,0,0.1); color: rgba(255,200,0,0.8); }
+    .cs-emotion--confused .cs-emotion__label { background: rgba(255,120,80,0.1); color: rgba(255,120,80,0.8); }
+    .cs-emotion--tense .cs-emotion__label { background: rgba(255,80,80,0.1); color: rgba(255,80,80,0.8); }
+    .cs-emotion--relieved .cs-emotion__label { background: rgba(80,200,120,0.1); color: rgba(80,200,120,0.8); }
+    .cs-emotion--calm .cs-emotion__label { background: rgba(91,143,255,0.12); color: rgba(130,180,255,0.9); }
+    .cs-emotion--loyal .cs-emotion__label { background: rgba(167,139,250,0.12); color: rgba(190,170,255,0.9); }
+
+    /* Opportunity row — blue tint */
+    .cs-opp {
+      font-size: 12px; color: rgba(130,175,255,0.75);
+      line-height: 1.6;
+    }
+
+    /* Impact row — green tint */
+    .cs-impact {
+      font-size: 12px; color: rgba(80,200,140,0.75);
+      line-height: 1.6;
+    }
+
+    /* Pain row — red tint */
+    .cs-pain {
+      font-size: 12px; color: rgba(255,110,90,0.75);
+      line-height: 1.6;
+    }
+
+    /* Stage colour accent on header */
+    .cs-stage-pill {
+      display: inline-block;
+      width: 28px; height: 3px; border-radius: 3px;
+      margin-bottom: 4px;
+    }
+
+    /* Emotion curve visual */
+    .cs-emotion-curve {
+      border-radius: 16px;
+      padding: 28px;
+      display: flex; flex-direction: column; gap: 16px;
+    }
+    .cs-curve-label {
+      font-size: 11px; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.10em;
+      color: rgba(255,255,255,0.22);
+    }
+    .cs-curve-track {
+      position: relative; height: 60px;
+      display: flex; align-items: center;
+    }
+    .cs-curve-track svg { width: 100%; height: 60px; overflow: visible; }
+  </style>
+  <script src="https://mcp.figma.com/mcp/html-to-design/capture.js" async></script>
+</head>
+<body>
+
+<section class="cs-journey" id="cs-journey">
+
+  <div class="cs-glows">
+    <div class="cs-glow cs-glow--1"></div>
+    <div class="cs-glow cs-glow--2"></div>
+  </div>
+  <div class="cs-grid"></div>
+
+  <div class="cs-inner">
+
+    <!-- Header -->
+    <div class="cs-header">
+      <div>
+        <div class="cs-eyebrow">05 — Journey</div>
+        <h2 class="cs-title">Customer<br><span>Journey Map</span></h2>
+      </div>
+      <div class="cs-ghost-num">05</div>
+    </div>
+
+    <!-- Emotion curve -->
+    <div class="cs-emotion-curve cs-glass">
+      <div class="cs-curve-label">Emily's Emotional Arc — Awareness to Loyalty</div>
+      <div class="cs-curve-track">
+        <svg viewBox="0 0 900 60" fill="none" preserveAspectRatio="none">
+          <defs>
+            <linearGradient id="curveGrad" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%" stop-color="#5B8FFF" stop-opacity="0.8"/>
+              <stop offset="60%" stop-color="#A78BFA" stop-opacity="0.8"/>
+              <stop offset="100%" stop-color="#5BC98A" stop-opacity="0.9"/>
+            </linearGradient>
+          </defs>
+          <!-- Baseline -->
+          <line x1="0" y1="40" x2="900" y2="40" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
+          <!-- Emotion path -->
+          <path d="M0,35 C80,35 130,42 180,44 C230,46 260,50 310,52 C360,54 390,48 440,38 C490,28 530,18 580,14 C630,10 700,12 750,10 C800,8 860,6 900,5"
+            stroke="url(#curveGrad)" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+          <!-- Dots at each stage -->
+          <circle cx="0"   cy="35" r="4" fill="#5B8FFF"/>
+          <circle cx="150" cy="44" r="4" fill="#7B9FFF"/>
+          <circle cx="310" cy="52" r="4" fill="#FF6A50"/>
+          <circle cx="450" cy="36" r="4" fill="#A78BFA"/>
+          <circle cx="600" cy="12" r="4" fill="#5BC98A"/>
+          <circle cx="900" cy="5"  r="4" fill="#5BC98A"/>
+          <!-- Stage labels -->
+          <text x="0"   y="58" font-size="9" fill="rgba(255,255,255,0.3)" font-family="DM Sans">Awareness</text>
+          <text x="120" y="58" font-size="9" fill="rgba(255,255,255,0.3)" font-family="DM Sans">Discovery</text>
+          <text x="278" y="58" font-size="9" fill="rgba(255,255,255,0.3)" font-family="DM Sans">Consideration</text>
+          <text x="425" y="58" font-size="9" fill="rgba(255,255,255,0.3)" font-family="DM Sans">Booking</text>
+          <text x="568" y="58" font-size="9" fill="rgba(255,255,255,0.3)" font-family="DM Sans">Post-Visit</text>
+          <text x="840" y="58" font-size="9" fill="rgba(255,255,255,0.3)" font-family="DM Sans">Loyalty</text>
+        </svg>
+      </div>
+    </div>
+
+    <!-- Journey Table -->
+    <div class="cs-table-wrap">
+      <table class="cs-table">
+        <thead>
+          <tr>
+            <th><div class="cs-stage-header"><span class="cs-stage-num">Row</span><span class="cs-stage-name">Stage</span></div></th>
+            <th><div class="cs-stage-header">
+              <div class="cs-stage-pill" style="background:rgba(91,143,255,0.6)"></div>
+              <span class="cs-stage-num">01</span>
+              <span class="cs-stage-name">Awareness</span>
+            </div></th>
+            <th><div class="cs-stage-header">
+              <div class="cs-stage-pill" style="background:rgba(120,160,255,0.6)"></div>
+              <span class="cs-stage-num">02</span>
+              <span class="cs-stage-name">Discovery</span>
+            </div></th>
+            <th><div class="cs-stage-header">
+              <div class="cs-stage-pill" style="background:rgba(255,110,90,0.6)"></div>
+              <span class="cs-stage-num">03</span>
+              <span class="cs-stage-name">Consideration</span>
+            </div></th>
+            <th><div class="cs-stage-header">
+              <div class="cs-stage-pill" style="background:rgba(167,139,250,0.6)"></div>
+              <span class="cs-stage-num">04</span>
+              <span class="cs-stage-name">Booking</span>
+            </div></th>
+            <th><div class="cs-stage-header">
+              <div class="cs-stage-pill" style="background:rgba(80,200,140,0.6)"></div>
+              <span class="cs-stage-num">05</span>
+              <span class="cs-stage-name">Post-Visit</span>
+            </div></th>
+            <th><div class="cs-stage-header">
+              <div class="cs-stage-pill" style="background:rgba(91,201,138,0.7)"></div>
+              <span class="cs-stage-num">06</span>
+              <span class="cs-stage-name">Loyalty</span>
+            </div></th>
+          </tr>
+        </thead>
+        <tbody>
+
+          <!-- User Action -->
+          <tr>
+            <td class="cs-row-label"><span>User Action</span></td>
+            <td><p class="cs-cell-text">Realises she needs to see a doctor, searches for booking apps</p></td>
+            <td><p class="cs-cell-text">Browses by specialty, reviews profiles, checks ratings</p></td>
+            <td><p class="cs-cell-text">Compares 2–3 doctors, reads reviews, checks availability</p></td>
+            <td><p class="cs-cell-text">Selects a slot, confirms details, receives confirmation</p></td>
+            <td><p class="cs-cell-text">Attends visit, checks notes, messages doctor with questions</p></td>
+            <td><p class="cs-cell-text">Re-books same doctor, recommends app to a friend</p></td>
+          </tr>
+
+          <!-- User Goal -->
+          <tr>
+            <td class="cs-row-label"><span>User Goal</span></td>
+            <td><p class="cs-cell-text">Find a trusted platform quickly, without hassle</p></td>
+            <td><p class="cs-cell-text">Find the right doctor for her specific concern</p></td>
+            <td><p class="cs-cell-text">Make a confident decision without overthinking</p></td>
+            <td><p class="cs-cell-text">Complete booking fast, feel certain it's confirmed</p></td>
+            <td><p class="cs-cell-text">Stay informed and maintain care continuity</p></td>
+            <td><p class="cs-cell-text">Have a healthcare partner she can rely on long-term</p></td>
+          </tr>
+
+          <!-- Pain Points -->
+          <tr>
+            <td class="cs-row-label"><span>Pain Points</span></td>
+            <td><p class="cs-pain">Too many apps, unclear which to trust</p></td>
+            <td><p class="cs-pain">No availability shown, too many options with no filter</p></td>
+            <td><p class="cs-pain">Thin profiles, no reviews, uncertainty about credentials</p></td>
+            <td><p class="cs-pain">Too many steps, unclear booking status</p></td>
+            <td><p class="cs-pain">No follow-up channel, visit notes inaccessible</p></td>
+            <td><p class="cs-pain">No loyalty reward, no continuity with same doctor</p></td>
+          </tr>
+
+          <!-- Emotion -->
+          <tr>
+            <td class="cs-row-label"><span>Emotion</span></td>
+            <td>
+              <div class="cs-emotion cs-emotion--neutral">
+                <div class="cs-emotion__face">😐</div>
+                <span class="cs-emotion__label">Neutral</span>
+              </div>
+            </td>
+            <td>
+              <div class="cs-emotion cs-emotion--confused">
+                <div class="cs-emotion__face">😕</div>
+                <span class="cs-emotion__label">Confused</span>
+              </div>
+            </td>
+            <td>
+              <div class="cs-emotion cs-emotion--tense">
+                <div class="cs-emotion__face">😰</div>
+                <span class="cs-emotion__label">Anxious</span>
+              </div>
+            </td>
+            <td>
+              <div class="cs-emotion cs-emotion--relieved">
+                <div class="cs-emotion__face">😌</div>
+                <span class="cs-emotion__label">Relieved</span>
+              </div>
+            </td>
+            <td>
+              <div class="cs-emotion cs-emotion--calm">
+                <div class="cs-emotion__face">😊</div>
+                <span class="cs-emotion__label">Satisfied</span>
+              </div>
+            </td>
+            <td>
+              <div class="cs-emotion cs-emotion--loyal">
+                <div class="cs-emotion__face">🤝</div>
+                <span class="cs-emotion__label">Loyal</span>
+              </div>
+            </td>
+          </tr>
+
+          <!-- Opportunity -->
+          <tr>
+            <td class="cs-row-label"><span>Opportunity</span></td>
+            <td><p class="cs-opp">Clear onboarding that communicates trust immediately</p></td>
+            <td><p class="cs-opp">Smart filters + real-time slot previews on listing</p></td>
+            <td><p class="cs-opp">Rich profiles with video intro, verified badges, reviews</p></td>
+            <td><p class="cs-opp">3-step booking with instant calendar confirmation</p></td>
+            <td><p class="cs-opp">In-app messaging, visit summary, smart follow-up nudges</p></td>
+            <td><p class="cs-opp">Favourite doctor, rebooking shortcuts, referral programme</p></td>
+          </tr>
+
+          <!-- Business Impact -->
+          <tr>
+            <td class="cs-row-label"><span>Business Impact</span></td>
+            <td><p class="cs-impact">Reduced drop-off at first screen</p></td>
+            <td><p class="cs-impact">Increased doctor profile view depth</p></td>
+            <td><p class="cs-impact">Higher booking initiation rate</p></td>
+            <td><p class="cs-impact">Lower booking abandonment</p></td>
+            <td><p class="cs-impact">Increased 30-day retention</p></td>
+            <td><p class="cs-impact">Higher repeat bookings & NPS</p></td>
+          </tr>
+
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+</section>
+
+</body>
+</html>

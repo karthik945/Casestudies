@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>S01 — Splash</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: #08081a;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      font-family: 'DM Sans', sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .phone {
+      width: 340px;
+      height: 736px;
+      border-radius: 36px;
+      position: relative;
+      overflow: hidden;
+      background: linear-gradient(160deg, #0d1535 0%, #0d0d1f 50%, #130d2a 100%);
+      box-shadow:
+        0 0 0 1px rgba(255,255,255,0.12),
+        0 0 0 2.5px rgba(0,0,0,0.8),
+        0 48px 96px rgba(0,0,0,0.8),
+        inset 0 1px 0 rgba(255,255,255,0.08);
+      flex-shrink: 0;
+    }
+
+    /* Notch */
+    .notch {
+      position: absolute;
+      top: 0; left: 50%; transform: translateX(-50%);
+      width: 90px; height: 24px;
+      background: #000;
+      border-radius: 0 0 16px 16px;
+      z-index: 20;
+    }
+
+    /* Status bar */
+    .status {
+      position: absolute;
+      top: 0; left: 0; right: 0; height: 44px;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 12px 20px 0;
+      z-index: 10;
+    }
+    .status-time {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 13px; font-weight: 600; color: #fff;
+    }
+    .status-icons { display: flex; align-items: center; gap: 5px; }
+    .battery {
+      width: 22px; height: 10px;
+      border: 1.5px solid rgba(255,255,255,0.45);
+      border-radius: 2.5px;
+      padding: 1.5px;
+      position: relative;
+      display: flex; align-items: center;
+    }
+    .battery::after {
+      content: '';
+      position: absolute; right: -4px; top: 50%; transform: translateY(-50%);
+      width: 2.5px; height: 5px;
+      background: rgba(255,255,255,0.45);
+      border-radius: 0 1.5px 1.5px 0;
+    }
+    .battery-fill {
+      width: 65%; height: 100%;
+      background: #3DD68C;
+      border-radius: 1px;
+    }
+
+    /* Background glows */
+    .glow-top {
+      position: absolute;
+      top: -60px; left: 50%; transform: translateX(-50%);
+      width: 320px; height: 320px;
+      background: radial-gradient(circle, rgba(91,143,255,0.18) 0%, transparent 65%);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+    .glow-bottom {
+      position: absolute;
+      bottom: -40px; left: 50%; transform: translateX(-50%);
+      width: 280px; height: 280px;
+      background: radial-gradient(circle, rgba(167,139,250,0.14) 0%, transparent 65%);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    /* Main content */
+    .content {
+      position: absolute;
+      top: 44px; left: 0; right: 0; bottom: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 0 28px 40px;
+    }
+
+    /* Logo section */
+    .logo-section {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 24px;
+    }
+
+    .logo-icon {
+      width: 72px; height: 72px;
+      background: linear-gradient(135deg, rgba(91,143,255,0.2), rgba(167,139,250,0.2));
+      border: 1px solid rgba(91,143,255,0.35);
+      border-radius: 22px;
+      display: flex; align-items: center; justify-content: center;
+      position: relative;
+      box-shadow: 0 8px 32px rgba(91,143,255,0.2), inset 0 1px 0 rgba(255,255,255,0.1);
+    }
+
+    .logo-text-group {
+      display: flex; flex-direction: column; align-items: center; gap: 10px;
+    }
+    .logo-name {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 32px; font-weight: 700;
+      letter-spacing: -1px;
+      color: #fff;
+    }
+    .logo-name span {
+      background: linear-gradient(135deg, #6FA3FF, #A78BFA);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .logo-tagline {
+      font-size: 14px; font-weight: 400;
+      color: rgba(255,255,255,0.45);
+      letter-spacing: 0.01em;
+      text-align: center;
+      line-height: 1.5;
+    }
+
+    /* Trust badges row */
+    .trust-row {
+      display: flex; gap: 8px; margin-top: 8px;
+    }
+    .trust-pill {
+      display: flex; align-items: center; gap: 5px;
+      padding: 5px 10px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 100px;
+      font-size: 10px; color: rgba(255,255,255,0.45);
+    }
+
+    /* CTA section */
+    .cta-section {
+      width: 100%;
+      display: flex; flex-direction: column; gap: 12px;
+    }
+
+    .btn-primary {
+      width: 100%; padding: 15px;
+      background: linear-gradient(135deg, #5B8FFF 0%, #7B6FFF 100%);
+      border-radius: 14px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 15px; font-weight: 600; color: #fff;
+      text-align: center;
+      box-shadow: 0 8px 24px rgba(91,143,255,0.35);
+      cursor: pointer;
+    }
+
+    .btn-secondary {
+      width: 100%; padding: 15px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 14px;
+      font-size: 15px; font-weight: 500;
+      color: rgba(255,255,255,0.65);
+      text-align: center;
+      cursor: pointer;
+    }
+
+    .signin-link {
+      text-align: center;
+      font-size: 12px;
+      color: rgba(255,255,255,0.3);
+      margin-top: 4px;
+    }
+    .signin-link span {
+      color: rgba(110,163,255,0.8);
+      font-weight: 500;
+    }
+  </style>
+</head>
+<body>
+
+<div class="phone">
+  <div class="notch"></div>
+  <div class="glow-top"></div>
+  <div class="glow-bottom"></div>
+
+  <!-- Status bar -->
+  <div class="status">
+    <div class="status-time">9:41</div>
+    <div class="status-icons">
+      <svg width="30" height="10" viewBox="0 0 30 10" fill="none">
+        <rect x="0" y="6" width="2.5" height="4" rx="0.4" fill="rgba(255,255,255,0.75)"/>
+        <rect x="3.8" y="3.5" width="2.5" height="6.5" rx="0.4" fill="rgba(255,255,255,0.75)"/>
+        <rect x="7.6" y="1.5" width="2.5" height="8.5" rx="0.4" fill="rgba(255,255,255,0.55)"/>
+        <rect x="11.4" y="0" width="2.5" height="10" rx="0.4" fill="rgba(255,255,255,0.38)"/>
+        <circle cx="23" cy="9" r="1.2" fill="rgba(255,255,255,0.7)"/>
+        <path d="M20.2 6.5a3.8 3.8 0 015.6 0" stroke="rgba(255,255,255,0.7)" stroke-width="1.2" stroke-linecap="round"/>
+        <path d="M17.8 4a7.2 7.2 0 0110.4 0" stroke="rgba(255,255,255,0.7)" stroke-width="1.2" stroke-linecap="round"/>
+      </svg>
+      <div class="battery"><div class="battery-fill"></div></div>
+    </div>
+  </div>
+
+  <!-- Main content -->
+  <div class="content">
+
+    <div class="logo-section">
+
+      <!-- Logo icon with pulse line -->
+      <div class="logo-icon">
+        <svg width="42" height="42" viewBox="0 0 42 42" fill="none">
+          <!-- Heartbeat / pulse line -->
+          <path d="M5 21h6l4-10 5 20 4-14 3 8 3-4h7"
+            stroke="url(#pulse-grad)" stroke-width="2.2"
+            stroke-linecap="round" stroke-linejoin="round"/>
+          <defs>
+            <linearGradient id="pulse-grad" x1="5" y1="21" x2="37" y2="21" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="#5B8FFF"/>
+              <stop offset="100%" stop-color="#A78BFA"/>
+            </linearGradient>
+          </defs>
+        </svg>
+      </div>
+
+      <div class="logo-text-group">
+        <div class="logo-name">Pulse<span>Care</span></div>
+        <div class="logo-tagline">Your health, on time.<br>Book trusted doctors in minutes.</div>
+      </div>
+
+      <!-- Trust badges -->
+      <div class="trust-row">
+        <div class="trust-pill">
+          <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
+            <path d="M5 1l1.2 2.6L9 4.1 7 6.1l.5 2.9L5 7.6 2.5 9l.5-2.9L1 4.1l2.8-.5L5 1z" fill="rgba(245,158,11,0.8)"/>
+          </svg>
+          4.9 rated
+        </div>
+        <div class="trust-pill">
+          <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
+            <circle cx="5" cy="5" r="4" stroke="rgba(61,214,140,0.7)" stroke-width="1.2"/>
+            <path d="M3 5l1.5 1.5L7 3.5" stroke="rgba(61,214,140,0.7)" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          HIPAA secure
+        </div>
+        <div class="trust-pill">
+          <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
+            <path d="M2 7c0-2.2 1.8-4 3-4s3 1.8 3 4" stroke="rgba(167,139,250,0.7)" stroke-width="1.2" stroke-linecap="round"/>
+            <circle cx="5" cy="3.5" r="1.2" fill="rgba(167,139,250,0.7)"/>
+          </svg>
+          50K+ patients
+        </div>
+      </div>
+
+    </div>
+
+    <!-- CTA Buttons -->
+    <div class="cta-section">
+      <div class="btn-primary">Get Started</div>
+      <div class="btn-secondary">
+        <span style="display:flex;align-items:center;justify-content:center;gap:8px;">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <path d="M14.5 8.16c0-.52-.04-1.02-.13-1.5H8v2.84h3.64a3.1 3.1 0 01-1.35 2.04v1.7h2.18c1.28-1.18 2.03-2.92 2.03-5.08z" fill="rgba(66,133,244,0.9)"/>
+            <path d="M8 15c1.83 0 3.36-.6 4.47-1.64l-2.18-1.7c-.6.41-1.38.65-2.29.65-1.76 0-3.25-1.19-3.78-2.78H1.97v1.74C3.07 13.6 5.38 15 8 15z" fill="rgba(52,168,83,0.9)"/>
+            <path d="M4.22 9.53A4.24 4.24 0 014 8c0-.53.09-1.04.22-1.53V4.73H1.97A7.02 7.02 0 001 8c0 1.13.27 2.2.97 3.27l2.25-1.74z" fill="rgba(251,188,4,0.9)"/>
+            <path d="M8 3.69c.99 0 1.88.34 2.58 1.01l1.93-1.93C11.36 1.73 9.83 1 8 1 5.38 1 3.07 2.4 1.97 4.73L4.22 6.47C4.75 4.88 6.24 3.69 8 3.69z" fill="rgba(234,67,53,0.9)"/>
+          </svg>
+          Continue with Google
+        </span>
+      </div>
+      <div class="signin-link">Already have an account? <span>Sign in</span></div>
+    </div>
+
+  </div>
+</div>
+
+</body>
+</html>

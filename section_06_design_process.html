@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PulseCare — Section 06: Design Process</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: #05050E;
+      color: #fff;
+      font-family: 'DM Sans', sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+    .cs-glass {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+    }
+
+    .cs-process {
+      position: relative;
+      padding: 120px 72px;
+      overflow: hidden;
+    }
+
+    .cs-glows { position: absolute; inset: 0; pointer-events: none; z-index: 0; }
+    .cs-glow { position: absolute; border-radius: 50%; filter: blur(120px); }
+    .cs-glow--1 {
+      width: 700px; height: 500px;
+      background: radial-gradient(circle, rgba(55,100,255,0.12) 0%, transparent 65%);
+      top: -80px; left: 50%; transform: translateX(-50%);
+    }
+    .cs-glow--2 {
+      width: 350px; height: 350px;
+      background: radial-gradient(circle, rgba(110,60,255,0.10) 0%, transparent 65%);
+      bottom: 60px; right: 60px;
+    }
+    .cs-grid {
+      position: absolute; inset: 0; z-index: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+      background-size: 64px 64px;
+    }
+
+    .cs-inner {
+      position: relative; z-index: 1;
+      max-width: 1200px; margin: 0 auto;
+      display: flex; flex-direction: column; gap: 80px;
+    }
+
+    /* Header */
+    .cs-header { display: flex; align-items: flex-end; justify-content: space-between; }
+    .cs-eyebrow {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-size: 11px; font-weight: 500;
+      text-transform: uppercase; letter-spacing: 0.12em;
+      color: rgba(160,190,255,0.7); margin-bottom: 12px;
+    }
+    .cs-eyebrow::before {
+      content: ''; display: block; width: 24px; height: 1px;
+      background: rgba(91,143,255,0.6);
+    }
+    .cs-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 52px; font-weight: 700;
+      letter-spacing: -2px; line-height: 1; color: #fff;
+    }
+    .cs-title span {
+      background: linear-gradient(135deg, #6FA3FF 0%, #A78BFA 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .cs-ghost-num {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 80px; font-weight: 700;
+      color: rgba(255,255,255,0.04);
+      letter-spacing: -4px; user-select: none;
+    }
+
+    /* ══ DIAMOND FUNNEL ══ */
+    .cs-funnel {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0;
+      position: relative;
+    }
+
+    /* Connecting line behind steps */
+    .cs-funnel::before {
+      content: '';
+      position: absolute;
+      top: 50%; left: 10%;
+      width: 80%; height: 1px;
+      background: linear-gradient(90deg,
+        transparent,
+        rgba(91,143,255,0.2) 20%,
+        rgba(91,143,255,0.2) 80%,
+        transparent
+      );
+      transform: translateY(-50%);
+      z-index: 0;
+    }
+
+    .cs-step {
+      position: relative; z-index: 1;
+      display: flex; flex-direction: column;
+      align-items: center; gap: 20px;
+      flex: 1;
+    }
+
+    /* Diamond shape */
+    .cs-step__diamond {
+      width: 80px; height: 80px;
+      transform: rotate(45deg);
+      border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      position: relative;
+      transition: transform 0.3s ease;
+    }
+    .cs-step__diamond:hover { transform: rotate(45deg) scale(1.08); }
+
+    .cs-step__diamond-inner {
+      transform: rotate(-45deg);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .cs-step__diamond-inner svg {
+      width: 26px; height: 26px;
+      fill: none; stroke-width: 1.5;
+      stroke-linecap: round; stroke-linejoin: round;
+    }
+
+    /* Step content */
+    .cs-step__content {
+      display: flex; flex-direction: column;
+      align-items: center; gap: 6px;
+      text-align: center;
+    }
+    .cs-step__num {
+      font-size: 10px; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.12em;
+      color: rgba(255,255,255,0.2);
+    }
+    .cs-step__name {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 15px; font-weight: 700;
+      color: rgba(255,255,255,0.85);
+      letter-spacing: -0.3px;
+    }
+    .cs-step__desc {
+      font-size: 12px; color: rgba(255,255,255,0.38);
+      line-height: 1.5; max-width: 130px;
+    }
+
+    /* Arrow between steps */
+    .cs-arrow {
+      width: 32px; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      z-index: 1; margin-top: -52px;
+    }
+    .cs-arrow svg {
+      width: 20px; height: 20px;
+      stroke: rgba(91,143,255,0.35);
+      fill: none; stroke-width: 1.5;
+    }
+
+    /* Step colour themes */
+    .cs-step--1 .cs-step__diamond { background: rgba(91,143,255,0.12); border: 1.5px solid rgba(91,143,255,0.3); box-shadow: 0 0 24px rgba(91,143,255,0.12); }
+    .cs-step--1 .cs-step__diamond-inner svg { stroke: #7AAAFF; }
+
+    .cs-step--2 .cs-step__diamond { background: rgba(130,100,255,0.12); border: 1.5px solid rgba(130,100,255,0.3); box-shadow: 0 0 24px rgba(130,100,255,0.12); }
+    .cs-step--2 .cs-step__diamond-inner svg { stroke: #A07BFF; }
+
+    .cs-step--3 .cs-step__diamond { background: rgba(167,139,250,0.12); border: 1.5px solid rgba(167,139,250,0.3); box-shadow: 0 0 24px rgba(167,139,250,0.12); }
+    .cs-step--3 .cs-step__diamond-inner svg { stroke: #C4AEFF; }
+
+    .cs-step--4 .cs-step__diamond { background: rgba(100,160,255,0.12); border: 1.5px solid rgba(100,160,255,0.3); box-shadow: 0 0 24px rgba(100,160,255,0.12); }
+    .cs-step--4 .cs-step__diamond-inner svg { stroke: #80B4FF; }
+
+    .cs-step--5 .cs-step__diamond { background: rgba(80,200,140,0.10); border: 1.5px solid rgba(80,200,140,0.28); box-shadow: 0 0 24px rgba(80,200,140,0.10); }
+    .cs-step--5 .cs-step__diamond-inner svg { stroke: #5BC98A; }
+
+    /* ══ DETAIL CARDS ══ */
+    .cs-detail-cards {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 16px;
+    }
+
+    .cs-detail-card {
+      border-radius: 18px;
+      padding: 24px 20px;
+      display: flex; flex-direction: column; gap: 14px;
+      position: relative; overflow: hidden;
+    }
+    .cs-detail-card::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    }
+    .cs-detail-card--1::before { background: linear-gradient(90deg, #5B8FFF, transparent); }
+    .cs-detail-card--2::before { background: linear-gradient(90deg, #8264FF, transparent); }
+    .cs-detail-card--3::before { background: linear-gradient(90deg, #A78BFA, transparent); }
+    .cs-detail-card--4::before { background: linear-gradient(90deg, #64A0FF, transparent); }
+    .cs-detail-card--5::before { background: linear-gradient(90deg, #5BC98A, transparent); }
+
+    .cs-detail-card__phase {
+      font-size: 10px; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.10em;
+      color: rgba(255,255,255,0.22);
+    }
+    .cs-detail-card__title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 15px; font-weight: 700;
+      color: rgba(255,255,255,0.85);
+      letter-spacing: -0.3px; line-height: 1.2;
+    }
+    .cs-detail-card__items {
+      display: flex; flex-direction: column; gap: 7px;
+    }
+    .cs-detail-card__item {
+      display: flex; align-items: flex-start; gap: 8px;
+      font-size: 12px; color: rgba(255,255,255,0.45);
+      line-height: 1.5;
+    }
+    .cs-detail-card__item::before {
+      content: '';
+      width: 4px; height: 4px; border-radius: 50%;
+      flex-shrink: 0; margin-top: 6px;
+    }
+    .cs-detail-card--1 .cs-detail-card__item::before { background: rgba(91,143,255,0.6); }
+    .cs-detail-card--2 .cs-detail-card__item::before { background: rgba(130,100,255,0.6); }
+    .cs-detail-card--3 .cs-detail-card__item::before { background: rgba(167,139,250,0.6); }
+    .cs-detail-card--4 .cs-detail-card__item::before { background: rgba(100,160,255,0.6); }
+    .cs-detail-card--5 .cs-detail-card__item::before { background: rgba(80,200,140,0.6); }
+
+    /* ══ TIMELINE STRIP ══ */
+    .cs-timeline {
+      border-radius: 16px;
+      padding: 24px 28px;
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 0;
+      position: relative;
+    }
+    .cs-timeline__item {
+      display: flex; flex-direction: column; gap: 6px;
+      padding: 0 16px;
+      border-right: 1px solid rgba(255,255,255,0.05);
+    }
+    .cs-timeline__item:first-child { padding-left: 0; }
+    .cs-timeline__item:last-child { border-right: none; }
+    .cs-timeline__week {
+      font-size: 10px; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.10em;
+      color: rgba(91,143,255,0.5);
+    }
+    .cs-timeline__phase {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 13px; font-weight: 600;
+      color: rgba(255,255,255,0.7);
+    }
+    .cs-timeline__bar {
+      height: 3px; border-radius: 3px;
+      background: rgba(255,255,255,0.05);
+      margin-top: 4px; position: relative; overflow: hidden;
+    }
+    .cs-timeline__fill {
+      position: absolute; top: 0; left: 0;
+      height: 100%; border-radius: 3px;
+      background: linear-gradient(90deg, #5B8FFF, #A78BFA);
+      width: 100%;
+    }
+  </style>
+  <script src="https://mcp.figma.com/mcp/html-to-design/capture.js" async></script>
+</head>
+<body>
+
+<section class="cs-process" id="cs-process">
+
+  <div class="cs-glows">
+    <div class="cs-glow cs-glow--1"></div>
+    <div class="cs-glow cs-glow--2"></div>
+  </div>
+  <div class="cs-grid"></div>
+
+  <div class="cs-inner">
+
+    <!-- Header -->
+    <div class="cs-header">
+      <div>
+        <div class="cs-eyebrow">06 — Process</div>
+        <h2 class="cs-title">Design<br><span>Approach</span></h2>
+      </div>
+      <div class="cs-ghost-num">06</div>
+    </div>
+
+    <!-- Diamond funnel -->
+    <div class="cs-funnel">
+
+      <div class="cs-step cs-step--1">
+        <div class="cs-step__diamond">
+          <div class="cs-step__diamond-inner">
+            <svg viewBox="0 0 24 24"><path d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"/></svg>
+          </div>
+        </div>
+        <div class="cs-step__content">
+          <span class="cs-step__num">Phase 01</span>
+          <span class="cs-step__name">Problem Definition</span>
+          <span class="cs-step__desc">Research, stakeholder interviews, competitive audit</span>
+        </div>
+      </div>
+
+      <div class="cs-arrow">
+        <svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"/></svg>
+      </div>
+
+      <div class="cs-step cs-step--2">
+        <div class="cs-step__diamond">
+          <div class="cs-step__diamond-inner">
+            <svg viewBox="0 0 24 24"><path d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"/></svg>
+          </div>
+        </div>
+        <div class="cs-step__content">
+          <span class="cs-step__num">Phase 02</span>
+          <span class="cs-step__name">User Persona</span>
+          <span class="cs-step__desc">Persona building, empathy mapping, JTBD framing</span>
+        </div>
+      </div>
+
+      <div class="cs-arrow">
+        <svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"/></svg>
+      </div>
+
+      <div class="cs-step cs-step--3">
+        <div class="cs-step__diamond">
+          <div class="cs-step__diamond-inner">
+            <svg viewBox="0 0 24 24"><path d="M7.5 3.75H6A2.25 2.25 0 003.75 6v1.5M16.5 3.75H18A2.25 2.25 0 0120.25 6v1.5m0 9V18A2.25 2.25 0 0118 20.25h-1.5m-9 0H6A2.25 2.25 0 013.75 18v-1.5M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+          </div>
+        </div>
+        <div class="cs-step__content">
+          <span class="cs-step__num">Phase 03</span>
+          <span class="cs-step__name">User Flows</span>
+          <span class="cs-step__desc">Information architecture, journey flows, edge cases</span>
+        </div>
+      </div>
+
+      <div class="cs-arrow">
+        <svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"/></svg>
+      </div>
+
+      <div class="cs-step cs-step--4">
+        <div class="cs-step__diamond">
+          <div class="cs-step__diamond-inner">
+            <svg viewBox="0 0 24 24"><path d="M9.53 16.122a3 3 0 00-5.78 1.128 2.25 2.25 0 01-2.4 2.245 4.5 4.5 0 008.4-2.245c0-.399-.078-.78-.22-1.128zm0 0a15.998 15.998 0 003.388-1.62m-5.043-.025a15.994 15.994 0 011.622-3.395m3.42 3.42a15.995 15.995 0 004.764-4.648l3.876-5.814a1.151 1.151 0 00-1.597-1.597L14.146 6.32a15.996 15.996 0 00-4.649 4.763m3.42 3.42a6.776 6.776 0 00-3.42-3.42"/></svg>
+          </div>
+        </div>
+        <div class="cs-step__content">
+          <span class="cs-step__num">Phase 04</span>
+          <span class="cs-step__name">Interface Design</span>
+          <span class="cs-step__desc">Wireframes, hi-fi screens, design system components</span>
+        </div>
+      </div>
+
+      <div class="cs-arrow">
+        <svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"/></svg>
+      </div>
+
+      <div class="cs-step cs-step--5">
+        <div class="cs-step__diamond">
+          <div class="cs-step__diamond-inner">
+            <svg viewBox="0 0 24 24"><path d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          </div>
+        </div>
+        <div class="cs-step__content">
+          <span class="cs-step__num">Phase 05</span>
+          <span class="cs-step__name">Validation</span>
+          <span class="cs-step__desc">Usability testing, iteration, final refinement</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Detail cards -->
+    <div class="cs-detail-cards">
+
+      <div class="cs-detail-card cs-glass cs-detail-card--1">
+        <span class="cs-detail-card__phase">Phase 01</span>
+        <span class="cs-detail-card__title">Problem Definition</span>
+        <div class="cs-detail-card__items">
+          <div class="cs-detail-card__item">12 user interviews conducted</div>
+          <div class="cs-detail-card__item">240-response survey analysed</div>
+          <div class="cs-detail-card__item">3 competitor apps audited</div>
+          <div class="cs-detail-card__item">Drop-off funnel mapped</div>
+        </div>
+      </div>
+
+      <div class="cs-detail-card cs-glass cs-detail-card--2">
+        <span class="cs-detail-card__phase">Phase 02</span>
+        <span class="cs-detail-card__title">User Persona</span>
+        <div class="cs-detail-card__items">
+          <div class="cs-detail-card__item">Primary persona defined</div>
+          <div class="cs-detail-card__item">Empathy map built</div>
+          <div class="cs-detail-card__item">JTBD statements written</div>
+          <div class="cs-detail-card__item">Journey map constructed</div>
+        </div>
+      </div>
+
+      <div class="cs-detail-card cs-glass cs-detail-card--3">
+        <span class="cs-detail-card__phase">Phase 03</span>
+        <span class="cs-detail-card__title">User Flows</span>
+        <div class="cs-detail-card__items">
+          <div class="cs-detail-card__item">Core booking flow mapped</div>
+          <div class="cs-detail-card__item">Edge cases documented</div>
+          <div class="cs-detail-card__item">IA restructured end-to-end</div>
+          <div class="cs-detail-card__item">Error states designed</div>
+        </div>
+      </div>
+
+      <div class="cs-detail-card cs-glass cs-detail-card--4">
+        <span class="cs-detail-card__phase">Phase 04</span>
+        <span class="cs-detail-card__title">Interface Design</span>
+        <div class="cs-detail-card__items">
+          <div class="cs-detail-card__item">Lo-fi wireframes in FigJam</div>
+          <div class="cs-detail-card__item">Hi-fi screens in Figma</div>
+          <div class="cs-detail-card__item">Component library built</div>
+          <div class="cs-detail-card__item">Prototype linked end-to-end</div>
+        </div>
+      </div>
+
+      <div class="cs-detail-card cs-glass cs-detail-card--5">
+        <span class="cs-detail-card__phase">Phase 05</span>
+        <span class="cs-detail-card__title">Validation</span>
+        <div class="cs-detail-card__items">
+          <div class="cs-detail-card__item">8 usability sessions via Maze</div>
+          <div class="cs-detail-card__item">3 iteration rounds</div>
+          <div class="cs-detail-card__item">A/B tested booking flow</div>
+          <div class="cs-detail-card__item">Final handoff to dev</div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Timeline strip -->
+    <div class="cs-timeline cs-glass">
+      <div class="cs-timeline__item">
+        <span class="cs-timeline__week">Weeks 1–2</span>
+        <span class="cs-timeline__phase">Research & Discovery</span>
+        <div class="cs-timeline__bar"><div class="cs-timeline__fill" style="background: linear-gradient(90deg,#5B8FFF,#7AAAFF)"></div></div>
+      </div>
+      <div class="cs-timeline__item">
+        <span class="cs-timeline__week">Weeks 3–4</span>
+        <span class="cs-timeline__phase">Persona & Mapping</span>
+        <div class="cs-timeline__bar"><div class="cs-timeline__fill" style="background: linear-gradient(90deg,#8264FF,#A07BFF)"></div></div>
+      </div>
+      <div class="cs-timeline__item">
+        <span class="cs-timeline__week">Weeks 5–6</span>
+        <span class="cs-timeline__phase">Flows & Architecture</span>
+        <div class="cs-timeline__bar"><div class="cs-timeline__fill" style="background: linear-gradient(90deg,#A78BFA,#C4AEFF)"></div></div>
+      </div>
+      <div class="cs-timeline__item">
+        <span class="cs-timeline__week">Weeks 7–8</span>
+        <span class="cs-timeline__phase">Interface Design</span>
+        <div class="cs-timeline__bar"><div class="cs-timeline__fill" style="background: linear-gradient(90deg,#64A0FF,#80B4FF)"></div></div>
+      </div>
+      <div class="cs-timeline__item">
+        <span class="cs-timeline__week">Weeks 9–10</span>
+        <span class="cs-timeline__phase">Testing & Refinement</span>
+        <div class="cs-timeline__bar"><div class="cs-timeline__fill" style="background: linear-gradient(90deg,#5BC98A,#7DDBA5)"></div></div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+</body>
+</html>

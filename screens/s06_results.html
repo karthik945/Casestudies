@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>S06 — Search Results</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: #08081a;
+      display: flex; align-items: center; justify-content: center;
+      min-height: 100vh;
+      font-family: 'DM Sans', sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+    .phone {
+      width: 340px; height: 736px;
+      border-radius: 36px; position: relative; overflow: hidden;
+      background: #0d0d1f;
+      box-shadow:
+        0 0 0 1px rgba(255,255,255,0.12),
+        0 0 0 2.5px rgba(0,0,0,0.8),
+        0 48px 96px rgba(0,0,0,0.8),
+        inset 0 1px 0 rgba(255,255,255,0.08);
+    }
+    .notch {
+      position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+      width: 90px; height: 24px; background: #000;
+      border-radius: 0 0 16px 16px; z-index: 20;
+    }
+    .status {
+      position: absolute; top: 0; left: 0; right: 0; height: 44px;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 12px 20px 0; z-index: 10;
+    }
+    .status-time { font-family: 'Space Grotesk',sans-serif; font-size: 13px; font-weight: 600; color: #fff; }
+    .status-icons { display: flex; align-items: center; gap: 5px; }
+    .battery {
+      width: 22px; height: 10px;
+      border: 1.5px solid rgba(255,255,255,0.45); border-radius: 2.5px;
+      padding: 1.5px; position: relative; display: flex; align-items: center;
+    }
+    .battery::after {
+      content: ''; position: absolute; right: -4px; top: 50%; transform: translateY(-50%);
+      width: 2.5px; height: 5px; background: rgba(255,255,255,0.45);
+      border-radius: 0 1.5px 1.5px 0;
+    }
+    .battery-fill { width: 65%; height: 100%; background: #3DD68C; border-radius: 1px; }
+
+    /* Top nav bar */
+    .topbar {
+      position: absolute; top: 44px; left: 0; right: 0;
+      padding: 12px 18px 10px;
+      display: flex; align-items: center; justify-content: space-between;
+      z-index: 15;
+      background: #0d0d1f;
+    }
+
+    /* Sticky filter bar */
+    .filterbar {
+      position: absolute; top: 108px; left: 0; right: 0;
+      padding: 0 18px 10px;
+      z-index: 14;
+      background: #0d0d1f;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+    }
+
+    /* Scrollable results */
+    .results {
+      position: absolute; top: 160px; left: 0; right: 0; bottom: 72px;
+      padding: 12px 18px 0;
+      overflow-y: auto; overflow-x: hidden;
+      scrollbar-width: none;
+      display: flex; flex-direction: column; gap: 10px;
+    }
+    .results::-webkit-scrollbar { display: none; }
+
+    /* Tab bar */
+    .tabbar {
+      position: absolute; bottom: 0; left: 0; right: 0; height: 72px;
+      background: rgba(8,10,24,0.97);
+      backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+      border-top: 1px solid rgba(255,255,255,0.07);
+      display: flex; align-items: center; justify-content: space-around;
+      padding: 0 8px 12px; z-index: 20;
+    }
+    .tab { display: flex; flex-direction: column; align-items: center; gap: 3px; color: rgba(255,255,255,0.28); padding: 6px 12px; border-radius: 12px; }
+    .tab--on { color: #5B8FFF; background: rgba(91,143,255,0.12); border-radius: 14px; padding: 6px 16px; }
+    .tab-dot { width: 4px; height: 4px; border-radius: 50%; background: currentColor; opacity: 0.8; }
+  </style>
+</head>
+<body>
+<div class="phone">
+  <div class="notch"></div>
+
+  <!-- Status bar -->
+  <div class="status">
+    <div class="status-time">9:46</div>
+    <div class="status-icons">
+      <svg width="30" height="10" viewBox="0 0 30 10" fill="none">
+        <rect x="0" y="6" width="2.5" height="4" rx="0.4" fill="rgba(255,255,255,0.75)"/>
+        <rect x="3.8" y="3.5" width="2.5" height="6.5" rx="0.4" fill="rgba(255,255,255,0.75)"/>
+        <rect x="7.6" y="1.5" width="2.5" height="8.5" rx="0.4" fill="rgba(255,255,255,0.55)"/>
+        <rect x="11.4" y="0" width="2.5" height="10" rx="0.4" fill="rgba(255,255,255,0.38)"/>
+        <circle cx="23" cy="9" r="1.2" fill="rgba(255,255,255,0.7)"/>
+        <path d="M20.2 6.5a3.8 3.8 0 015.6 0" stroke="rgba(255,255,255,0.7)" stroke-width="1.2" stroke-linecap="round"/>
+        <path d="M17.8 4a7.2 7.2 0 0110.4 0" stroke="rgba(255,255,255,0.7)" stroke-width="1.2" stroke-linecap="round"/>
+      </svg>
+      <div class="battery"><div class="battery-fill"></div></div>
+    </div>
+  </div>
+
+  <!-- Top bar: Back | Title+subtitle | Sort -->
+  <div class="topbar">
+    <!-- Back -->
+    <div style="display:flex;align-items:center;gap:5px;color:rgba(255,255,255,0.55);cursor:pointer;min-width:48px;">
+      <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+        <path d="M11 14L6 9l5-5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <span style="font-size:13px;">Back</span>
+    </div>
+
+    <!-- Center: title + subtitle -->
+    <div style="display:flex;flex-direction:column;align-items:center;gap:1px;">
+      <div style="font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:700;color:#fff;letter-spacing:-0.2px;">Cardiologists</div>
+      <div style="font-size:11px;color:rgba(255,255,255,0.35);">12 results near New York City</div>
+    </div>
+
+    <!-- Sort -->
+    <div style="display:flex;align-items:center;gap:4px;padding:6px 10px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.09);border-radius:9px;cursor:pointer;min-width:48px;justify-content:center;">
+      <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
+        <path d="M2 4h9M4 6.5h5M6 9h1" stroke="rgba(255,255,255,0.55)" stroke-width="1.3" stroke-linecap="round"/>
+      </svg>
+      <span style="font-size:11px;color:rgba(255,255,255,0.55);">Sort</span>
+    </div>
+  </div>
+
+  <!-- Sticky filter bar -->
+  <div class="filterbar">
+    <!-- USABILITY FIX label -->
+    <div style="display:flex;align-items:center;gap:5px;margin-bottom:8px;">
+      <div style="width:5px;height:5px;border-radius:50%;background:#5B8FFF;flex-shrink:0;"></div>
+      <span style="font-size:10px;font-weight:600;color:rgba(91,143,255,0.8);text-transform:uppercase;letter-spacing:0.08em;">Filter by</span>
+    </div>
+    <!-- Scrollable chips -->
+    <div style="display:flex;gap:7px;overflow-x:auto;scrollbar-width:none;">
+      <!-- Active filter: Cardiology with ✕ -->
+      <div style="flex-shrink:0;display:flex;align-items:center;gap:5px;padding:6px 10px 6px 12px;background:rgba(91,143,255,0.15);border:1px solid rgba(91,143,255,0.4);border-radius:100px;">
+        <span style="font-size:11px;font-weight:600;color:rgba(140,180,255,0.95);">Cardiology</span>
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+          <path d="M3.5 3.5l5 5M8.5 3.5l-5 5" stroke="rgba(91,143,255,0.8)" stroke-width="1.3" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <!-- Active filter: Today with ✕ -->
+      <div style="flex-shrink:0;display:flex;align-items:center;gap:5px;padding:6px 10px 6px 12px;background:rgba(61,214,140,0.12);border:1px solid rgba(61,214,140,0.3);border-radius:100px;">
+        <span style="font-size:11px;font-weight:600;color:rgba(61,214,140,0.9);">Today</span>
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+          <path d="M3.5 3.5l5 5M8.5 3.5l-5 5" stroke="rgba(61,214,140,0.7)" stroke-width="1.3" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <!-- Inactive: Insurance -->
+      <div style="flex-shrink:0;padding:6px 12px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.09);border-radius:100px;">
+        <span style="font-size:11px;color:rgba(255,255,255,0.38);">Insurance</span>
+      </div>
+      <!-- Inactive: Distance -->
+      <div style="flex-shrink:0;padding:6px 12px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.09);border-radius:100px;">
+        <span style="font-size:11px;color:rgba(255,255,255,0.38);">Distance</span>
+      </div>
+      <!-- Inactive: Rating -->
+      <div style="flex-shrink:0;padding:6px 12px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.09);border-radius:100px;">
+        <span style="font-size:11px;color:rgba(255,255,255,0.38);">Rating</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Results list -->
+  <div class="results">
+
+    <!-- Card 1: Dr. James Mitchell — tap card = profile, tap Book = slots -->
+    <div style="display:flex;align-items:flex-start;gap:12px;background:rgba(255,255,255,0.05);border:1px solid rgba(91,143,255,0.2);border-radius:16px;padding:13px;cursor:pointer;">
+      <div style="width:52px;height:52px;border-radius:13px;overflow:hidden;flex-shrink:0;border:1.5px solid rgba(255,255,255,0.1);">
+        <img src="https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=200&h=200&fit=crop&q=80" style="width:100%;height:100%;object-fit:cover;display:block;" />
+      </div>
+      <div style="flex:1;min-width:0;">
+        <div style="font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:700;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Dr. James Mitchell</div>
+        <div style="font-size:11px;color:rgba(255,255,255,0.42);margin-top:2px;">Cardiologist · 0.8 mi</div>
+        <div style="display:flex;align-items:center;gap:4px;margin-top:3px;">
+          <span style="font-size:10px;color:#F59E0B;">★★★★★</span>
+          <span style="font-size:10px;color:rgba(255,255,255,0.38);">4.9 (142 reviews)</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:6px;margin-top:6px;">
+          <div style="display:flex;align-items:center;gap:4px;padding:3px 8px;background:rgba(61,214,140,0.12);border:1px solid rgba(61,214,140,0.25);border-radius:100px;">
+            <div style="width:5px;height:5px;border-radius:50%;background:#3DD68C;"></div>
+            <span style="font-size:10px;font-weight:500;color:rgba(61,214,140,0.85);">Available today</span>
+          </div>
+          <span style="font-size:10px;color:rgba(255,255,255,0.28);">Next: 2:00 PM</span>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px;flex-shrink:0;">
+        <div style="font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:700;color:#fff;">$120</div>
+        <!-- Book → goes to S08 slot selection -->
+        <div style="padding:7px 14px;background:linear-gradient(135deg,#5B8FFF,#7B6FFF);border-radius:9px;font-size:12px;font-weight:600;color:#fff;cursor:pointer;box-shadow:0 4px 12px rgba(91,143,255,0.3);">Book</div>
+      </div>
+    </div>
+
+    <!-- Card 2: Dr. Sophia Reyes -->
+    <div style="display:flex;align-items:flex-start;gap:12px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);border-radius:16px;padding:13px;cursor:pointer;">
+      <div style="width:52px;height:52px;border-radius:13px;overflow:hidden;flex-shrink:0;border:1.5px solid rgba(255,255,255,0.08);">
+        <img src="https://images.unsplash.com/photo-1594824476967-48c8b964273f?w=200&h=200&fit=crop&q=80" style="width:100%;height:100%;object-fit:cover;display:block;" />
+      </div>
+      <div style="flex:1;min-width:0;">
+        <div style="font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:700;color:#fff;">Dr. Sophia Reyes</div>
+        <div style="font-size:11px;color:rgba(255,255,255,0.42);margin-top:2px;">Cardiologist · 1.2 mi</div>
+        <div style="display:flex;align-items:center;gap:4px;margin-top:3px;">
+          <span style="font-size:10px;color:#F59E0B;">★★★★★</span>
+          <span style="font-size:10px;color:rgba(255,255,255,0.38);">4.8 (98 reviews)</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:6px;margin-top:6px;">
+          <div style="display:flex;align-items:center;gap:4px;padding:3px 8px;background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.22);border-radius:100px;">
+            <div style="width:5px;height:5px;border-radius:50%;background:#F59E0B;"></div>
+            <span style="font-size:10px;font-weight:500;color:rgba(245,158,11,0.85);">Next: Tomorrow</span>
+          </div>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px;flex-shrink:0;">
+        <div style="font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:700;color:#fff;">$110</div>
+        <div style="padding:7px 14px;background:rgba(91,143,255,0.15);border:1px solid rgba(91,143,255,0.3);border-radius:9px;font-size:12px;font-weight:600;color:rgba(110,163,255,0.9);cursor:pointer;">Book</div>
+      </div>
+    </div>
+
+    <!-- Card 3: Dr. Kevin Park -->
+    <div style="display:flex;align-items:flex-start;gap:12px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);border-radius:16px;padding:13px;cursor:pointer;">
+      <div style="width:52px;height:52px;border-radius:13px;overflow:hidden;flex-shrink:0;border:1.5px solid rgba(255,255,255,0.08);">
+        <img src="https://images.unsplash.com/photo-1622253692010-333f2da6031d?w=200&h=200&fit=crop&q=80" style="width:100%;height:100%;object-fit:cover;display:block;" />
+      </div>
+      <div style="flex:1;min-width:0;">
+        <div style="font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:700;color:#fff;">Dr. Kevin Park</div>
+        <div style="font-size:11px;color:rgba(255,255,255,0.42);margin-top:2px;">Cardiologist · 2.1 mi</div>
+        <div style="display:flex;align-items:center;gap:4px;margin-top:3px;">
+          <span style="font-size:10px;color:#F59E0B;">★★★★</span><span style="font-size:10px;color:rgba(255,255,255,0.2);">★</span>
+          <span style="font-size:10px;color:rgba(255,255,255,0.38);">4.7 (76 reviews)</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:6px;margin-top:6px;">
+          <div style="display:flex;align-items:center;gap:4px;padding:3px 8px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:100px;">
+            <span style="font-size:10px;color:rgba(255,255,255,0.4);">Next: Thu 23 Mar</span>
+          </div>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px;flex-shrink:0;">
+        <div style="font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:700;color:#fff;">$95</div>
+        <div style="padding:7px 14px;background:rgba(91,143,255,0.15);border:1px solid rgba(91,143,255,0.3);border-radius:9px;font-size:12px;font-weight:600;color:rgba(110,163,255,0.9);cursor:pointer;">Book</div>
+      </div>
+    </div>
+
+    <!-- Skeleton cards (loading state preview — faded) -->
+    <div style="margin-top:4px;">
+      <div style="font-size:10px;font-weight:600;color:rgba(255,255,255,0.15);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px;">Loading more...</div>
+      <!-- Skeleton card -->
+      <div style="display:flex;align-items:flex-start;gap:12px;background:rgba(255,255,255,0.025);border:1px solid rgba(255,255,255,0.04);border-radius:16px;padding:13px;">
+        <div style="width:52px;height:52px;border-radius:13px;background:rgba(255,255,255,0.05);flex-shrink:0;"></div>
+        <div style="flex:1;display:flex;flex-direction:column;gap:7px;padding-top:4px;">
+          <div style="height:11px;width:65%;background:rgba(255,255,255,0.05);border-radius:4px;"></div>
+          <div style="height:9px;width:45%;background:rgba(255,255,255,0.04);border-radius:4px;"></div>
+          <div style="height:9px;width:55%;background:rgba(255,255,255,0.04);border-radius:4px;"></div>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px;flex-shrink:0;">
+          <div style="width:32px;height:14px;background:rgba(255,255,255,0.05);border-radius:4px;"></div>
+          <div style="width:52px;height:28px;background:rgba(255,255,255,0.04);border-radius:9px;"></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Tab bar -->
+  <div class="tabbar">
+    <div class="tab">
+      <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+        <path d="M3 10.5L11 3l8 7.5V19a1 1 0 01-1 1H4a1 1 0 01-1-1v-8.5z" stroke="currentColor" stroke-width="1.6" fill="currentColor" fill-opacity="0.1" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M8 20v-6h6v6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    <div class="tab tab--on">
+      <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+        <circle cx="10" cy="10" r="6.5" stroke="currentColor" stroke-width="1.8"/>
+        <path d="M15 15l4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+      </svg>
+      <div class="tab-dot"></div>
+    </div>
+    <div class="tab">
+      <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+        <rect x="3" y="5" width="16" height="14" rx="2" stroke="currentColor" stroke-width="1.6"/>
+        <path d="M3 9h16M7 3v4M15 3v4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+        <rect x="7" y="13" width="2" height="2" rx="0.5" fill="currentColor"/>
+        <rect x="10.5" y="13" width="2" height="2" rx="0.5" fill="currentColor"/>
+      </svg>
+    </div>
+    <div class="tab">
+      <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+        <circle cx="11" cy="8" r="3.5" stroke="currentColor" stroke-width="1.6"/>
+        <path d="M4 19c0-3.866 3.134-7 7-7h0c3.866 0 7 3.134 7 7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+      </svg>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

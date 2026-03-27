@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>S14 — Pre-Visit Checklist</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: #08081a;
+      display: flex; align-items: center; justify-content: center;
+      min-height: 100vh;
+      font-family: 'DM Sans', sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+    .phone {
+      width: 340px; height: 736px;
+      border-radius: 36px; position: relative; overflow: hidden;
+      background: #0d0d1f;
+      box-shadow:
+        0 0 0 1px rgba(255,255,255,0.12),
+        0 0 0 2.5px rgba(0,0,0,0.8),
+        0 48px 96px rgba(0,0,0,0.8),
+        inset 0 1px 0 rgba(255,255,255,0.08);
+    }
+    .notch {
+      position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+      width: 90px; height: 24px; background: #000;
+      border-radius: 0 0 16px 16px; z-index: 20;
+    }
+    .status {
+      position: absolute; top: 0; left: 0; right: 0; height: 44px;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 12px 20px 0; z-index: 10;
+    }
+    .status-time { font-family: 'Space Grotesk',sans-serif; font-size: 13px; font-weight: 600; color: #fff; }
+    .status-icons { display: flex; align-items: center; gap: 5px; }
+    .battery {
+      width: 22px; height: 10px;
+      border: 1.5px solid rgba(255,255,255,0.45); border-radius: 2.5px;
+      padding: 1.5px; position: relative; display: flex; align-items: center;
+    }
+    .battery::after {
+      content: ''; position: absolute; right: -4px; top: 50%; transform: translateY(-50%);
+      width: 2.5px; height: 5px; background: rgba(255,255,255,0.45);
+      border-radius: 0 1.5px 1.5px 0;
+    }
+    .battery-fill { width: 65%; height: 100%; background: #3DD68C; border-radius: 1px; }
+    .body {
+      position: absolute;
+      top: 44px; left: 0; right: 0; bottom: 70px;
+      overflow-y: auto; overflow-x: hidden;
+      scrollbar-width: none;
+      padding: 0 18px;
+    }
+    .body::-webkit-scrollbar { display: none; }
+    .sticky-cta {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      padding: 10px 18px 16px;
+      background: linear-gradient(to top, #0d0d1f 70%, transparent);
+      z-index: 20;
+    }
+  </style>
+</head>
+<body>
+<div class="phone">
+  <div class="notch"></div>
+
+  <!-- Status bar -->
+  <div class="status">
+    <div class="status-time">10:08</div>
+    <div class="status-icons">
+      <svg width="30" height="10" viewBox="0 0 30 10" fill="none">
+        <rect x="0" y="6" width="2.5" height="4" rx="0.4" fill="rgba(255,255,255,0.75)"/>
+        <rect x="3.8" y="3.5" width="2.5" height="6.5" rx="0.4" fill="rgba(255,255,255,0.75)"/>
+        <rect x="7.6" y="1.5" width="2.5" height="8.5" rx="0.4" fill="rgba(255,255,255,0.55)"/>
+        <rect x="11.4" y="0" width="2.5" height="10" rx="0.4" fill="rgba(255,255,255,0.38)"/>
+        <circle cx="23" cy="9" r="1.2" fill="rgba(255,255,255,0.7)"/>
+        <path d="M20.2 6.5a3.8 3.8 0 015.6 0" stroke="rgba(255,255,255,0.7)" stroke-width="1.2" stroke-linecap="round"/>
+        <path d="M17.8 4a7.2 7.2 0 0110.4 0" stroke="rgba(255,255,255,0.7)" stroke-width="1.2" stroke-linecap="round"/>
+      </svg>
+      <div class="battery"><div class="battery-fill"></div></div>
+    </div>
+  </div>
+
+  <div class="body">
+
+    <!-- ① Top bar -->
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 0 16px;">
+      <div style="display:flex;align-items:center;gap:5px;color:rgba(255,255,255,0.55);">
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+          <path d="M11 14L6 9l5-5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <span style="font-size:13px;">Back</span>
+      </div>
+      <div style="font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:700;color:#fff;">Pre-Visit</div>
+      <div style="width:48px;"></div>
+    </div>
+
+    <!-- ② Appointment reminder banner -->
+    <div style="background:linear-gradient(135deg,rgba(91,143,255,0.14),rgba(91,143,255,0.07));border:1px solid rgba(91,143,255,0.25);border-radius:18px;padding:14px;margin-bottom:20px;position:relative;overflow:hidden;">
+      <div style="position:absolute;top:-20px;right:-20px;width:80px;height:80px;background:radial-gradient(circle,rgba(91,143,255,0.15),transparent 65%);border-radius:50%;pointer-events:none;"></div>
+      <div style="display:flex;align-items:center;gap:11px;">
+        <div style="width:44px;height:44px;border-radius:12px;overflow:hidden;flex-shrink:0;border:1.5px solid rgba(91,143,255,0.25);">
+          <img src="https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=200&h=200&fit=crop&q=80" style="width:100%;height:100%;object-fit:cover;display:block;" />
+        </div>
+        <div style="flex:1;">
+          <div style="font-size:10px;font-weight:600;color:rgba(110,163,255,0.75);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:2px;">Today's Appointment</div>
+          <div style="font-size:13px;font-weight:600;color:#fff;">Dr. James Mitchell</div>
+          <div style="font-size:11px;color:rgba(255,255,255,0.42);margin-top:1px;">2:00 PM · NYU Langone</div>
+        </div>
+        <!-- Countdown -->
+        <div style="text-align:center;flex-shrink:0;">
+          <div style="font-family:'Space Grotesk',sans-serif;font-size:20px;font-weight:700;color:rgba(110,163,255,0.9);">4h</div>
+          <div style="font-size:9px;color:rgba(91,143,255,0.6);">away</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ③ Checklist -->
+    <div style="margin-bottom:20px;">
+      <div style="font-size:11px;font-weight:600;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:12px;">Preparation Checklist</div>
+
+      <!-- Item 1: checked -->
+      <div style="display:flex;align-items:center;gap:12px;background:rgba(61,214,140,0.06);border:1px solid rgba(61,214,140,0.16);border-radius:13px;padding:12px 14px;margin-bottom:8px;">
+        <div style="width:22px;height:22px;border-radius:6px;background:rgba(61,214,140,0.2);border:1.5px solid rgba(61,214,140,0.5);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+          <svg width="11" height="11" viewBox="0 0 11 11" fill="none"><path d="M2 5.5l2.5 2.5 4.5-5" stroke="#3DD68C" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div style="flex:1;">
+          <div style="font-size:13px;font-weight:500;color:rgba(255,255,255,0.75);">Bring insurance card</div>
+          <div style="font-size:11px;color:rgba(255,255,255,0.3);margin-top:1px;">Physical or digital copy</div>
+        </div>
+      </div>
+
+      <!-- Item 2: checked -->
+      <div style="display:flex;align-items:center;gap:12px;background:rgba(61,214,140,0.06);border:1px solid rgba(61,214,140,0.16);border-radius:13px;padding:12px 14px;margin-bottom:8px;">
+        <div style="width:22px;height:22px;border-radius:6px;background:rgba(61,214,140,0.2);border:1.5px solid rgba(61,214,140,0.5);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+          <svg width="11" height="11" viewBox="0 0 11 11" fill="none"><path d="M2 5.5l2.5 2.5 4.5-5" stroke="#3DD68C" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div style="flex:1;">
+          <div style="font-size:13px;font-weight:500;color:rgba(255,255,255,0.75);">Fast 2 hours before</div>
+          <div style="font-size:11px;color:rgba(255,255,255,0.3);margin-top:1px;">No heavy meals before visit</div>
+        </div>
+      </div>
+
+      <!-- Item 3: checked -->
+      <div style="display:flex;align-items:center;gap:12px;background:rgba(61,214,140,0.06);border:1px solid rgba(61,214,140,0.16);border-radius:13px;padding:12px 14px;margin-bottom:8px;">
+        <div style="width:22px;height:22px;border-radius:6px;background:rgba(61,214,140,0.2);border:1.5px solid rgba(61,214,140,0.5);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+          <svg width="11" height="11" viewBox="0 0 11 11" fill="none"><path d="M2 5.5l2.5 2.5 4.5-5" stroke="#3DD68C" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div style="flex:1;">
+          <div style="font-size:13px;font-weight:500;color:rgba(255,255,255,0.75);">Arrive 10 min early</div>
+          <div style="font-size:11px;color:rgba(255,255,255,0.3);margin-top:1px;">Allow time for check-in</div>
+        </div>
+      </div>
+
+      <!-- Item 4: unchecked -->
+      <div style="display:flex;align-items:center;gap:12px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.09);border-radius:13px;padding:12px 14px;">
+        <div style="width:22px;height:22px;border-radius:6px;background:rgba(255,255,255,0.05);border:1.5px solid rgba(255,255,255,0.15);flex-shrink:0;"></div>
+        <div style="flex:1;">
+          <div style="font-size:13px;font-weight:500;color:rgba(255,255,255,0.55);">Prepare your questions</div>
+          <div style="font-size:11px;color:rgba(255,255,255,0.25);margin-top:1px;">Note down symptoms & concerns</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ④ Progress indicator -->
+    <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);border-radius:12px;padding:12px 14px;margin-bottom:20px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+        <span style="font-size:12px;color:rgba(255,255,255,0.45);">3 of 4 items completed</span>
+        <span style="font-size:12px;font-weight:600;color:rgba(61,214,140,0.8);">75%</span>
+      </div>
+      <div style="height:5px;background:rgba(255,255,255,0.07);border-radius:100px;overflow:hidden;">
+        <div style="width:75%;height:100%;background:linear-gradient(90deg,#3DD68C,#22c55e);border-radius:100px;"></div>
+      </div>
+    </div>
+
+    <!-- ⑤ Doctor note -->
+    <div style="background:rgba(91,143,255,0.06);border:1px solid rgba(91,143,255,0.16);border-radius:14px;padding:13px;margin-bottom:12px;">
+      <div style="font-size:10px;font-weight:600;color:rgba(91,143,255,0.75);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:7px;">Note from Dr. Mitchell</div>
+      <div style="font-size:12px;color:rgba(255,255,255,0.5);line-height:1.6;">"Please bring any recent lab results or ECG reports if available. Wear comfortable clothing."</div>
+    </div>
+
+    <div style="height:12px;"></div>
+
+  </div>
+
+  <!-- Sticky CTA -->
+  <div class="sticky-cta">
+    <div style="padding:14px;background:linear-gradient(135deg,#5B8FFF,#7B6FFF);border-radius:14px;font-size:14px;font-weight:600;color:#fff;text-align:center;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 8px 24px rgba(91,143,255,0.3);">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+        <path d="M2 3h12a1 1 0 011 1v7a1 1 0 01-1 1H5l-3 3V4a1 1 0 011-1z" stroke="rgba(255,255,255,0.9)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      Message Dr. Mitchell
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

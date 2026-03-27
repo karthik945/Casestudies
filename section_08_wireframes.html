@@ -1,0 +1,913 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PulseCare — Section 08: Wireframes</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: #05050E;
+      color: #fff;
+      font-family: 'DM Sans', sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+    .cs-glass {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+    }
+    .cs-wf {
+      position: relative;
+      padding: 120px 72px;
+      overflow: hidden;
+    }
+    .cs-glows { position: absolute; inset: 0; pointer-events: none; z-index: 0; }
+    .cs-glow { position: absolute; border-radius: 50%; filter: blur(120px); }
+    .cs-glow--1 {
+      width: 600px; height: 600px;
+      background: radial-gradient(circle, rgba(55,100,255,0.12) 0%, transparent 65%);
+      top: -80px; right: 0;
+    }
+    .cs-glow--2 {
+      width: 400px; height: 400px;
+      background: radial-gradient(circle, rgba(110,60,255,0.08) 0%, transparent 65%);
+      bottom: 80px; left: 0;
+    }
+    .cs-grid {
+      position: absolute; inset: 0; z-index: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+      background-size: 64px 64px;
+    }
+    .cs-inner {
+      position: relative; z-index: 1;
+      max-width: 1200px; margin: 0 auto;
+      display: flex; flex-direction: column; gap: 64px;
+    }
+    .cs-header { display: flex; align-items: flex-end; justify-content: space-between; }
+    .cs-eyebrow {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-size: 11px; font-weight: 500;
+      text-transform: uppercase; letter-spacing: 0.12em;
+      color: rgba(160,190,255,0.7); margin-bottom: 12px;
+    }
+    .cs-eyebrow::before {
+      content: ''; display: block; width: 24px; height: 1px;
+      background: rgba(91,143,255,0.6);
+    }
+    .cs-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 52px; font-weight: 700;
+      letter-spacing: -2px; line-height: 1; color: #fff;
+    }
+    .cs-title span {
+      background: linear-gradient(135deg, #6FA3FF 0%, #A78BFA 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .cs-ghost-num {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 80px; font-weight: 700;
+      color: rgba(255,255,255,0.04);
+      letter-spacing: -4px; user-select: none;
+    }
+
+    /* Fidelity strip */
+    .cs-fidelity {
+      display: flex; align-items: stretch; gap: 0;
+      border-radius: 100px; overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+    .cs-fidelity__step {
+      flex: 1; padding: 10px 0; text-align: center;
+      font-size: 11px; font-weight: 500;
+      text-transform: uppercase; letter-spacing: 0.1em;
+      color: rgba(255,255,255,0.22);
+      background: rgba(255,255,255,0.02);
+      border-right: 1px solid rgba(255,255,255,0.06);
+    }
+    .cs-fidelity__step:last-child { border-right: none; }
+    .cs-fidelity__step--active {
+      background: rgba(91,143,255,0.12);
+      color: rgba(160,190,255,0.9);
+    }
+
+    /* ── 6-column unified grid for stagger ── */
+    .cs-screens {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 28px;
+      align-items: start;
+    }
+    /* Row 1: 3 cards × 2 cols each */
+    .cs-screen-card { grid-column: span 2; }
+    /* Row 2: 2 cards centered (cols 2–3 and 4–5) */
+    .cs-screen-card--r2a { grid-column: 2 / span 2; }
+    .cs-screen-card--r2b { grid-column: 4 / span 2; }
+
+    /* ── Phone frame ── */
+    .cs-phone-wrap {
+      display: flex; flex-direction: column; gap: 14px;
+    }
+    .cs-phone {
+      border-radius: 32px;
+      border: 1.5px solid rgba(255,255,255,0.10);
+      background: #0a0a18;
+      overflow: hidden;
+      position: relative;
+      display: flex; flex-direction: column;
+    }
+    /* Status bar */
+    .cs-phone__status {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 10px 16px 6px;
+      flex-shrink: 0;
+    }
+    .cs-phone__time {
+      width: 28px; height: 7px; border-radius: 3px;
+      background: rgba(255,255,255,0.18);
+    }
+    .cs-phone__notch {
+      width: 48px; height: 7px; border-radius: 10px;
+      background: rgba(255,255,255,0.06);
+    }
+    .cs-phone__icons {
+      display: flex; gap: 4px;
+    }
+    .cs-phone__icon {
+      width: 12px; height: 7px; border-radius: 2px;
+      background: rgba(255,255,255,0.18);
+    }
+    /* Screen body */
+    .cs-phone__body {
+      flex: 1;
+      padding: 4px 14px 14px;
+      display: flex; flex-direction: column;
+      gap: 0;
+      overflow: hidden;
+    }
+    /* Tab bar */
+    .cs-phone__tabbar {
+      display: flex; justify-content: space-around; align-items: center;
+      padding: 10px 20px 12px;
+      border-top: 1px solid rgba(255,255,255,0.05);
+      flex-shrink: 0;
+    }
+    .cs-tab-dot {
+      width: 22px; height: 22px; border-radius: 6px;
+      background: rgba(255,255,255,0.07);
+    }
+    .cs-tab-dot--active { background: rgba(91,143,255,0.35); }
+
+    /* Screen label */
+    .cs-screen-meta { text-align: center; }
+    .cs-screen-num {
+      font-size: 10px; letter-spacing: 0.12em;
+      text-transform: uppercase; color: rgba(91,143,255,0.6);
+      margin-bottom: 4px;
+    }
+    .cs-screen-label {
+      font-size: 13px; font-weight: 600;
+      color: rgba(255,255,255,0.65);
+    }
+
+    /* ── Skeleton primitives ── */
+    .sk { border-radius: 4px; background: rgba(255,255,255,0.08); }
+    .sk--accent { background: rgba(91,143,255,0.22); }
+    .sk--green  { background: rgba(80,200,140,0.22); }
+    .sk--dim    { background: rgba(255,255,255,0.04); }
+
+    /* Section block inside phone — adds top margin for breathing room */
+    .sk-section { margin-top: 12px; display: flex; flex-direction: column; gap: 6px; }
+    .sk-section:first-child { margin-top: 0; }
+
+    .sk-row { display: flex; gap: 8px; align-items: center; }
+    .sk-col { display: flex; flex-direction: column; gap: 5px; flex: 1; }
+
+    /* Avatar / image blocks */
+    .sk-avatar {
+      border-radius: 50%;
+      background: rgba(255,255,255,0.08);
+      flex-shrink: 0;
+    }
+    .sk-thumb {
+      border-radius: 10px;
+      background: rgba(255,255,255,0.06);
+      flex-shrink: 0;
+    }
+
+    /* Card block */
+    .sk-card {
+      border-radius: 12px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.07);
+      padding: 10px 10px;
+      display: flex; flex-direction: column; gap: 7px;
+    }
+    .sk-card--accent {
+      background: rgba(91,143,255,0.07);
+      border-color: rgba(91,143,255,0.18);
+    }
+
+    /* Search bar */
+    .sk-search {
+      border-radius: 8px;
+      border: 1px solid rgba(255,255,255,0.09);
+      background: rgba(255,255,255,0.04);
+      height: 30px;
+      display: flex; align-items: center; gap: 7px;
+      padding: 0 10px;
+    }
+    .sk-search-icon {
+      width: 12px; height: 12px; border-radius: 50%;
+      border: 1.5px solid rgba(255,255,255,0.2);
+      flex-shrink: 0;
+    }
+
+    /* Chips */
+    .sk-chips { display: flex; gap: 6px; flex-wrap: nowrap; }
+    .sk-chip {
+      height: 22px; border-radius: 100px;
+      background: rgba(91,143,255,0.12);
+      border: 1px solid rgba(91,143,255,0.2);
+      flex-shrink: 0;
+    }
+    .sk-chip--ghost {
+      background: rgba(255,255,255,0.04);
+      border-color: rgba(255,255,255,0.08);
+    }
+
+    /* Button */
+    .sk-btn {
+      border-radius: 8px; height: 30px;
+      background: rgba(91,143,255,0.25);
+      border: 1px solid rgba(91,143,255,0.4);
+    }
+    .sk-btn--green {
+      background: rgba(80,200,140,0.2);
+      border-color: rgba(80,200,140,0.4);
+    }
+    .sk-btn--ghost {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.09);
+    }
+
+    /* Slot grid */
+    .sk-slots { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; }
+    .sk-slot {
+      height: 24px; border-radius: 6px;
+      background: rgba(91,143,255,0.07);
+      border: 1px solid rgba(91,143,255,0.15);
+    }
+    .sk-slot--on {
+      background: rgba(91,143,255,0.25);
+      border-color: rgba(91,143,255,0.45);
+    }
+
+    /* Calendar strip */
+    .sk-cal { display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px; }
+    .sk-cal-day {
+      border-radius: 8px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.07);
+      padding: 5px 0;
+      display: flex; flex-direction: column; align-items: center; gap: 3px;
+    }
+    .sk-cal-day--active {
+      background: rgba(91,143,255,0.2);
+      border-color: rgba(91,143,255,0.4);
+    }
+
+    /* Stats row */
+    .sk-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; }
+    .sk-stat {
+      border-radius: 8px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.07);
+      padding: 7px 5px;
+      display: flex; flex-direction: column; align-items: center; gap: 4px;
+    }
+
+    /* Message bubbles */
+    .sk-bubble {
+      border-radius: 10px; padding: 8px 10px;
+      background: rgba(255,255,255,0.06);
+      display: flex; flex-direction: column; gap: 4px;
+      max-width: 78%;
+    }
+    .sk-bubble--sent {
+      background: rgba(91,143,255,0.2);
+      align-self: flex-end;
+    }
+
+    /* Divider */
+    .sk-divider {
+      height: 1px;
+      background: rgba(255,255,255,0.05);
+      margin: 4px 0;
+    }
+
+    /* Cover image area */
+    .sk-cover {
+      border-radius: 10px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+
+    /* ── Annotations ── */
+    .cs-annots {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 28px;
+    }
+    .cs-annot { grid-column: span 2; }
+    .cs-annot--r2a { grid-column: 2 / span 2; }
+    .cs-annot--r2b { grid-column: 4 / span 2; }
+
+    .cs-annot__inner {
+      border-radius: 12px; padding: 14px 16px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-top: 2px solid rgba(91,143,255,0.35);
+      display: flex; flex-direction: column; gap: 5px;
+    }
+    .cs-annot__tag {
+      font-size: 10px; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.1em;
+      color: rgba(91,143,255,0.7);
+    }
+    .cs-annot__text {
+      font-size: 12px; color: rgba(255,255,255,0.42); line-height: 1.6;
+    }
+
+    /* ── Design decisions ── */
+    .cs-decisions {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;
+    }
+    .cs-decision {
+      border-radius: 16px; padding: 24px;
+      display: flex; flex-direction: column; gap: 10px;
+    }
+    .cs-decision__icon {
+      width: 36px; height: 36px; border-radius: 10px;
+      background: rgba(91,143,255,0.12);
+      border: 1px solid rgba(91,143,255,0.2);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .cs-decision__title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 15px; font-weight: 600; color: rgba(255,255,255,0.85);
+    }
+    .cs-decision__text {
+      font-size: 13px; color: rgba(255,255,255,0.38); line-height: 1.65;
+    }
+  </style>
+  <script src="https://mcp.figma.com/mcp/html-to-design/capture.js" async></script>
+</head>
+<body>
+
+<section class="cs-wf" id="cs-wireframes">
+  <div class="cs-glows">
+    <div class="cs-glow cs-glow--1"></div>
+    <div class="cs-glow cs-glow--2"></div>
+  </div>
+  <div class="cs-grid"></div>
+
+  <div class="cs-inner">
+
+    <div class="cs-header">
+      <div>
+        <div class="cs-eyebrow">08 — Wireframes</div>
+        <h2 class="cs-title">Lo-Fi to<br><span>Structure</span></h2>
+      </div>
+      <div class="cs-ghost-num">08</div>
+    </div>
+
+    <!-- Fidelity strip -->
+    <div class="cs-fidelity">
+      <div class="cs-fidelity__step cs-fidelity__step--active">01 — Lo-Fi Wireframes</div>
+      <div class="cs-fidelity__step">02 — Hi-Fi Design</div>
+      <div class="cs-fidelity__step">03 — Usability Testing</div>
+      <div class="cs-fidelity__step">04 — Final Design</div>
+    </div>
+
+    <!-- ── Screens ── -->
+    <div class="cs-screens">
+
+      <!-- S01: Search & Filter -->
+      <div class="cs-screen-card">
+        <div class="cs-phone-wrap">
+          <div class="cs-phone">
+            <!-- Status -->
+            <div class="cs-phone__status">
+              <div class="cs-phone__time"></div>
+              <div class="cs-phone__notch"></div>
+              <div class="cs-phone__icons">
+                <div class="cs-phone__icon"></div>
+                <div class="cs-phone__icon" style="width:8px;"></div>
+                <div class="cs-phone__icon" style="width:8px;"></div>
+              </div>
+            </div>
+            <div class="cs-phone__body">
+
+              <!-- Greeting row -->
+              <div class="sk-section" style="margin-top:4px;">
+                <div class="sk-row">
+                  <div class="sk-avatar" style="width:32px;height:32px;"></div>
+                  <div class="sk-col">
+                    <div class="sk" style="height:7px;width:55%;"></div>
+                    <div class="sk" style="height:6px;width:38%;opacity:.6;"></div>
+                  </div>
+                  <div class="sk" style="width:24px;height:24px;border-radius:8px;flex-shrink:0;"></div>
+                </div>
+              </div>
+
+              <!-- Search bar -->
+              <div class="sk-section">
+                <div class="sk-search">
+                  <div class="sk-search-icon"></div>
+                  <div class="sk" style="height:6px;flex:1;opacity:.5;"></div>
+                </div>
+              </div>
+
+              <!-- Filter chips -->
+              <div class="sk-section" style="margin-top:8px;">
+                <div class="sk-chips">
+                  <div class="sk-chip" style="width:52px;"></div>
+                  <div class="sk-chip" style="width:68px;"></div>
+                  <div class="sk-chip sk-chip--ghost" style="width:44px;"></div>
+                  <div class="sk-chip sk-chip--ghost" style="width:56px;"></div>
+                </div>
+              </div>
+
+              <!-- Section label -->
+              <div class="sk-section" style="margin-top:12px;">
+                <div class="sk" style="height:6px;width:30%;opacity:.4;"></div>
+              </div>
+
+              <!-- Doctor card 1 -->
+              <div class="sk-section" style="margin-top:6px;">
+                <div class="sk-card">
+                  <div class="sk-row" style="align-items:flex-start;">
+                    <div class="sk-thumb" style="width:44px;height:44px;"></div>
+                    <div class="sk-col">
+                      <div class="sk" style="height:8px;width:70%;"></div>
+                      <div class="sk" style="height:6px;width:50%;opacity:.6;"></div>
+                      <div style="display:flex;gap:5px;margin-top:2px;">
+                        <div class="sk sk--accent" style="height:5px;width:32px;border-radius:3px;"></div>
+                        <div class="sk" style="height:5px;width:48px;opacity:.4;"></div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="sk-divider" style="margin:2px 0;"></div>
+                  <div class="sk-btn" style="height:26px;"></div>
+                </div>
+              </div>
+
+              <!-- Doctor card 2 -->
+              <div class="sk-section" style="margin-top:6px;">
+                <div class="sk-card">
+                  <div class="sk-row" style="align-items:flex-start;">
+                    <div class="sk-thumb" style="width:44px;height:44px;"></div>
+                    <div class="sk-col">
+                      <div class="sk" style="height:8px;width:65%;"></div>
+                      <div class="sk" style="height:6px;width:45%;opacity:.6;"></div>
+                      <div style="display:flex;gap:5px;margin-top:2px;">
+                        <div class="sk sk--accent" style="height:5px;width:32px;border-radius:3px;"></div>
+                        <div class="sk" style="height:5px;width:52px;opacity:.4;"></div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="sk-divider" style="margin:2px 0;"></div>
+                  <div class="sk-btn" style="height:26px;"></div>
+                </div>
+              </div>
+
+            </div>
+            <div class="cs-phone__tabbar">
+              <div class="cs-tab-dot cs-tab-dot--active"></div>
+              <div class="cs-tab-dot"></div>
+              <div class="cs-tab-dot"></div>
+              <div class="cs-tab-dot"></div>
+            </div>
+          </div>
+          <div class="cs-screen-meta">
+            <div class="cs-screen-num">Screen 01</div>
+            <div class="cs-screen-label">Search & Filter</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- S02: Doctor Profile -->
+      <div class="cs-screen-card">
+        <div class="cs-phone-wrap">
+          <div class="cs-phone">
+            <div class="cs-phone__status">
+              <div class="cs-phone__time"></div>
+              <div class="cs-phone__notch"></div>
+              <div class="cs-phone__icons">
+                <div class="cs-phone__icon"></div>
+                <div class="cs-phone__icon" style="width:8px;"></div>
+              </div>
+            </div>
+            <div class="cs-phone__body">
+
+              <!-- Cover image -->
+              <div class="sk-cover" style="height:72px;margin-bottom:0;"></div>
+
+              <!-- Avatar + name (overlaps cover) -->
+              <div class="sk-section" style="margin-top:-18px;">
+                <div class="sk-row" style="align-items:flex-end;">
+                  <div class="sk-avatar" style="width:48px;height:48px;border:2.5px solid #0a0a18;"></div>
+                  <div class="sk-col" style="padding-bottom:4px;">
+                    <div class="sk" style="height:8px;width:65%;"></div>
+                    <div class="sk" style="height:6px;width:45%;opacity:.55;"></div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Stats -->
+              <div class="sk-section" style="margin-top:10px;">
+                <div class="sk-stats">
+                  <div class="sk-stat">
+                    <div class="sk sk--accent" style="height:9px;width:60%;border-radius:4px;"></div>
+                    <div class="sk" style="height:5px;width:80%;opacity:.4;"></div>
+                  </div>
+                  <div class="sk-stat">
+                    <div class="sk sk--accent" style="height:9px;width:60%;border-radius:4px;"></div>
+                    <div class="sk" style="height:5px;width:80%;opacity:.4;"></div>
+                  </div>
+                  <div class="sk-stat">
+                    <div class="sk sk--accent" style="height:9px;width:60%;border-radius:4px;"></div>
+                    <div class="sk" style="height:5px;width:80%;opacity:.4;"></div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- About section -->
+              <div class="sk-section" style="margin-top:12px;">
+                <div class="sk" style="height:6px;width:28%;opacity:.4;"></div>
+                <div class="sk-divider"></div>
+                <div class="sk" style="height:6px;width:100%;opacity:.5;"></div>
+                <div class="sk" style="height:6px;width:88%;opacity:.4;"></div>
+                <div class="sk" style="height:6px;width:72%;opacity:.35;"></div>
+              </div>
+
+              <!-- Review row -->
+              <div class="sk-section" style="margin-top:12px;">
+                <div class="sk" style="height:6px;width:28%;opacity:.4;"></div>
+                <div class="sk-divider"></div>
+                <div class="sk-card" style="flex-direction:row;align-items:center;gap:8px;">
+                  <div class="sk-avatar" style="width:28px;height:28px;"></div>
+                  <div class="sk-col">
+                    <div class="sk" style="height:6px;width:55%;"></div>
+                    <div class="sk" style="height:5px;width:80%;opacity:.5;"></div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- CTA -->
+              <div class="sk-section" style="margin-top:auto;">
+                <div class="sk-btn"></div>
+              </div>
+
+            </div>
+            <div class="cs-phone__tabbar">
+              <div class="cs-tab-dot"></div>
+              <div class="cs-tab-dot cs-tab-dot--active"></div>
+              <div class="cs-tab-dot"></div>
+              <div class="cs-tab-dot"></div>
+            </div>
+          </div>
+          <div class="cs-screen-meta">
+            <div class="cs-screen-num">Screen 02</div>
+            <div class="cs-screen-label">Doctor Profile</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- S03: Slot Selection -->
+      <div class="cs-screen-card">
+        <div class="cs-phone-wrap">
+          <div class="cs-phone">
+            <div class="cs-phone__status">
+              <div class="cs-phone__time"></div>
+              <div class="cs-phone__notch"></div>
+              <div class="cs-phone__icons">
+                <div class="cs-phone__icon"></div>
+                <div class="cs-phone__icon" style="width:8px;"></div>
+              </div>
+            </div>
+            <div class="cs-phone__body">
+
+              <!-- Back + title -->
+              <div class="sk-section" style="margin-top:4px;">
+                <div class="sk-row">
+                  <div class="sk" style="width:16px;height:16px;border-radius:5px;flex-shrink:0;opacity:.5;"></div>
+                  <div class="sk sk--accent" style="height:8px;width:55%;margin:0 auto;"></div>
+                  <div style="width:16px;"></div>
+                </div>
+              </div>
+
+              <!-- Month nav -->
+              <div class="sk-section" style="margin-top:10px;">
+                <div class="sk-row" style="justify-content:space-between;">
+                  <div class="sk" style="width:14px;height:14px;border-radius:4px;flex-shrink:0;opacity:.4;"></div>
+                  <div class="sk sk--accent" style="height:7px;width:32%;"></div>
+                  <div class="sk" style="width:14px;height:14px;border-radius:4px;flex-shrink:0;opacity:.4;"></div>
+                </div>
+              </div>
+
+              <!-- Calendar strip -->
+              <div class="sk-section" style="margin-top:6px;">
+                <div class="sk-cal">
+                  <div class="sk-cal-day">
+                    <div class="sk" style="width:18px;height:5px;opacity:.4;"></div>
+                    <div class="sk" style="width:14px;height:7px;opacity:.5;"></div>
+                  </div>
+                  <div class="sk-cal-day">
+                    <div class="sk" style="width:18px;height:5px;opacity:.4;"></div>
+                    <div class="sk" style="width:14px;height:7px;opacity:.5;"></div>
+                  </div>
+                  <div class="sk-cal-day sk-cal-day--active">
+                    <div class="sk sk--accent" style="width:18px;height:5px;"></div>
+                    <div class="sk sk--accent" style="width:14px;height:7px;opacity:.8;"></div>
+                  </div>
+                  <div class="sk-cal-day">
+                    <div class="sk" style="width:18px;height:5px;opacity:.4;"></div>
+                    <div class="sk" style="width:14px;height:7px;opacity:.5;"></div>
+                  </div>
+                  <div class="sk-cal-day">
+                    <div class="sk" style="width:18px;height:5px;opacity:.4;"></div>
+                    <div class="sk" style="width:14px;height:7px;opacity:.5;"></div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Time section label -->
+              <div class="sk-section" style="margin-top:14px;">
+                <div class="sk" style="height:6px;width:28%;opacity:.4;"></div>
+                <div class="sk-divider"></div>
+              </div>
+
+              <!-- Time slots -->
+              <div class="sk-section" style="margin-top:4px;">
+                <div class="sk-slots">
+                  <div class="sk-slot"></div>
+                  <div class="sk-slot sk-slot--on"></div>
+                  <div class="sk-slot"></div>
+                  <div class="sk-slot"></div>
+                  <div class="sk-slot"></div>
+                  <div class="sk-slot"></div>
+                </div>
+              </div>
+
+              <!-- Visit type label -->
+              <div class="sk-section" style="margin-top:14px;">
+                <div class="sk" style="height:6px;width:30%;opacity:.4;"></div>
+                <div class="sk-divider"></div>
+              </div>
+
+              <!-- Visit type toggle -->
+              <div class="sk-section" style="margin-top:4px;">
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">
+                  <div class="sk-btn" style="height:28px;"></div>
+                  <div class="sk-btn sk-btn--ghost" style="height:28px;"></div>
+                </div>
+              </div>
+
+              <!-- CTA -->
+              <div class="sk-section" style="margin-top:auto;">
+                <div class="sk-btn"></div>
+              </div>
+
+            </div>
+          </div>
+          <div class="cs-screen-meta">
+            <div class="cs-screen-num">Screen 03</div>
+            <div class="cs-screen-label">Slot Selection</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- S04: Payment & Confirm (row 2 left) -->
+      <div class="cs-screen-card cs-screen-card--r2a">
+        <div class="cs-phone-wrap">
+          <div class="cs-phone">
+            <div class="cs-phone__status">
+              <div class="cs-phone__time"></div>
+              <div class="cs-phone__notch"></div>
+              <div class="cs-phone__icons">
+                <div class="cs-phone__icon"></div>
+                <div class="cs-phone__icon" style="width:8px;"></div>
+              </div>
+            </div>
+            <div class="cs-phone__body">
+
+              <!-- Title -->
+              <div class="sk-section" style="margin-top:4px;">
+                <div class="sk sk--accent" style="height:8px;width:45%;margin:0 auto;"></div>
+              </div>
+
+              <!-- Booking summary card -->
+              <div class="sk-section" style="margin-top:12px;">
+                <div class="sk" style="height:6px;width:30%;opacity:.4;"></div>
+                <div class="sk-divider"></div>
+                <div class="sk-card sk-card--accent">
+                  <div class="sk-row">
+                    <div class="sk-thumb" style="width:40px;height:40px;"></div>
+                    <div class="sk-col">
+                      <div class="sk" style="height:8px;width:65%;"></div>
+                      <div class="sk" style="height:6px;width:48%;opacity:.6;"></div>
+                    </div>
+                  </div>
+                  <div class="sk-divider"></div>
+                  <div class="sk-row">
+                    <div class="sk" style="height:6px;width:40%;opacity:.5;"></div>
+                    <div class="sk sk--accent" style="height:6px;width:30%;margin-left:auto;border-radius:3px;"></div>
+                  </div>
+                  <div class="sk-row">
+                    <div class="sk" style="height:6px;width:50%;opacity:.5;"></div>
+                    <div class="sk sk--accent" style="height:6px;width:25%;margin-left:auto;border-radius:3px;opacity:.6;"></div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Payment method -->
+              <div class="sk-section" style="margin-top:14px;">
+                <div class="sk" style="height:6px;width:35%;opacity:.4;"></div>
+                <div class="sk-divider"></div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">
+                  <div class="sk-card" style="align-items:center;border-color:rgba(91,143,255,0.3);background:rgba(91,143,255,0.08);">
+                    <div class="sk sk--accent" style="height:7px;width:60%;"></div>
+                    <div class="sk" style="height:5px;width:45%;opacity:.4;"></div>
+                  </div>
+                  <div class="sk-card" style="align-items:center;">
+                    <div class="sk" style="height:7px;width:60%;opacity:.5;"></div>
+                    <div class="sk" style="height:5px;width:45%;opacity:.3;"></div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Total row -->
+              <div class="sk-section" style="margin-top:14px;">
+                <div class="sk-divider"></div>
+                <div class="sk-row" style="margin-top:6px;">
+                  <div class="sk" style="height:7px;width:30%;opacity:.5;"></div>
+                  <div class="sk sk--accent" style="height:10px;width:22%;margin-left:auto;border-radius:4px;"></div>
+                </div>
+              </div>
+
+              <!-- Pay CTA -->
+              <div class="sk-section" style="margin-top:auto;">
+                <div class="sk-btn sk-btn--green"></div>
+              </div>
+
+            </div>
+          </div>
+          <div class="cs-screen-meta">
+            <div class="cs-screen-num">Screen 04</div>
+            <div class="cs-screen-label">Payment & Confirm</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- S05: Post-Visit Chat (row 2 right) -->
+      <div class="cs-screen-card cs-screen-card--r2b">
+        <div class="cs-phone-wrap">
+          <div class="cs-phone">
+            <div class="cs-phone__status">
+              <div class="cs-phone__time"></div>
+              <div class="cs-phone__notch"></div>
+              <div class="cs-phone__icons">
+                <div class="cs-phone__icon"></div>
+                <div class="cs-phone__icon" style="width:8px;"></div>
+              </div>
+            </div>
+            <div class="cs-phone__body">
+
+              <!-- Chat header -->
+              <div class="sk-section" style="margin-top:4px;">
+                <div class="sk-row">
+                  <div class="sk" style="width:16px;height:16px;border-radius:5px;flex-shrink:0;opacity:.5;"></div>
+                  <div class="sk-avatar" style="width:34px;height:34px;margin:0 8px;"></div>
+                  <div class="sk-col">
+                    <div class="sk" style="height:7px;width:60%;"></div>
+                    <div class="sk sk--green" style="height:5px;width:32%;opacity:.7;"></div>
+                  </div>
+                  <div class="sk" style="width:22px;height:22px;border-radius:50%;flex-shrink:0;opacity:.4;"></div>
+                </div>
+                <div class="sk-divider" style="margin-top:8px;"></div>
+              </div>
+
+              <!-- Messages -->
+              <div class="sk-section" style="gap:8px;flex:1;">
+                <div class="sk-bubble">
+                  <div class="sk" style="height:6px;width:90%;opacity:.5;"></div>
+                  <div class="sk" style="height:6px;width:68%;opacity:.4;"></div>
+                </div>
+                <div class="sk-bubble sk-bubble--sent">
+                  <div class="sk" style="height:6px;width:80%;background:rgba(255,255,255,0.3);"></div>
+                </div>
+                <div class="sk-bubble">
+                  <div class="sk" style="height:6px;width:95%;opacity:.5;"></div>
+                  <div class="sk" style="height:6px;width:75%;opacity:.45;"></div>
+                  <div class="sk" style="height:6px;width:55%;opacity:.35;"></div>
+                </div>
+                <div class="sk-bubble sk-bubble--sent">
+                  <div class="sk" style="height:6px;width:85%;background:rgba(255,255,255,0.3);"></div>
+                  <div class="sk" style="height:6px;width:55%;background:rgba(255,255,255,0.2);"></div>
+                </div>
+                <div class="sk-bubble">
+                  <div class="sk" style="height:6px;width:80%;opacity:.5;"></div>
+                </div>
+              </div>
+
+              <!-- Input bar -->
+              <div class="sk-section" style="margin-top:8px;">
+                <div class="sk-search" style="height:34px;">
+                  <div class="sk" style="height:6px;flex:1;opacity:.35;"></div>
+                  <div style="width:26px;height:26px;border-radius:50%;background:rgba(91,143,255,0.35);flex-shrink:0;"></div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+          <div class="cs-screen-meta">
+            <div class="cs-screen-num">Screen 05</div>
+            <div class="cs-screen-label">Post-Visit Chat</div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /cs-screens -->
+
+    <!-- Annotations (mirrors screen grid) -->
+    <div class="cs-annots">
+      <div class="cs-annot">
+        <div class="cs-annot__inner">
+          <div class="cs-annot__tag">S01 — Search</div>
+          <div class="cs-annot__text">Filter chips surface specialty, location, and availability — no multi-step form needed.</div>
+        </div>
+      </div>
+      <div class="cs-annot">
+        <div class="cs-annot__inner">
+          <div class="cs-annot__tag">S02 — Profile</div>
+          <div class="cs-annot__text">Key stats (rating, years, reviews) above the fold so trust is earned before the CTA.</div>
+        </div>
+      </div>
+      <div class="cs-annot">
+        <div class="cs-annot__inner">
+          <div class="cs-annot__tag">S03 — Booking</div>
+          <div class="cs-annot__text">Date strip + slot grid collapses 3 screens into one — 2 taps to confirm a time.</div>
+        </div>
+      </div>
+      <div class="cs-annot cs-annot--r2a">
+        <div class="cs-annot__inner">
+          <div class="cs-annot__tag">S04 — Payment</div>
+          <div class="cs-annot__text">Summary card stays anchored throughout payment so users never lose context on what they're booking.</div>
+        </div>
+      </div>
+      <div class="cs-annot cs-annot--r2b">
+        <div class="cs-annot__inner">
+          <div class="cs-annot__tag">S05 — Chat</div>
+          <div class="cs-annot__text">Async messaging keeps the care loop alive after the visit without forcing a new appointment.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Design decisions -->
+    <div class="cs-decisions">
+      <div class="cs-decision cs-glass">
+        <div class="cs-decision__icon">
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><rect x="2" y="2" width="6" height="6" rx="1.5" stroke="#6FA3FF" stroke-width="1.4"/><rect x="10" y="2" width="6" height="6" rx="1.5" stroke="#6FA3FF" stroke-width="1.4" opacity=".4"/><rect x="2" y="10" width="6" height="6" rx="1.5" stroke="#6FA3FF" stroke-width="1.4" opacity=".4"/><rect x="10" y="10" width="6" height="6" rx="1.5" stroke="#6FA3FF" stroke-width="1.4" opacity=".4"/></svg>
+        </div>
+        <div class="cs-decision__title">Single-scroll layouts</div>
+        <div class="cs-decision__text">Every screen is designed to work without horizontal navigation. All critical content fits in one continuous scroll.</div>
+      </div>
+      <div class="cs-decision cs-glass">
+        <div class="cs-decision__icon">
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="6.5" stroke="#6FA3FF" stroke-width="1.4"/><path d="M6 9h6M9 6v6" stroke="#6FA3FF" stroke-width="1.4" stroke-linecap="round"/></svg>
+        </div>
+        <div class="cs-decision__title">Progressive disclosure</div>
+        <div class="cs-decision__text">Filters, date pickers, and payment fields appear contextually — reducing cognitive load at each decision point.</div>
+      </div>
+      <div class="cs-decision cs-glass">
+        <div class="cs-decision__icon">
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M3 14l4-4 3 3 5-7" stroke="#6FA3FF" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div class="cs-decision__title">Persistent context</div>
+        <div class="cs-decision__text">Booking summary stays visible through payment so the user always knows exactly what they're confirming.</div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+</body>
+</html>

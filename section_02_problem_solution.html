@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PulseCare — Section 02: Problem & Solution</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: #05050E;
+      color: #fff;
+      font-family: 'DM Sans', sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .cs-glass {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+    }
+
+    /* ══ SECTION WRAPPER ══ */
+    .cs-ps {
+      position: relative;
+      padding: 120px 72px;
+      overflow: hidden;
+    }
+
+    /* Glows */
+    .cs-glows { position: absolute; inset: 0; pointer-events: none; z-index: 0; }
+    .cs-glow { position: absolute; border-radius: 50%; filter: blur(120px); }
+    .cs-glow--1 {
+      width: 500px; height: 500px;
+      background: radial-gradient(circle, rgba(55,100,255,0.14) 0%, transparent 65%);
+      top: 0; right: -100px;
+    }
+    .cs-glow--2 {
+      width: 400px; height: 400px;
+      background: radial-gradient(circle, rgba(110,60,255,0.10) 0%, transparent 65%);
+      bottom: 100px; left: -60px;
+    }
+
+    .cs-grid {
+      position: absolute; inset: 0; z-index: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+      background-size: 64px 64px;
+    }
+
+    /* ══ INNER ══ */
+    .cs-ps__inner {
+      position: relative; z-index: 1;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    /* ══ SECTION HEADER ══ */
+    .cs-section-header {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      margin-bottom: 72px;
+    }
+    .cs-section-header__left { display: flex; flex-direction: column; gap: 12px; }
+
+    .cs-eyebrow {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-size: 11px; font-weight: 500;
+      text-transform: uppercase; letter-spacing: 0.12em;
+      color: rgba(160,190,255,0.7);
+    }
+    .cs-eyebrow::before {
+      content: '';
+      display: block; width: 24px; height: 1px;
+      background: rgba(91,143,255,0.6);
+    }
+
+    .cs-section-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 52px; font-weight: 700;
+      letter-spacing: -2px; line-height: 1;
+      color: #fff;
+    }
+    .cs-section-title span {
+      background: linear-gradient(135deg, #6FA3FF 0%, #A78BFA 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .cs-section-header__count {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 80px; font-weight: 700;
+      color: rgba(255,255,255,0.04);
+      letter-spacing: -4px;
+      line-height: 1;
+      user-select: none;
+    }
+
+    /* ══ PAIRS ══ */
+    .cs-pairs { display: flex; flex-direction: column; gap: 48px; }
+
+    .cs-pair {
+      display: grid;
+      grid-template-columns: 1fr 1fr 280px;
+      gap: 20px;
+      align-items: stretch;
+    }
+
+    /* Flip for even pairs */
+    .cs-pair:nth-child(even) {
+      grid-template-columns: 280px 1fr 1fr;
+    }
+    .cs-pair:nth-child(even) .cs-pair__phone { order: -1; }
+
+    /* Problem card */
+    .cs-pair__problem {
+      border-radius: 18px;
+      padding: 28px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      border: 1px solid rgba(255,90,70,0.12);
+      background: rgba(255,60,40,0.04);
+      backdrop-filter: blur(24px);
+    }
+    .cs-pair__solution {
+      border-radius: 18px;
+      padding: 28px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      border: 1px solid rgba(60,200,120,0.12);
+      background: rgba(40,180,100,0.04);
+      backdrop-filter: blur(24px);
+    }
+
+    .cs-card-tag {
+      display: inline-flex; align-items: center; gap: 7px;
+      font-size: 10px; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.12em;
+      width: fit-content;
+    }
+    .cs-card-tag__dot {
+      width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0;
+    }
+    .cs-card-tag--problem { color: rgba(255,110,90,0.85); }
+    .cs-card-tag--problem .cs-card-tag__dot { background: rgba(255,110,90,0.85); }
+    .cs-card-tag--solution { color: rgba(60,200,130,0.85); }
+    .cs-card-tag--solution .cs-card-tag__dot { background: rgba(60,200,130,0.85); }
+
+    .cs-pair__num {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 40px; font-weight: 700;
+      color: rgba(255,255,255,0.06);
+      letter-spacing: -2px;
+      line-height: 1;
+    }
+
+    .cs-pair__heading {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 18px; font-weight: 600;
+      color: rgba(255,255,255,0.88);
+      line-height: 1.3;
+      letter-spacing: -0.3px;
+    }
+
+    .cs-pair__text {
+      font-size: 13px; font-weight: 400;
+      color: rgba(255,255,255,0.50);
+      line-height: 1.7;
+      flex: 1;
+    }
+
+    /* Divider between number and content */
+    .cs-pair__line {
+      width: 32px; height: 1px;
+      background: linear-gradient(90deg, rgba(255,255,255,0.15), transparent);
+    }
+
+    /* Phone placeholder */
+    .cs-pair__phone {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .cs-phone-mini {
+      width: 200px; height: 380px;
+      border-radius: 32px;
+      border: 1.5px solid rgba(255,255,255,0.10);
+      box-shadow:
+        0 20px 60px rgba(0,0,0,0.6),
+        0 0 40px rgba(65,120,255,0.12),
+        inset 0 1px 0 rgba(255,255,255,0.08);
+      position: relative;
+      overflow: hidden;
+    }
+    .cs-phone-mini iframe {
+      width: 340px; height: 736px;
+      border: none; display: block;
+      transform: scale(0.5882);
+      transform-origin: top left;
+    }
+    .cs-phone-mini::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0; height: 40%;
+      background: linear-gradient(180deg, rgba(65,120,255,0.06) 0%, transparent 100%);
+    }
+    .cs-phone-mini__notch {
+      position: absolute; top: 10px;
+      width: 66px; height: 18px;
+      background: rgba(0,0,0,0.6);
+      border-radius: 100px;
+    }
+    .cs-phone-mini__inner {
+      position: relative; z-index: 1;
+      display: flex; flex-direction: column;
+      align-items: center; gap: 8px;
+      padding: 16px; text-align: center;
+    }
+    .cs-phone-mini__icon {
+      width: 38px; height: 38px;
+      border-radius: 10px;
+      background: rgba(65,120,255,0.14);
+      border: 1px solid rgba(65,120,255,0.24);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .cs-phone-mini__icon svg {
+      width: 18px; height: 18px;
+      stroke: #7AAAFF; fill: none; stroke-width: 1.5;
+    }
+    .cs-phone-mini__label {
+      font-size: 9px;
+      color: rgba(255,255,255,0.15);
+      line-height: 1.5; max-width: 130px;
+    }
+
+    /* Separator between pairs */
+    .cs-pair-sep {
+      width: 100%; height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.05) 30%, rgba(255,255,255,0.05) 70%, transparent);
+    }
+  </style>
+  <script src="https://mcp.figma.com/mcp/html-to-design/capture.js" async></script>
+</head>
+<body>
+
+<section class="cs-ps" id="cs-problem-solution">
+
+  <div class="cs-glows">
+    <div class="cs-glow cs-glow--1"></div>
+    <div class="cs-glow cs-glow--2"></div>
+  </div>
+  <div class="cs-grid"></div>
+
+  <div class="cs-ps__inner">
+
+    <!-- Header -->
+    <div class="cs-section-header">
+      <div class="cs-section-header__left">
+        <span class="cs-eyebrow">02 — Discovery</span>
+        <h2 class="cs-section-title">Problem &<br><span>Solution</span></h2>
+      </div>
+      <div class="cs-section-header__count">02</div>
+    </div>
+
+    <!-- Pairs -->
+    <div class="cs-pairs">
+
+      <!-- PAIR 1 -->
+      <div class="cs-pair">
+
+        <div class="cs-pair__problem">
+          <div class="cs-pair__num">01</div>
+          <div class="cs-pair__line"></div>
+          <div class="cs-card-tag cs-card-tag--problem">
+            <div class="cs-card-tag__dot"></div>
+            User Problem
+          </div>
+          <h3 class="cs-pair__heading">No clear way to find the right doctor</h3>
+          <p class="cs-pair__text">Users are overwhelmed by unfiltered doctor lists with no specialty sorting, no real availability shown, and no way to compare profiles meaningfully. They resort to phone calls or give up entirely.</p>
+        </div>
+
+        <div class="cs-pair__solution">
+          <div class="cs-pair__num">01</div>
+          <div class="cs-pair__line"></div>
+          <div class="cs-card-tag cs-card-tag--solution">
+            <div class="cs-card-tag__dot"></div>
+            The Solution
+          </div>
+          <h3 class="cs-pair__heading">Structured filtering with live availability</h3>
+          <p class="cs-pair__text">A smart search layer with specialty, location, language, and rating filters — combined with real-time slot visibility. Users see exactly when a doctor is free before tapping into their profile.</p>
+        </div>
+
+        <div class="cs-pair__phone">
+          <div class="cs-phone-mini">
+            <iframe src="screens/s05_discover.html" scrolling="no" frameborder="0"></iframe>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="cs-pair-sep"></div>
+
+      <!-- PAIR 2 -->
+      <div class="cs-pair">
+
+        <div class="cs-pair__problem">
+          <div class="cs-pair__num">02</div>
+          <div class="cs-pair__line"></div>
+          <div class="cs-card-tag cs-card-tag--problem">
+            <div class="cs-card-tag__dot"></div>
+            User Problem
+          </div>
+          <h3 class="cs-pair__heading">Users don't trust doctors they haven't met</h3>
+          <p class="cs-pair__text">Thin doctor profiles with stock photos and generic bios fail to build confidence. Users struggle with deciding — browsing too many options and frequently abandoning the booking entirely.</p>
+        </div>
+
+        <div class="cs-pair__solution">
+          <div class="cs-pair__num">02</div>
+          <div class="cs-pair__line"></div>
+          <div class="cs-card-tag cs-card-tag--solution">
+            <div class="cs-card-tag__dot"></div>
+            The Solution
+          </div>
+          <h3 class="cs-pair__heading">Rich doctor profiles that build trust</h3>
+          <p class="cs-pair__text">Detailed profiles surface verified credentials, patient reviews, video introductions, and specialty highlights. Trust scores and badge systems let users make confident decisions faster.</p>
+        </div>
+
+        <div class="cs-pair__phone">
+          <div class="cs-phone-mini">
+            <iframe src="screens/s07_profile.html" scrolling="no" frameborder="0"></iframe>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="cs-pair-sep"></div>
+
+      <!-- PAIR 3 -->
+      <div class="cs-pair">
+
+        <div class="cs-pair__problem">
+          <div class="cs-pair__num">03</div>
+          <div class="cs-pair__line"></div>
+          <div class="cs-card-tag cs-card-tag--problem">
+            <div class="cs-card-tag__dot"></div>
+            User Problem
+          </div>
+          <h3 class="cs-pair__heading">Booking flow is multi-step and confusing</h3>
+          <p class="cs-pair__text">Existing apps require too many taps, ask for redundant information, and give no clarity on booking status. Users frequently hit dead ends with no available slots and no guidance on what to do next.</p>
+        </div>
+
+        <div class="cs-pair__solution">
+          <div class="cs-pair__num">03</div>
+          <div class="cs-pair__line"></div>
+          <div class="cs-card-tag cs-card-tag--solution">
+            <div class="cs-card-tag__dot"></div>
+            The Solution
+          </div>
+          <h3 class="cs-pair__heading">3-step booking with clear progress states</h3>
+          <p class="cs-pair__text">A streamlined booking flow: Pick slot → Confirm details → Done. Progress indicators, animated confirmations, and instant calendar sync make the experience feel fast and certain.</p>
+        </div>
+
+        <div class="cs-pair__phone">
+          <div class="cs-phone-mini">
+            <iframe src="screens/s08_slots.html" scrolling="no" frameborder="0"></iframe>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="cs-pair-sep"></div>
+
+      <!-- PAIR 4 -->
+      <div class="cs-pair">
+
+        <div class="cs-pair__problem">
+          <div class="cs-pair__num">04</div>
+          <div class="cs-pair__line"></div>
+          <div class="cs-card-tag cs-card-tag--problem">
+            <div class="cs-card-tag__dot"></div>
+            User Problem
+          </div>
+          <h3 class="cs-pair__heading">No communication after the appointment</h3>
+          <p class="cs-pair__text">Once the visit ends, the app goes silent. Users have no way to follow up with their doctor, access visit notes, or manage ongoing care — forcing them off-platform to text, email, or call.</p>
+        </div>
+
+        <div class="cs-pair__solution">
+          <div class="cs-pair__num">04</div>
+          <div class="cs-pair__line"></div>
+          <div class="cs-card-tag cs-card-tag--solution">
+            <div class="cs-card-tag__dot"></div>
+            The Solution
+          </div>
+          <h3 class="cs-pair__heading">In-app messaging and visit history</h3>
+          <p class="cs-pair__text">A post-visit hub with secure doctor messaging, visit summaries, prescription history, and smart follow-up reminders — keeping the care relationship alive long after the appointment ends.</p>
+        </div>
+
+        <div class="cs-pair__phone">
+                    <div class="cs-phone-mini">
+            <iframe src="screens/s16_chat.html" scrolling="no" frameborder="0"></iframe>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+</section>
+
+</body>
+</html>

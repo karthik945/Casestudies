@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PulseCare — Section 07: User Flow</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: #05050E;
+      color: #fff;
+      font-family: 'DM Sans', sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+    .cs-glass {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+    }
+    .cs-flow {
+      position: relative;
+      padding: 120px 72px;
+      overflow: hidden;
+    }
+    .cs-glows { position: absolute; inset: 0; pointer-events: none; z-index: 0; }
+    .cs-glow { position: absolute; border-radius: 50%; filter: blur(120px); }
+    .cs-glow--1 {
+      width: 700px; height: 500px;
+      background: radial-gradient(circle, rgba(55,100,255,0.13) 0%, transparent 65%);
+      top: -60px; left: -100px;
+    }
+    .cs-glow--2 {
+      width: 400px; height: 400px;
+      background: radial-gradient(circle, rgba(80,200,140,0.07) 0%, transparent 65%);
+      bottom: 0; right: 0;
+    }
+    .cs-grid {
+      position: absolute; inset: 0; z-index: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+      background-size: 64px 64px;
+    }
+    .cs-inner {
+      position: relative; z-index: 1;
+      max-width: 1200px; margin: 0 auto;
+      display: flex; flex-direction: column; gap: 64px;
+    }
+    .cs-header { display: flex; align-items: flex-end; justify-content: space-between; }
+    .cs-eyebrow {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-size: 11px; font-weight: 500;
+      text-transform: uppercase; letter-spacing: 0.12em;
+      color: rgba(160,190,255,0.7); margin-bottom: 12px;
+    }
+    .cs-eyebrow::before {
+      content: ''; display: block; width: 24px; height: 1px;
+      background: rgba(91,143,255,0.6);
+    }
+    .cs-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 52px; font-weight: 700;
+      letter-spacing: -2px; line-height: 1; color: #fff;
+    }
+    .cs-title span {
+      background: linear-gradient(135deg, #6FA3FF 0%, #A78BFA 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .cs-ghost-num {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 80px; font-weight: 700;
+      color: rgba(255,255,255,0.04);
+      letter-spacing: -4px; user-select: none;
+    }
+
+    .cs-diagram-wrap {
+      border-radius: 24px;
+      padding: 40px 32px;
+      position: relative;
+      overflow-x: auto;
+    }
+    .cs-diagram-wrap::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0; height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(91,143,255,0.3), transparent);
+    }
+
+    /* Let Mermaid SVG render at its natural size */
+    .mermaid {
+      display: flex;
+      justify-content: center;
+      min-width: max-content;
+    }
+
+    .cs-legend {
+      display: flex; gap: 20px; flex-wrap: wrap; align-items: center;
+    }
+    .cs-legend__item {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 12px; color: rgba(255,255,255,0.38);
+    }
+    .cs-legend__swatch { width: 24px; height: 14px; border-radius: 3px; }
+
+    .cs-flow-stats {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px;
+    }
+    .cs-fstat {
+      border-radius: 16px; padding: 22px 24px;
+      display: flex; flex-direction: column; gap: 6px;
+    }
+    .cs-fstat__num {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 32px; font-weight: 700; letter-spacing: -1px;
+      background: linear-gradient(135deg, #fff 40%, rgba(160,185,255,0.7) 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .cs-fstat__label { font-size: 12px; color: rgba(255,255,255,0.40); line-height: 1.5; }
+    .cs-fstat__bar {
+      height: 2px; border-radius: 2px;
+      background: rgba(255,255,255,0.05);
+      margin-top: 6px; position: relative; overflow: hidden;
+    }
+    .cs-fstat__fill {
+      position: absolute; top: 0; left: 0; height: 100%; border-radius: 2px;
+      background: linear-gradient(90deg, #5B8FFF, #A78BFA);
+    }
+  </style>
+  <script src="https://mcp.figma.com/mcp/html-to-design/capture.js" async></script>
+</head>
+<body>
+
+<section class="cs-flow" id="cs-userflow">
+  <div class="cs-glows">
+    <div class="cs-glow cs-glow--1"></div>
+    <div class="cs-glow cs-glow--2"></div>
+  </div>
+  <div class="cs-grid"></div>
+
+  <div class="cs-inner">
+
+    <div class="cs-header">
+      <div>
+        <div class="cs-eyebrow">07 — Architecture</div>
+        <h2 class="cs-title">Booking &<br><span>Communication Flow</span></h2>
+      </div>
+      <div class="cs-ghost-num">07</div>
+    </div>
+
+    <div class="cs-legend">
+      <div class="cs-legend__item">
+        <div class="cs-legend__swatch" style="background:#1a3560;border:1.5px solid #5B8FFF;border-radius:8px;"></div>
+        Start / End
+      </div>
+      <div class="cs-legend__item">
+        <div class="cs-legend__swatch" style="background:#131d36;border:1px solid #3a5a99;"></div>
+        Action
+      </div>
+      <div class="cs-legend__item">
+        <div class="cs-legend__swatch" style="background:#1e1040;border:1px solid #7B5FD0;"></div>
+        Decision
+      </div>
+      <div class="cs-legend__item">
+        <div class="cs-legend__swatch" style="background:#2a1008;border:1px solid #CC4030;"></div>
+        Fallback
+      </div>
+      <div class="cs-legend__item">
+        <div class="cs-legend__swatch" style="background:#0e2a1e;border:1.5px solid #3a9060;border-radius:8px;"></div>
+        Success
+      </div>
+    </div>
+
+    <div class="cs-diagram-wrap cs-glass">
+      <div class="mermaid">
+flowchart LR
+    A(["Open App"]) --> B["Search &\nFilter"] --> C{"Results?"}
+    C -->|"No"| ERR1["Suggest\nAlternatives"]:::error
+    C -->|"Yes"| D["View\nProfile"] --> E{"Slot\nFree?"}
+    E -->|"No"| ERR2["Notify\nMe"]:::error
+    E -->|"Yes"| F["Book\nSlot"] --> G{"Payment\nOK?"}
+    G -->|"Fail"| ERR3["Retry"]:::error
+    G -->|"OK"| H(["Confirmed"]):::success --> I["Attend\nVisit"] --> J["Message\nDoctor"] --> K(["Re-book"]):::success
+
+    classDef default fill:#131d36,stroke:#3a5a99,stroke-width:1.5px,color:#c0d0f0,rx:6
+    classDef error fill:#2a1008,stroke:#CC4030,stroke-width:1.5px,color:#FF9080
+    classDef success fill:#0e2a1e,stroke:#3a9060,stroke-width:2px,color:#7DDBA5
+
+    class A default
+      </div>
+    </div>
+
+    <div class="cs-flow-stats">
+      <div class="cs-fstat cs-glass">
+        <div class="cs-fstat__num">3</div>
+        <div class="cs-fstat__label">Taps to complete a booking</div>
+        <div class="cs-fstat__bar"><div class="cs-fstat__fill" style="width:30%"></div></div>
+      </div>
+      <div class="cs-fstat cs-glass">
+        <div class="cs-fstat__num">3</div>
+        <div class="cs-fstat__label">Decision points in the flow</div>
+        <div class="cs-fstat__bar"><div class="cs-fstat__fill" style="width:30%"></div></div>
+      </div>
+      <div class="cs-fstat cs-glass">
+        <div class="cs-fstat__num">3</div>
+        <div class="cs-fstat__label">Fallback states handled gracefully</div>
+        <div class="cs-fstat__bar"><div class="cs-fstat__fill" style="width:30%"></div></div>
+      </div>
+      <div class="cs-fstat cs-glass">
+        <div class="cs-fstat__num">100%</div>
+        <div class="cs-fstat__label">Happy and unhappy paths covered</div>
+        <div class="cs-fstat__bar"><div class="cs-fstat__fill" style="width:100%"></div></div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<script>
+  mermaid.initialize({
+    startOnLoad: true,
+    theme: 'base',
+    themeVariables: {
+      background:           'transparent',
+      primaryColor:         '#131d36',
+      primaryBorderColor:   '#3a5a99',
+      primaryTextColor:     '#c0d0f0',
+      secondaryColor:       '#1e1040',
+      secondaryBorderColor: '#7B5FD0',
+      secondaryTextColor:   '#C4AEFF',
+      tertiaryColor:        '#2a1008',
+      tertiaryBorderColor:  '#CC4030',
+      tertiaryTextColor:    '#FF9080',
+      lineColor:            '#3a5888',
+      edgeLabelBackground:  '#0d1120',
+      fontFamily:           'DM Sans, sans-serif',
+      fontSize:             '14px'
+    },
+    flowchart: {
+      curve:        'basis',
+      padding:      20,
+      nodeSpacing:  50,
+      rankSpacing:  60,
+      useMaxWidth:  true
+    }
+  });
+</script>
+</body>
+</html>

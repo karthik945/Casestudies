@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PulseCare — Section 03: User Research</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: #05050E;
+      color: #fff;
+      font-family: 'DM Sans', sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+    .cs-glass {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+    }
+
+    /* ══ SECTION ══ */
+    .cs-research {
+      position: relative;
+      padding: 120px 72px;
+      overflow: hidden;
+    }
+
+    .cs-glows { position: absolute; inset: 0; pointer-events: none; z-index: 0; }
+    .cs-glow { position: absolute; border-radius: 50%; filter: blur(120px); }
+    .cs-glow--1 {
+      width: 600px; height: 600px;
+      background: radial-gradient(circle, rgba(55,100,255,0.13) 0%, transparent 65%);
+      top: -100px; left: -150px;
+    }
+    .cs-glow--2 {
+      width: 400px; height: 400px;
+      background: radial-gradient(circle, rgba(110,60,255,0.09) 0%, transparent 65%);
+      bottom: 0; right: 0;
+    }
+    .cs-grid {
+      position: absolute; inset: 0; z-index: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+      background-size: 64px 64px;
+    }
+
+    .cs-inner {
+      position: relative; z-index: 1;
+      max-width: 1200px; margin: 0 auto;
+      display: flex; flex-direction: column; gap: 72px;
+    }
+
+    /* ══ HEADER ══ */
+    .cs-header {
+      display: flex; align-items: flex-end;
+      justify-content: space-between;
+    }
+    .cs-eyebrow {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-size: 11px; font-weight: 500;
+      text-transform: uppercase; letter-spacing: 0.12em;
+      color: rgba(160,190,255,0.7);
+      margin-bottom: 12px;
+    }
+    .cs-eyebrow::before {
+      content: ''; display: block;
+      width: 24px; height: 1px;
+      background: rgba(91,143,255,0.6);
+    }
+    .cs-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 52px; font-weight: 700;
+      letter-spacing: -2px; line-height: 1; color: #fff;
+    }
+    .cs-title span {
+      background: linear-gradient(135deg, #6FA3FF 0%, #A78BFA 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .cs-ghost-num {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 80px; font-weight: 700;
+      color: rgba(255,255,255,0.04);
+      letter-spacing: -4px; line-height: 1;
+      user-select: none;
+    }
+
+    /* ══ BIG STATS ══ */
+    .cs-stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+    .cs-stat-card {
+      border-radius: 20px;
+      padding: 32px 28px;
+      display: flex; flex-direction: column; gap: 12px;
+      position: relative; overflow: hidden;
+    }
+    .cs-stat-card::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0; height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(91,143,255,0.4), transparent);
+    }
+    .cs-stat-card__num {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 64px; font-weight: 700;
+      letter-spacing: -3px; line-height: 1;
+      background: linear-gradient(135deg, #ffffff 40%, rgba(160,185,255,0.7) 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .cs-stat-card__label {
+      font-size: 14px; font-weight: 400;
+      color: rgba(255,255,255,0.5); line-height: 1.5;
+    }
+    .cs-stat-card__bar {
+      width: 100%; height: 3px;
+      border-radius: 3px;
+      background: rgba(255,255,255,0.06);
+      margin-top: 4px;
+      position: relative; overflow: hidden;
+    }
+    .cs-stat-card__bar::after {
+      content: '';
+      position: absolute; top: 0; left: 0; height: 100%;
+      border-radius: 3px;
+      background: linear-gradient(90deg, #5B8FFF, #A78BFA);
+    }
+    .cs-stat-card:nth-child(1) .cs-stat-card__bar::after { width: 62%; }
+    .cs-stat-card:nth-child(2) .cs-stat-card__bar::after { width: 48%; }
+    .cs-stat-card:nth-child(3) .cs-stat-card__bar::after { width: 75%; }
+
+    /* ══ METHODS + FINDINGS ROW ══ */
+    .cs-row {
+      display: grid;
+      grid-template-columns: 1fr 1.4fr;
+      gap: 32px;
+      align-items: start;
+    }
+
+    /* Research Methods */
+    .cs-methods { display: flex; flex-direction: column; gap: 14px; }
+    .cs-methods__label {
+      font-size: 11px; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.12em;
+      color: rgba(255,255,255,0.25); margin-bottom: 4px;
+    }
+    .cs-method-card {
+      border-radius: 14px;
+      padding: 16px 20px;
+      display: flex; align-items: center; gap: 16px;
+    }
+    .cs-method-card__icon {
+      width: 40px; height: 40px; border-radius: 10px; flex-shrink: 0;
+      background: rgba(65,120,255,0.12);
+      border: 1px solid rgba(65,120,255,0.22);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .cs-method-card__icon svg {
+      width: 18px; height: 18px;
+      stroke: #7AAAFF; fill: none; stroke-width: 1.5;
+    }
+    .cs-method-card__info { display: flex; flex-direction: column; gap: 3px; }
+    .cs-method-card__name {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 14px; font-weight: 600;
+      color: rgba(255,255,255,0.85);
+    }
+    .cs-method-card__detail {
+      font-size: 12px; color: rgba(255,255,255,0.35);
+    }
+
+    /* Key Findings */
+    .cs-findings { display: flex; flex-direction: column; gap: 14px; }
+    .cs-findings__label {
+      font-size: 11px; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.12em;
+      color: rgba(255,255,255,0.25); margin-bottom: 4px;
+    }
+    .cs-finding {
+      border-radius: 14px;
+      padding: 18px 22px;
+      display: flex; gap: 16px; align-items: flex-start;
+    }
+    .cs-finding__index {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 11px; font-weight: 700;
+      color: rgba(91,143,255,0.6);
+      padding-top: 2px; flex-shrink: 0;
+      letter-spacing: 0.05em;
+    }
+    .cs-finding__text {
+      font-size: 13px; font-weight: 400;
+      color: rgba(255,255,255,0.60); line-height: 1.65;
+    }
+    .cs-finding__text strong {
+      color: rgba(255,255,255,0.85); font-weight: 500;
+    }
+
+    /* ══ QUOTES ══ */
+    .cs-quotes {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+    .cs-quote {
+      border-radius: 18px;
+      padding: 28px;
+      display: flex; flex-direction: column; gap: 16px;
+      position: relative;
+    }
+    .cs-quote__mark {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 48px; font-weight: 700;
+      color: rgba(91,143,255,0.25);
+      line-height: 0.8;
+    }
+    .cs-quote__text {
+      font-size: 15px; font-weight: 300;
+      color: rgba(255,255,255,0.65);
+      line-height: 1.75;
+      font-style: italic;
+    }
+    .cs-quote__author {
+      display: flex; align-items: center; gap: 10px;
+      padding-top: 8px;
+      border-top: 1px solid rgba(255,255,255,0.06);
+    }
+    .cs-quote__avatar {
+      width: 32px; height: 32px; border-radius: 50%;
+      background: linear-gradient(135deg, rgba(91,143,255,0.3), rgba(167,139,250,0.3));
+      border: 1px solid rgba(91,143,255,0.2);
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 12px; font-weight: 600;
+      color: rgba(255,255,255,0.6);
+    }
+    .cs-quote__name {
+      font-size: 12px; font-weight: 500;
+      color: rgba(255,255,255,0.45);
+    }
+  </style>
+  <script src="https://mcp.figma.com/mcp/html-to-design/capture.js" async></script>
+</head>
+<body>
+
+<section class="cs-research" id="cs-research">
+
+  <div class="cs-glows">
+    <div class="cs-glow cs-glow--1"></div>
+    <div class="cs-glow cs-glow--2"></div>
+  </div>
+  <div class="cs-grid"></div>
+
+  <div class="cs-inner">
+
+    <!-- Header -->
+    <div class="cs-header">
+      <div>
+        <div class="cs-eyebrow">03 — Research</div>
+        <h2 class="cs-title">User Research &<br><span>Key Findings</span></h2>
+      </div>
+      <div class="cs-ghost-num">03</div>
+    </div>
+
+    <!-- Big Stats -->
+    <div class="cs-stats">
+      <div class="cs-stat-card cs-glass">
+        <div class="cs-stat-card__num">62%</div>
+        <p class="cs-stat-card__label">of users abandoned the booking flow before confirming an appointment</p>
+        <div class="cs-stat-card__bar"></div>
+      </div>
+      <div class="cs-stat-card cs-glass">
+        <div class="cs-stat-card__num">48%</div>
+        <p class="cs-stat-card__label">found appointment management time-consuming and hard to navigate</p>
+        <div class="cs-stat-card__bar"></div>
+      </div>
+      <div class="cs-stat-card cs-glass">
+        <div class="cs-stat-card__num">75%</div>
+        <p class="cs-stat-card__label">struggled with complex forms and low trust in doctor information shown</p>
+        <div class="cs-stat-card__bar"></div>
+      </div>
+    </div>
+
+    <!-- Methods + Findings -->
+    <div class="cs-row">
+
+      <!-- Methods -->
+      <div class="cs-methods">
+        <div class="cs-methods__label">Research Methods</div>
+
+        <div class="cs-method-card cs-glass">
+          <div class="cs-method-card__icon">
+            <svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z"/></svg>
+          </div>
+          <div class="cs-method-card__info">
+            <span class="cs-method-card__name">User Interviews</span>
+            <span class="cs-method-card__detail">12 participants · 45 min sessions</span>
+          </div>
+        </div>
+
+        <div class="cs-method-card cs-glass">
+          <div class="cs-method-card__icon">
+            <svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25zM6.75 12h.008v.008H6.75V12zm0 3h.008v.008H6.75V15zm0 3h.008v.008H6.75V18z"/></svg>
+          </div>
+          <div class="cs-method-card__info">
+            <span class="cs-method-card__name">Survey</span>
+            <span class="cs-method-card__detail">240 responses · online screened</span>
+          </div>
+        </div>
+
+        <div class="cs-method-card cs-glass">
+          <div class="cs-method-card__icon">
+            <svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z"/></svg>
+          </div>
+          <div class="cs-method-card__info">
+            <span class="cs-method-card__name">Analytics Audit</span>
+            <span class="cs-method-card__detail">Funnel drop-off · session recordings</span>
+          </div>
+        </div>
+
+        <div class="cs-method-card cs-glass">
+          <div class="cs-method-card__icon">
+            <svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9.75 3.104v5.714a2.25 2.25 0 01-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.301 24.301 0 014.5 0m0 0v5.714c0 .597.237 1.17.659 1.591L19.8 15.3M14.25 3.104c.251.023.501.05.75.082M19.8 15.3l-1.57.393A9.065 9.065 0 0112 15a9.065 9.065 0 00-6.23-.693L5 14.5m14.8.8l1.402 1.402c1.232 1.232.65 3.318-1.067 3.611A48.309 48.309 0 0112 21c-2.773 0-5.491-.235-8.135-.687-1.718-.293-2.3-2.379-1.067-3.61L5 14.5"/></svg>
+          </div>
+          <div class="cs-method-card__info">
+            <span class="cs-method-card__name">Competitive Analysis</span>
+            <span class="cs-method-card__detail">Zocdoc · Practo · HealthTap</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Findings -->
+      <div class="cs-findings">
+        <div class="cs-findings__label">Key Findings</div>
+
+        <div class="cs-finding cs-glass">
+          <span class="cs-finding__index">F01</span>
+          <p class="cs-finding__text"><strong>Trust is the #1 blocker.</strong> Users spent an average of 4 minutes on a doctor's profile before deciding — and 6 out of 10 still left without booking, citing insufficient information.</p>
+        </div>
+
+        <div class="cs-finding cs-glass">
+          <span class="cs-finding__index">F02</span>
+          <p class="cs-finding__text"><strong>Availability uncertainty causes anxiety.</strong> When users couldn't see real-time slots, they assumed the doctor was unavailable and exited — even when slots existed.</p>
+        </div>
+
+        <div class="cs-finding cs-glass">
+          <span class="cs-finding__index">F03</span>
+          <p class="cs-finding__text"><strong>Post-visit silence breaks loyalty.</strong> Users who couldn't follow up in-app churned within 30 days. Those with in-app messaging returned 3× more often.</p>
+        </div>
+
+        <div class="cs-finding cs-glass">
+          <span class="cs-finding__index">F04</span>
+          <p class="cs-finding__text"><strong>Booking flows have too many steps.</strong> The average competing app required 7+ taps to confirm a booking. Users expected to be done in 3.</p>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- User Quotes -->
+    <div class="cs-quotes">
+      <div class="cs-quote cs-glass">
+        <div class="cs-quote__mark">"</div>
+        <p class="cs-quote__text">I just want to find a doctor near me, see when they're free, and book it. Why does it feel like I'm filling out a tax return?</p>
+        <div class="cs-quote__author">
+          <div class="cs-quote__avatar">SC</div>
+          <span class="cs-quote__name">Sarah C. — Marketing Manager, 34</span>
+        </div>
+      </div>
+      <div class="cs-quote cs-glass">
+        <div class="cs-quote__mark">"</div>
+        <p class="cs-quote__text">After the appointment, the app became useless. I had to text my doctor on WhatsApp to ask a follow-up question. That felt wrong.</p>
+        <div class="cs-quote__author">
+          <div class="cs-quote__avatar">MR</div>
+          <span class="cs-quote__name">Marcus R. — Software Engineer, 29</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+</body>
+</html>

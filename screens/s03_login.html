@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>S03 — Login</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: #08081a;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      font-family: 'DM Sans', sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+    .phone {
+      width: 340px;
+      height: 736px;
+      border-radius: 36px;
+      position: relative;
+      overflow: hidden;
+      background: linear-gradient(160deg, #0d1535 0%, #0d0d1f 50%, #130d2a 100%);
+      box-shadow:
+        0 0 0 1px rgba(255,255,255,0.12),
+        0 0 0 2.5px rgba(0,0,0,0.8),
+        0 48px 96px rgba(0,0,0,0.8),
+        inset 0 1px 0 rgba(255,255,255,0.08);
+    }
+    .notch {
+      position: absolute;
+      top: 0; left: 50%; transform: translateX(-50%);
+      width: 90px; height: 24px;
+      background: #000;
+      border-radius: 0 0 16px 16px;
+      z-index: 20;
+    }
+    .status {
+      position: absolute;
+      top: 0; left: 0; right: 0; height: 44px;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 12px 20px 0;
+      z-index: 10;
+    }
+    .status-time {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 13px; font-weight: 600; color: #fff;
+    }
+    .status-icons { display: flex; align-items: center; gap: 5px; }
+    .battery {
+      width: 22px; height: 10px;
+      border: 1.5px solid rgba(255,255,255,0.45);
+      border-radius: 2.5px; padding: 1.5px;
+      position: relative; display: flex; align-items: center;
+    }
+    .battery::after {
+      content: '';
+      position: absolute; right: -4px; top: 50%; transform: translateY(-50%);
+      width: 2.5px; height: 5px;
+      background: rgba(255,255,255,0.45);
+      border-radius: 0 1.5px 1.5px 0;
+    }
+    .battery-fill { width: 65%; height: 100%; background: #3DD68C; border-radius: 1px; }
+
+    .glow-top {
+      position: absolute;
+      top: -80px; left: 50%; transform: translateX(-50%);
+      width: 280px; height: 280px;
+      background: radial-gradient(circle, rgba(167,139,250,0.15) 0%, transparent 65%);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    .content {
+      position: absolute;
+      top: 44px; left: 0; right: 0; bottom: 0;
+      padding: 32px 24px 36px;
+      display: flex; flex-direction: column; gap: 0;
+      overflow: hidden;
+    }
+
+    /* Back link */
+    .back-link {
+      display: flex; align-items: center; gap: 6px;
+      font-size: 13px; color: rgba(255,255,255,0.4);
+      margin-bottom: 28px;
+    }
+
+    .screen-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 26px; font-weight: 700;
+      letter-spacing: -0.5px; color: #fff;
+      line-height: 1.2;
+    }
+    .screen-sub {
+      font-size: 13px; color: rgba(255,255,255,0.38);
+      margin-top: 6px; margin-bottom: 28px;
+      line-height: 1.5;
+    }
+
+    .form { display: flex; flex-direction: column; gap: 14px; }
+    .field { display: flex; flex-direction: column; gap: 5px; }
+    .field-label {
+      font-size: 11px; font-weight: 500;
+      color: rgba(255,255,255,0.4);
+      text-transform: uppercase; letter-spacing: 0.06em;
+    }
+    .field-input {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 12px;
+      padding: 13px 14px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .field-input--active {
+      border-color: rgba(91,143,255,0.5);
+      background: rgba(91,143,255,0.06);
+    }
+    .field-value { font-size: 13px; color: rgba(255,255,255,0.75); }
+
+    .forgot {
+      text-align: right;
+      font-size: 12px; color: rgba(110,163,255,0.7);
+      margin-top: -6px;
+    }
+
+    .btn-primary {
+      width: 100%; padding: 14px;
+      background: linear-gradient(135deg, #5B8FFF 0%, #7B6FFF 100%);
+      border-radius: 14px;
+      font-size: 14px; font-weight: 600; color: #fff;
+      text-align: center;
+      margin-top: 8px;
+      box-shadow: 0 8px 24px rgba(91,143,255,0.3);
+    }
+
+    .divider {
+      display: flex; align-items: center; gap: 10px;
+      margin: 20px 0;
+    }
+    .divider-line { flex: 1; height: 1px; background: rgba(255,255,255,0.07); }
+    .divider-text { font-size: 11px; color: rgba(255,255,255,0.25); }
+
+    .btn-google {
+      width: 100%; padding: 13px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 14px;
+      font-size: 13px; color: rgba(255,255,255,0.65);
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+    }
+
+    .signup-note {
+      text-align: center;
+      font-size: 12px; color: rgba(255,255,255,0.28);
+      margin-top: 20px;
+    }
+    .signup-note span { color: rgba(110,163,255,0.8); font-weight: 500; }
+
+    /* Biometric row */
+    .biometric-row {
+      display: flex; align-items: center; justify-content: center; gap: 12px;
+      margin-top: 16px;
+    }
+    .biometric-btn {
+      display: flex; flex-direction: column; align-items: center; gap: 5px;
+      padding: 10px 18px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 12px;
+      font-size: 10px; color: rgba(255,255,255,0.35);
+    }
+  </style>
+</head>
+<body>
+<div class="phone">
+  <div class="notch"></div>
+  <div class="glow-top"></div>
+
+  <!-- Status bar -->
+  <div class="status">
+    <div class="status-time">9:41</div>
+    <div class="status-icons">
+      <svg width="30" height="10" viewBox="0 0 30 10" fill="none">
+        <rect x="0" y="6" width="2.5" height="4" rx="0.4" fill="rgba(255,255,255,0.75)"/>
+        <rect x="3.8" y="3.5" width="2.5" height="6.5" rx="0.4" fill="rgba(255,255,255,0.75)"/>
+        <rect x="7.6" y="1.5" width="2.5" height="8.5" rx="0.4" fill="rgba(255,255,255,0.55)"/>
+        <rect x="11.4" y="0" width="2.5" height="10" rx="0.4" fill="rgba(255,255,255,0.38)"/>
+        <circle cx="23" cy="9" r="1.2" fill="rgba(255,255,255,0.7)"/>
+        <path d="M20.2 6.5a3.8 3.8 0 015.6 0" stroke="rgba(255,255,255,0.7)" stroke-width="1.2" stroke-linecap="round"/>
+        <path d="M17.8 4a7.2 7.2 0 0110.4 0" stroke="rgba(255,255,255,0.7)" stroke-width="1.2" stroke-linecap="round"/>
+      </svg>
+      <div class="battery"><div class="battery-fill"></div></div>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- Back link -->
+    <div class="back-link">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+        <path d="M10 13L5 8l5-5" stroke="rgba(255,255,255,0.4)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      Back
+    </div>
+
+    <!-- Header -->
+    <div class="screen-title">Welcome back</div>
+    <div class="screen-sub">Sign in to your PulseCare account</div>
+
+    <!-- Form -->
+    <div class="form">
+      <div class="field">
+        <div class="field-label">Email Address</div>
+        <div class="field-input field-input--active">
+          <span class="field-value">emily@example.com</span>
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+            <rect x="1.5" y="3" width="11" height="8" rx="1.5" stroke="rgba(91,143,255,0.6)" stroke-width="1.4"/>
+            <path d="M1.5 5l5.5 3.5L12.5 5" stroke="rgba(91,143,255,0.6)" stroke-width="1.4" stroke-linecap="round"/>
+          </svg>
+        </div>
+      </div>
+
+      <div class="field">
+        <div class="field-label">Password</div>
+        <div class="field-input">
+          <span class="field-value" style="letter-spacing:3px;font-size:11px;">••••••••••</span>
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+            <path d="M2 7s2-4 5-4 5 4 5 4-2 4-5 4-5-4-5-4z" stroke="rgba(255,255,255,0.25)" stroke-width="1.4"/>
+            <circle cx="7" cy="7" r="1.5" fill="rgba(255,255,255,0.25)"/>
+          </svg>
+        </div>
+      </div>
+
+      <div class="forgot">Forgot password?</div>
+
+      <div class="btn-primary">Sign In</div>
+    </div>
+
+    <!-- Divider -->
+    <div class="divider">
+      <div class="divider-line"></div>
+      <div class="divider-text">or continue with</div>
+      <div class="divider-line"></div>
+    </div>
+
+    <!-- Google -->
+    <div class="btn-google">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+        <path d="M14.5 8.16c0-.52-.04-1.02-.13-1.5H8v2.84h3.64a3.1 3.1 0 01-1.35 2.04v1.7h2.18c1.28-1.18 2.03-2.92 2.03-5.08z" fill="rgba(66,133,244,0.8)"/>
+        <path d="M8 15c1.83 0 3.36-.6 4.47-1.64l-2.18-1.7c-.6.41-1.38.65-2.29.65-1.76 0-3.25-1.19-3.78-2.78H1.97v1.74C3.07 13.6 5.38 15 8 15z" fill="rgba(52,168,83,0.8)"/>
+        <path d="M4.22 9.53A4.24 4.24 0 014 8c0-.53.09-1.04.22-1.53V4.73H1.97A7.02 7.02 0 001 8c0 1.13.27 2.2.97 3.27l2.25-1.74z" fill="rgba(251,188,4,0.8)"/>
+        <path d="M8 3.69c.99 0 1.88.34 2.58 1.01l1.93-1.93C11.36 1.73 9.83 1 8 1 5.38 1 3.07 2.4 1.97 4.73L4.22 6.47C4.75 4.88 6.24 3.69 8 3.69z" fill="rgba(234,67,53,0.8)"/>
+      </svg>
+      Continue with Google
+    </div>
+
+    <!-- Biometric -->
+    <div class="biometric-row">
+      <div class="biometric-btn">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+          <!-- Face ID: corner brackets + face -->
+          <path d="M4 8.5V6a2 2 0 012-2h2.5" stroke="rgba(255,255,255,0.4)" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M16 8.5V6a2 2 0 00-2-2h-2.5" stroke="rgba(255,255,255,0.4)" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M4 11.5V14a2 2 0 002 2h2.5" stroke="rgba(255,255,255,0.4)" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M16 11.5V14a2 2 0 01-2 2h-2.5" stroke="rgba(255,255,255,0.4)" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="8" cy="10" r="0.9" fill="rgba(255,255,255,0.45)"/>
+          <circle cx="12" cy="10" r="0.9" fill="rgba(255,255,255,0.45)"/>
+          <path d="M7.5 12.5a3 3 0 005 0" stroke="rgba(255,255,255,0.4)" stroke-width="1.2" stroke-linecap="round"/>
+        </svg>
+        Face ID
+      </div>
+      <div style="font-size:11px;color:rgba(255,255,255,0.2);">or</div>
+      <div class="biometric-btn">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+          <!-- Touch ID: fingerprint -->
+          <circle cx="10" cy="10" r="1.2" fill="rgba(255,255,255,0.4)"/>
+          <path d="M7.5 10a2.5 2.5 0 015 0c0 1.4-.5 3-1.5 4.2" stroke="rgba(255,255,255,0.4)" stroke-width="1.1" stroke-linecap="round" fill="none"/>
+          <path d="M10 7.5a2.5 2.5 0 00-2.5 2.5" stroke="rgba(255,255,255,0.4)" stroke-width="1.1" stroke-linecap="round" fill="none"/>
+          <path d="M5 10a5 5 0 0110 0c0 2.4-1 5.2-2.5 7" stroke="rgba(255,255,255,0.3)" stroke-width="1.1" stroke-linecap="round" fill="none"/>
+          <path d="M10 5a5 5 0 00-5 5" stroke="rgba(255,255,255,0.3)" stroke-width="1.1" stroke-linecap="round" fill="none"/>
+          <path d="M2.5 10a7.5 7.5 0 0115 0c0 3.2-1.3 7-3.5 9.5" stroke="rgba(255,255,255,0.2)" stroke-width="1.1" stroke-linecap="round" fill="none"/>
+          <path d="M10 2.5a7.5 7.5 0 00-7.5 7.5" stroke="rgba(255,255,255,0.2)" stroke-width="1.1" stroke-linecap="round" fill="none"/>
+        </svg>
+        Touch ID
+      </div>
+    </div>
+
+    <div class="signup-note">New here? <span>Create an account</span></div>
+
+  </div>
+</div>
+</body>
+</html>

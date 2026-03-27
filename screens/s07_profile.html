@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>S07 — Doctor Profile</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: #08081a;
+      display: flex; align-items: center; justify-content: center;
+      min-height: 100vh;
+      font-family: 'DM Sans', sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+    .phone {
+      width: 340px; height: 736px;
+      border-radius: 36px; position: relative; overflow: hidden;
+      background: #0d0d1f;
+      box-shadow:
+        0 0 0 1px rgba(255,255,255,0.12),
+        0 0 0 2.5px rgba(0,0,0,0.8),
+        0 48px 96px rgba(0,0,0,0.8),
+        inset 0 1px 0 rgba(255,255,255,0.08);
+    }
+    .notch {
+      position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+      width: 90px; height: 24px; background: #000;
+      border-radius: 0 0 16px 16px; z-index: 20;
+    }
+    .status {
+      position: absolute; top: 0; left: 0; right: 0; height: 44px;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 12px 20px 0; z-index: 30;
+    }
+    .status-time { font-family: 'Space Grotesk',sans-serif; font-size: 13px; font-weight: 600; color: #fff; }
+    .status-icons { display: flex; align-items: center; gap: 5px; }
+    .battery {
+      width: 22px; height: 10px;
+      border: 1.5px solid rgba(255,255,255,0.45); border-radius: 2.5px;
+      padding: 1.5px; position: relative; display: flex; align-items: center;
+    }
+    .battery::after {
+      content: ''; position: absolute; right: -4px; top: 50%; transform: translateY(-50%);
+      width: 2.5px; height: 5px; background: rgba(255,255,255,0.45);
+      border-radius: 0 1.5px 1.5px 0;
+    }
+    .battery-fill { width: 65%; height: 100%; background: #3DD68C; border-radius: 1px; }
+
+    /* Scrollable body — full height minus sticky CTA */
+    .body {
+      position: absolute;
+      top: 44px; left: 0; right: 0; bottom: 70px;
+      overflow-y: auto; overflow-x: hidden;
+      scrollbar-width: none;
+    }
+    .body::-webkit-scrollbar { display: none; }
+
+    /* Sticky CTA — sits at very bottom, no tab bar on this screen */
+    .sticky-cta {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      padding: 10px 18px 16px;
+      background: linear-gradient(to top, #0d0d1f 70%, transparent);
+      z-index: 20;
+    }
+  </style>
+</head>
+<body>
+<div class="phone">
+  <div class="notch"></div>
+
+  <!-- Status bar -->
+  <div class="status">
+    <div class="status-time">9:48</div>
+    <div class="status-icons">
+      <svg width="30" height="10" viewBox="0 0 30 10" fill="none">
+        <rect x="0" y="6" width="2.5" height="4" rx="0.4" fill="rgba(255,255,255,0.75)"/>
+        <rect x="3.8" y="3.5" width="2.5" height="6.5" rx="0.4" fill="rgba(255,255,255,0.75)"/>
+        <rect x="7.6" y="1.5" width="2.5" height="8.5" rx="0.4" fill="rgba(255,255,255,0.55)"/>
+        <rect x="11.4" y="0" width="2.5" height="10" rx="0.4" fill="rgba(255,255,255,0.38)"/>
+        <circle cx="23" cy="9" r="1.2" fill="rgba(255,255,255,0.7)"/>
+        <path d="M20.2 6.5a3.8 3.8 0 015.6 0" stroke="rgba(255,255,255,0.7)" stroke-width="1.2" stroke-linecap="round"/>
+        <path d="M17.8 4a7.2 7.2 0 0110.4 0" stroke="rgba(255,255,255,0.7)" stroke-width="1.2" stroke-linecap="round"/>
+      </svg>
+      <div class="battery"><div class="battery-fill"></div></div>
+    </div>
+  </div>
+
+  <div class="body">
+
+    <!-- ① Hero image -->
+    <div style="position:relative;width:100%;height:200px;overflow:hidden;">
+      <img src="https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=600&h=400&fit=crop&q=80"
+        style="width:100%;height:100%;object-fit:cover;object-position:top center;display:block;" />
+      <!-- Top gradient for button readability -->
+      <div style="position:absolute;top:0;left:0;right:0;height:90px;background:linear-gradient(to bottom,rgba(0,0,0,0.55),transparent);"></div>
+      <!-- Bottom gradient fade into bg -->
+      <div style="position:absolute;bottom:0;left:0;right:0;height:80px;background:linear-gradient(to top,#0d0d1f,transparent);"></div>
+
+      <!-- Back button -->
+      <div style="position:absolute;top:52px;left:16px;display:flex;align-items:center;gap:5px;background:rgba(0,0,0,0.5);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);padding:6px 12px 6px 8px;border-radius:100px;border:1px solid rgba(255,255,255,0.15);">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+          <path d="M10 13L5 8l5-5" stroke="#fff" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <span style="font-size:12px;font-weight:500;color:#fff;">Back</span>
+      </div>
+
+      <!-- Top right: Save (bookmark) + Share — correct icons -->
+      <div style="position:absolute;top:52px;right:16px;display:flex;gap:8px;">
+        <!-- Bookmark / Save -->
+        <div style="width:34px;height:34px;background:rgba(0,0,0,0.5);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-radius:50%;border:1px solid rgba(255,255,255,0.15);display:flex;align-items:center;justify-content:center;">
+          <svg width="15" height="15" viewBox="0 0 15 15" fill="none">
+            <path d="M3 2h9a1 1 0 011 1v10l-5-3-5 3V3a1 1 0 011-1z" stroke="rgba(255,255,255,0.75)" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <!-- Share -->
+        <div style="width:34px;height:34px;background:rgba(0,0,0,0.5);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-radius:50%;border:1px solid rgba(255,255,255,0.15);display:flex;align-items:center;justify-content:center;">
+          <svg width="15" height="15" viewBox="0 0 15 15" fill="none">
+            <circle cx="12" cy="3" r="1.8" stroke="rgba(255,255,255,0.75)" stroke-width="1.3"/>
+            <circle cx="12" cy="12" r="1.8" stroke="rgba(255,255,255,0.75)" stroke-width="1.3"/>
+            <circle cx="3" cy="7.5" r="1.8" stroke="rgba(255,255,255,0.75)" stroke-width="1.3"/>
+            <path d="M4.7 6.7l5.5-2.8M4.7 8.3l5.5 2.8" stroke="rgba(255,255,255,0.75)" stroke-width="1.3"/>
+          </svg>
+        </div>
+      </div>
+
+      <!-- Available today badge -->
+      <div style="position:absolute;bottom:14px;left:16px;display:flex;align-items:center;gap:5px;background:rgba(10,30,20,0.75);backdrop-filter:blur(8px);border:1px solid rgba(61,214,140,0.4);padding:5px 10px;border-radius:100px;">
+        <div style="width:6px;height:6px;border-radius:50%;background:#3DD68C;"></div>
+        <span style="font-size:11px;font-weight:600;color:rgba(61,214,140,0.95);">Available Today</span>
+      </div>
+    </div>
+
+    <!-- ② Doctor identity -->
+    <div style="padding:14px 18px 0;">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;">
+        <div style="flex:1;">
+          <div style="font-family:'Space Grotesk',sans-serif;font-size:20px;font-weight:700;color:#fff;letter-spacing:-0.4px;">Dr. James Mitchell</div>
+          <div style="font-size:12px;color:rgba(255,255,255,0.42);margin-top:3px;">Cardiologist · MD, FACC</div>
+          <div style="display:flex;align-items:center;gap:4px;margin-top:4px;">
+            <svg width="11" height="11" viewBox="0 0 11 11" fill="none">
+              <path d="M5.5 1a2.5 2.5 0 012.5 2.5C8 5.5 5.5 9 5.5 9S3 5.5 3 3.5A2.5 2.5 0 015.5 1z" stroke="rgba(255,255,255,0.28)" stroke-width="1.1"/>
+            </svg>
+            <span style="font-size:11px;color:rgba(255,255,255,0.32);">NYU Langone Medical Center</span>
+          </div>
+        </div>
+        <div style="text-align:right;flex-shrink:0;">
+          <div style="font-family:'Space Grotesk',sans-serif;font-size:18px;font-weight:700;color:#fff;">$120</div>
+          <div style="font-size:10px;color:rgba(255,255,255,0.32);">per visit</div>
+        </div>
+      </div>
+
+      <!-- Rating -->
+      <div style="display:flex;align-items:center;gap:6px;margin-top:10px;flex-wrap:wrap;">
+        <span style="font-size:11px;color:#F59E0B;">★★★★★</span>
+        <span style="font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:600;color:#fff;">4.9</span>
+        <span style="font-size:11px;color:rgba(255,255,255,0.32);">· 142 reviews</span>
+        <div style="margin-left:auto;padding:3px 8px;background:rgba(91,143,255,0.1);border:1px solid rgba(91,143,255,0.2);border-radius:100px;font-size:10px;color:rgba(110,163,255,0.75);">Top 5% in NYC</div>
+      </div>
+    </div>
+
+    <!-- ③ Stats row -->
+    <div style="display:flex;gap:8px;padding:12px 18px 0;">
+      <div style="flex:1;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);border-radius:12px;padding:10px;text-align:center;">
+        <div style="font-family:'Space Grotesk',sans-serif;font-size:17px;font-weight:700;color:#5B8FFF;">14+</div>
+        <div style="font-size:10px;color:rgba(255,255,255,0.32);margin-top:2px;">Yrs Exp.</div>
+      </div>
+      <div style="flex:1;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);border-radius:12px;padding:10px;text-align:center;">
+        <div style="font-family:'Space Grotesk',sans-serif;font-size:17px;font-weight:700;color:#5B8FFF;">2.4K</div>
+        <div style="font-size:10px;color:rgba(255,255,255,0.32);margin-top:2px;">Patients</div>
+      </div>
+      <div style="flex:1;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);border-radius:12px;padding:10px;text-align:center;">
+        <div style="font-family:'Space Grotesk',sans-serif;font-size:17px;font-weight:700;color:#3DD68C;">98%</div>
+        <div style="font-size:10px;color:rgba(255,255,255,0.32);margin-top:2px;">Recommended</div>
+      </div>
+    </div>
+
+    <!-- ④ About -->
+    <div style="padding:14px 18px 0;">
+      <div style="font-size:11px;font-weight:600;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:7px;">About</div>
+      <div style="font-size:12.5px;color:rgba(255,255,255,0.52);line-height:1.65;">
+        Board-certified cardiologist specialising in preventive cardiology and heart failure. Trained at Johns Hopkins. Known for thorough consultations and patient-first approach.
+        <span style="color:rgba(91,143,255,0.75);"> Read more</span>
+      </div>
+    </div>
+
+    <!-- ⑤ Specialises In -->
+    <div style="padding:12px 18px 0;">
+      <div style="font-size:11px;font-weight:600;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px;">Specialises In</div>
+      <div style="display:flex;flex-wrap:wrap;gap:6px;">
+        <div style="padding:5px 11px;background:rgba(91,143,255,0.08);border:1px solid rgba(91,143,255,0.2);border-radius:100px;font-size:11px;color:rgba(110,163,255,0.8);">Heart Failure</div>
+        <div style="padding:5px 11px;background:rgba(91,143,255,0.08);border:1px solid rgba(91,143,255,0.2);border-radius:100px;font-size:11px;color:rgba(110,163,255,0.8);">Preventive Cardiology</div>
+        <div style="padding:5px 11px;background:rgba(91,143,255,0.08);border:1px solid rgba(91,143,255,0.2);border-radius:100px;font-size:11px;color:rgba(110,163,255,0.8);">Echocardiography</div>
+        <div style="padding:5px 11px;background:rgba(91,143,255,0.08);border:1px solid rgba(91,143,255,0.2);border-radius:100px;font-size:11px;color:rgba(110,163,255,0.8);">Hypertension</div>
+      </div>
+    </div>
+
+    <!-- ⑥ Location -->
+    <div style="padding:12px 18px 0;">
+      <div style="font-size:11px;font-weight:600;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px;">Location</div>
+      <div style="display:flex;align-items:center;gap:10px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);border-radius:12px;padding:11px;">
+        <div style="width:34px;height:34px;background:rgba(91,143,255,0.1);border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <path d="M8 2a3.5 3.5 0 013.5 3.5C11.5 8.5 8 13 8 13S4.5 8.5 4.5 5.5A3.5 3.5 0 018 2z" stroke="#5B8FFF" stroke-width="1.4"/>
+            <circle cx="8" cy="5.5" r="1.3" fill="rgba(91,143,255,0.7)"/>
+          </svg>
+        </div>
+        <div style="flex:1;">
+          <div style="font-size:12.5px;font-weight:500;color:rgba(255,255,255,0.72);">NYU Langone Medical Center</div>
+          <div style="font-size:11px;color:rgba(255,255,255,0.32);margin-top:1px;">550 1st Ave, New York · 0.8 mi</div>
+        </div>
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+          <path d="M5 3l4 4-4 4" stroke="rgba(255,255,255,0.22)" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+    </div>
+
+    <!-- Spacer so content clears sticky CTA -->
+    <div style="height:16px;"></div>
+
+  </div>
+
+  <!-- Sticky CTA — bottom of screen, no tab bar on flow screens -->
+  <div class="sticky-cta">
+    <div style="display:flex;gap:10px;">
+      <div style="width:48px;height:50px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+          <path d="M2 3h14a1 1 0 011 1v8a1 1 0 01-1 1H6l-4 3V4a1 1 0 011-1z" stroke="rgba(255,255,255,0.5)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M5.5 8h7M5.5 11h4" stroke="rgba(255,255,255,0.3)" stroke-width="1.2" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div style="flex:1;padding:14px;background:linear-gradient(135deg,#5B8FFF 0%,#7B6FFF 100%);border-radius:14px;font-size:15px;font-weight:600;color:#fff;text-align:center;cursor:pointer;box-shadow:0 8px 24px rgba(91,143,255,0.35);">
+        Book Appointment
+      </div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

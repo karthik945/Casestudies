@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PulseCare — Section 04: User Persona</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: #05050E;
+      color: #fff;
+      font-family: 'DM Sans', sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+    .cs-glass {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+    }
+
+    .cs-persona {
+      position: relative;
+      padding: 120px 72px;
+      overflow: hidden;
+    }
+
+    .cs-glows { position: absolute; inset: 0; pointer-events: none; z-index: 0; }
+    .cs-glow { position: absolute; border-radius: 50%; filter: blur(120px); }
+    .cs-glow--1 {
+      width: 500px; height: 500px;
+      background: radial-gradient(circle, rgba(55,100,255,0.15) 0%, transparent 65%);
+      top: 50px; right: 0;
+    }
+    .cs-glow--2 {
+      width: 350px; height: 350px;
+      background: radial-gradient(circle, rgba(110,60,255,0.10) 0%, transparent 65%);
+      bottom: 0; left: 100px;
+    }
+    .cs-grid {
+      position: absolute; inset: 0; z-index: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+      background-size: 64px 64px;
+    }
+
+    .cs-inner {
+      position: relative; z-index: 1;
+      max-width: 1200px; margin: 0 auto;
+      display: flex; flex-direction: column; gap: 64px;
+    }
+
+    /* Header */
+    .cs-header { display: flex; align-items: flex-end; justify-content: space-between; }
+    .cs-eyebrow {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-size: 11px; font-weight: 500;
+      text-transform: uppercase; letter-spacing: 0.12em;
+      color: rgba(160,190,255,0.7); margin-bottom: 12px;
+    }
+    .cs-eyebrow::before {
+      content: ''; display: block; width: 24px; height: 1px;
+      background: rgba(91,143,255,0.6);
+    }
+    .cs-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 52px; font-weight: 700;
+      letter-spacing: -2px; line-height: 1; color: #fff;
+    }
+    .cs-title span {
+      background: linear-gradient(135deg, #6FA3FF 0%, #A78BFA 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .cs-ghost-num {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 80px; font-weight: 700;
+      color: rgba(255,255,255,0.04);
+      letter-spacing: -4px; user-select: none;
+    }
+
+    /* ══ PERSONA CARD ══ */
+    .cs-persona-card {
+      display: grid;
+      grid-template-columns: 300px 1fr;
+      border-radius: 24px;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    /* Left — identity */
+    .cs-persona-card__identity {
+      background: linear-gradient(160deg, rgba(65,120,255,0.12) 0%, rgba(110,60,255,0.06) 100%);
+      border-right: 1px solid rgba(255,255,255,0.07);
+      padding: 40px 32px;
+      display: flex; flex-direction: column; gap: 24px;
+      align-items: center; text-align: center;
+    }
+
+    .cs-avatar {
+      width: 120px; height: 120px; border-radius: 50%;
+      border: 2px solid rgba(91,143,255,0.35);
+      box-shadow: 0 0 24px rgba(91,143,255,0.2);
+      position: relative;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+    .cs-avatar img {
+      width: 100%; height: 100%;
+      object-fit: cover; object-position: top;
+      display: block;
+    }
+    .cs-avatar::after {
+      content: '';
+      position: absolute; bottom: 6px; right: 6px;
+      width: 14px; height: 14px; border-radius: 50%;
+      background: #5BC98A;
+      border: 2px solid #05050E;
+      box-shadow: 0 0 8px rgba(91,201,138,0.6);
+      z-index: 2;
+    }
+
+    .cs-persona-name {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 22px; font-weight: 700;
+      color: #fff; letter-spacing: -0.5px;
+    }
+    .cs-persona-role {
+      font-size: 13px; color: rgba(255,255,255,0.4);
+      margin-top: 4px;
+    }
+
+    .cs-persona-tags {
+      display: flex; flex-wrap: wrap;
+      gap: 7px; justify-content: center;
+    }
+    .cs-tag {
+      padding: 4px 11px;
+      border-radius: 100px;
+      background: rgba(91,143,255,0.10);
+      border: 1px solid rgba(91,143,255,0.20);
+      font-size: 11px; color: rgba(160,190,255,0.8);
+    }
+
+    .cs-persona-bio {
+      font-size: 13px; color: rgba(255,255,255,0.45);
+      line-height: 1.7; text-align: left;
+      padding-top: 16px;
+      border-top: 1px solid rgba(255,255,255,0.06);
+    }
+
+    /* Demo data pills */
+    .cs-identity-meta {
+      width: 100%; display: flex; flex-direction: column; gap: 8px;
+    }
+    .cs-identity-meta__row {
+      display: flex; justify-content: space-between;
+      align-items: center;
+      padding: 8px 12px; border-radius: 8px;
+      background: rgba(255,255,255,0.03);
+    }
+    .cs-identity-meta__key {
+      font-size: 11px; color: rgba(255,255,255,0.25);
+      text-transform: uppercase; letter-spacing: 0.08em;
+    }
+    .cs-identity-meta__val {
+      font-size: 12px; font-weight: 500;
+      color: rgba(255,255,255,0.65);
+    }
+
+    /* Right — attributes */
+    .cs-persona-card__attrs {
+      padding: 40px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      background: rgba(255,255,255,0.02);
+    }
+
+    .cs-attr-block { display: flex; flex-direction: column; gap: 12px; }
+    .cs-attr-block__label {
+      font-size: 10px; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.12em;
+      color: rgba(255,255,255,0.22);
+      display: flex; align-items: center; gap: 8px;
+    }
+    .cs-attr-block__label::after {
+      content: ''; flex: 1; height: 1px;
+      background: rgba(255,255,255,0.05);
+    }
+
+    /* Needs & Goals — list */
+    .cs-attr-list { display: flex; flex-direction: column; gap: 8px; }
+    .cs-attr-list__item {
+      display: flex; align-items: flex-start; gap: 10px;
+      font-size: 13px; color: rgba(255,255,255,0.55);
+      line-height: 1.5;
+    }
+    .cs-attr-list__item::before {
+      content: '';
+      width: 5px; height: 5px; border-radius: 50%;
+      background: rgba(91,143,255,0.6);
+      flex-shrink: 0; margin-top: 6px;
+    }
+
+    /* Frustrations — red tint */
+    .cs-attr-list--frustrations .cs-attr-list__item::before {
+      background: rgba(255,100,80,0.6);
+    }
+
+    /* Personality bars */
+    .cs-personality { display: flex; flex-direction: column; gap: 10px; }
+    .cs-personality__row { display: flex; flex-direction: column; gap: 5px; }
+    .cs-personality__labels {
+      display: flex; justify-content: space-between;
+      font-size: 11px; color: rgba(255,255,255,0.35);
+    }
+    .cs-personality__bar {
+      height: 4px; border-radius: 4px;
+      background: rgba(255,255,255,0.06);
+      position: relative; overflow: hidden;
+    }
+    .cs-personality__fill {
+      position: absolute; top: 0; left: 0; height: 100%;
+      border-radius: 4px;
+      background: linear-gradient(90deg, #5B8FFF, #A78BFA);
+    }
+
+    /* Jobs to be done */
+    .cs-jtbd { display: flex; flex-direction: column; gap: 8px; }
+    .cs-jtbd__item {
+      border-radius: 10px;
+      padding: 12px 16px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.06);
+      font-size: 13px; color: rgba(255,255,255,0.55);
+      line-height: 1.5;
+    }
+    .cs-jtbd__item strong {
+      color: rgba(255,255,255,0.80); font-weight: 500;
+      display: block; margin-bottom: 2px; font-size: 12px;
+    }
+
+    /* ══ CONTEXT NOTE ══ */
+    .cs-context-note {
+      border-radius: 16px;
+      padding: 24px 28px;
+      border-left: 3px solid rgba(91,143,255,0.5);
+      background: rgba(91,143,255,0.05);
+      font-size: 14px;
+      color: rgba(255,255,255,0.55);
+      line-height: 1.75;
+    }
+    .cs-context-note strong { color: rgba(255,255,255,0.85); font-weight: 500; }
+  </style>
+  <script src="https://mcp.figma.com/mcp/html-to-design/capture.js" async></script>
+</head>
+<body>
+
+<section class="cs-persona" id="cs-persona">
+
+  <div class="cs-glows">
+    <div class="cs-glow cs-glow--1"></div>
+    <div class="cs-glow cs-glow--2"></div>
+  </div>
+  <div class="cs-grid"></div>
+
+  <div class="cs-inner">
+
+    <!-- Header -->
+    <div class="cs-header">
+      <div>
+        <div class="cs-eyebrow">04 — Persona</div>
+        <h2 class="cs-title">Meet the<br><span>User</span></h2>
+      </div>
+      <div class="cs-ghost-num">04</div>
+    </div>
+
+    <!-- Persona Card -->
+    <div class="cs-persona-card">
+
+      <!-- Identity panel -->
+      <div class="cs-persona-card__identity">
+
+        <div class="cs-avatar">
+          <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=240&h=240&fit=crop&crop=face" alt="Emily Carter" />
+        </div>
+
+        <div>
+          <div class="cs-persona-name">Emily Carter</div>
+          <div class="cs-persona-role">Marketing Manager</div>
+        </div>
+
+        <div class="cs-persona-tags">
+          <span class="cs-tag">Busy Professional</span>
+          <span class="cs-tag">Digital-First</span>
+          <span class="cs-tag">Time-Poor</span>
+          <span class="cs-tag">Trust-Driven</span>
+        </div>
+
+        <div class="cs-identity-meta">
+          <div class="cs-identity-meta__row">
+            <span class="cs-identity-meta__key">Age</span>
+            <span class="cs-identity-meta__val">34</span>
+          </div>
+          <div class="cs-identity-meta__row">
+            <span class="cs-identity-meta__key">Location</span>
+            <span class="cs-identity-meta__val">New York, USA</span>
+          </div>
+          <div class="cs-identity-meta__row">
+            <span class="cs-identity-meta__key">Device</span>
+            <span class="cs-identity-meta__val">iPhone 15 Pro</span>
+          </div>
+          <div class="cs-identity-meta__row">
+            <span class="cs-identity-meta__key">Visits/Year</span>
+            <span class="cs-identity-meta__val">4–6 checkups</span>
+          </div>
+        </div>
+
+        <p class="cs-persona-bio">
+          Emily prioritises her health but has almost no time to manage it. She expects her healthcare apps to be as intuitive as her banking and food delivery apps — fast, clear, and stress-free.
+        </p>
+
+      </div>
+
+      <!-- Attributes grid -->
+      <div class="cs-persona-card__attrs">
+
+        <!-- Needs -->
+        <div class="cs-attr-block">
+          <div class="cs-attr-block__label">Needs</div>
+          <div class="cs-attr-list">
+            <div class="cs-attr-list__item">Find a specialist quickly without endless scrolling</div>
+            <div class="cs-attr-list__item">See real availability before tapping into a profile</div>
+            <div class="cs-attr-list__item">Book, reschedule, and cancel with minimal friction</div>
+            <div class="cs-attr-list__item">Stay connected with her doctor after the visit</div>
+          </div>
+        </div>
+
+        <!-- Personality -->
+        <div class="cs-attr-block">
+          <div class="cs-attr-block__label">Personality</div>
+          <div class="cs-personality">
+            <div class="cs-personality__row">
+              <div class="cs-personality__labels"><span>Introvert</span><span>Extrovert</span></div>
+              <div class="cs-personality__bar"><div class="cs-personality__fill" style="width:38%"></div></div>
+            </div>
+            <div class="cs-personality__row">
+              <div class="cs-personality__labels"><span>Sensing</span><span>Intuitive</span></div>
+              <div class="cs-personality__bar"><div class="cs-personality__fill" style="width:72%"></div></div>
+            </div>
+            <div class="cs-personality__row">
+              <div class="cs-personality__labels"><span>Thinking</span><span>Feeling</span></div>
+              <div class="cs-personality__bar"><div class="cs-personality__fill" style="width:60%"></div></div>
+            </div>
+            <div class="cs-personality__row">
+              <div class="cs-personality__labels"><span>Judging</span><span>Perceiving</span></div>
+              <div class="cs-personality__bar"><div class="cs-personality__fill" style="width:80%"></div></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Frustrations -->
+        <div class="cs-attr-block">
+          <div class="cs-attr-block__label">Frustrations</div>
+          <div class="cs-attr-list cs-attr-list--frustrations">
+            <div class="cs-attr-list__item">Confusing multi-step forms that ask the same thing twice</div>
+            <div class="cs-attr-list__item">No way to know if a doctor has available slots without calling</div>
+            <div class="cs-attr-list__item">Apps that go silent after the appointment ends</div>
+            <div class="cs-attr-list__item">Thin profiles that don't help her trust a new doctor</div>
+          </div>
+        </div>
+
+        <!-- Jobs to be Done -->
+        <div class="cs-attr-block">
+          <div class="cs-attr-block__label">Jobs to be Done</div>
+          <div class="cs-jtbd">
+            <div class="cs-jtbd__item">
+              <strong>When I need a doctor</strong>
+              Help me find the right one fast, without second-guessing my choice.
+            </div>
+            <div class="cs-jtbd__item">
+              <strong>When I book an appointment</strong>
+              Make it feel as easy as ordering food — 3 taps, done.
+            </div>
+            <div class="cs-jtbd__item">
+              <strong>After my visit</strong>
+              Let me follow up without leaving the app.
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Context note -->
+    <div class="cs-context-note">
+      <strong>Why Emily represents the core segment —</strong> She sits at the intersection of high digital literacy and high healthcare anxiety. She's not looking for a medical encyclopedia — she wants a product that respects her time, earns her trust, and stays useful after the appointment. Designing for Emily means designing for the majority of our active users.
+    </div>
+
+  </div>
+</section>
+
+</body>
+</html>

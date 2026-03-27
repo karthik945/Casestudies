@@ -1,0 +1,808 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PulseCare — Section 10: Usability Testing</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: #05050E;
+      color: #fff;
+      font-family: 'DM Sans', sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+    .cs-glass {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+    }
+    .cs-ut {
+      position: relative;
+      padding: 120px 72px;
+      overflow: hidden;
+    }
+    .cs-glows { position: absolute; inset: 0; pointer-events: none; z-index: 0; }
+    .cs-glow { position: absolute; border-radius: 50%; filter: blur(120px); }
+    .cs-glow--1 {
+      width: 500px; height: 500px;
+      background: radial-gradient(circle, rgba(200,80,60,0.10) 0%, transparent 65%);
+      top: 0; left: -80px;
+    }
+    .cs-glow--2 {
+      width: 400px; height: 400px;
+      background: radial-gradient(circle, rgba(55,100,255,0.10) 0%, transparent 65%);
+      bottom: 0; right: 0;
+    }
+    .cs-grid {
+      position: absolute; inset: 0; z-index: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+      background-size: 64px 64px;
+    }
+    .cs-inner {
+      position: relative; z-index: 1;
+      max-width: 1200px; margin: 0 auto;
+      display: flex; flex-direction: column; gap: 64px;
+    }
+    .cs-header { display: flex; align-items: flex-end; justify-content: space-between; }
+    .cs-eyebrow {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-size: 11px; font-weight: 500;
+      text-transform: uppercase; letter-spacing: 0.12em;
+      color: rgba(160,190,255,0.7); margin-bottom: 12px;
+    }
+    .cs-eyebrow::before {
+      content: ''; display: block; width: 24px; height: 1px;
+      background: rgba(91,143,255,0.6);
+    }
+    .cs-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 52px; font-weight: 700;
+      letter-spacing: -2px; line-height: 1; color: #fff;
+    }
+    .cs-title span {
+      background: linear-gradient(135deg, #FF8A65 0%, #FF5252 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .cs-ghost-num {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 80px; font-weight: 700;
+      color: rgba(255,255,255,0.04);
+      letter-spacing: -4px; user-select: none;
+    }
+
+    /* Fidelity strip */
+    .cs-fidelity {
+      display: flex; align-items: stretch; gap: 0;
+      border-radius: 100px; overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+    .cs-fidelity__step {
+      flex: 1; padding: 10px 0; text-align: center;
+      font-size: 11px; font-weight: 500;
+      text-transform: uppercase; letter-spacing: 0.1em;
+      color: rgba(255,255,255,0.22);
+      background: rgba(255,255,255,0.02);
+      border-right: 1px solid rgba(255,255,255,0.06);
+    }
+    .cs-fidelity__step:last-child { border-right: none; }
+    .cs-fidelity__step--done {
+      background: rgba(91,143,255,0.06);
+      color: rgba(91,143,255,0.5);
+    }
+    .cs-fidelity__step--active {
+      background: rgba(255,100,80,0.12);
+      color: rgba(255,160,140,0.9);
+    }
+
+    /* Stats row */
+    .cs-stats {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px;
+    }
+    .cs-stat {
+      border-radius: 16px; padding: 24px;
+      display: flex; flex-direction: column; gap: 6px;
+    }
+    .cs-stat__num {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 36px; font-weight: 700; letter-spacing: -1.5px;
+      background: linear-gradient(135deg, #fff 40%, rgba(200,180,255,0.7) 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .cs-stat__label { font-size: 12px; color: rgba(255,255,255,0.38); line-height: 1.5; }
+    .cs-stat__bar {
+      height: 2px; border-radius: 2px;
+      background: rgba(255,255,255,0.05); margin-top: 6px;
+      position: relative; overflow: hidden;
+    }
+    .cs-stat__fill {
+      position: absolute; top: 0; left: 0; height: 100%;
+      border-radius: 2px;
+      background: linear-gradient(90deg, #FF6B4A, #FF9F8A);
+    }
+
+    /* Findings grid */
+    .cs-findings {
+      display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px;
+    }
+    .cs-finding {
+      border-radius: 20px; padding: 28px;
+      display: flex; flex-direction: column; gap: 16px;
+      position: relative; overflow: hidden;
+    }
+    .cs-finding::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    }
+    .cs-finding--critical::before { background: linear-gradient(90deg, #FF4040, transparent); }
+    .cs-finding--moderate::before { background: linear-gradient(90deg, #FF9F2E, transparent); }
+
+    .cs-finding__top { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+    .cs-finding__icon {
+      width: 40px; height: 40px; border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .cs-finding__icon--critical { background: rgba(255,64,64,0.12); border: 1px solid rgba(255,64,64,0.2); }
+    .cs-finding__icon--moderate { background: rgba(255,159,46,0.12); border: 1px solid rgba(255,159,46,0.2); }
+
+    .cs-badge {
+      padding: 4px 10px; border-radius: 100px;
+      font-size: 10px; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.1em;
+      flex-shrink: 0;
+    }
+    .cs-badge--critical { background: rgba(255,64,64,0.12); color: #FF8080; border: 1px solid rgba(255,64,64,0.2); }
+    .cs-badge--moderate { background: rgba(255,159,46,0.12); color: #FFBA6E; border: 1px solid rgba(255,159,46,0.2); }
+    .cs-badge--resolved { background: rgba(80,200,140,0.12); color: #7DDBA5; border: 1px solid rgba(80,200,140,0.2); }
+
+    .cs-finding__title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 17px; font-weight: 600; color: rgba(255,255,255,0.88);
+      line-height: 1.3;
+    }
+    .cs-finding__desc {
+      font-size: 13px; color: rgba(255,255,255,0.45); line-height: 1.7;
+    }
+    .cs-finding__users {
+      display: flex; align-items: center; gap: 8px;
+    }
+    .cs-finding__avatars { display: flex; }
+    .cs-finding__avatar {
+      width: 22px; height: 22px; border-radius: 50%;
+      background: rgba(255,255,255,0.10);
+      border: 1.5px solid #05050E;
+      margin-left: -6px;
+    }
+    .cs-finding__avatar:first-child { margin-left: 0; }
+    .cs-finding__user-text {
+      font-size: 11px; color: rgba(255,255,255,0.30);
+    }
+
+    .cs-finding__fix {
+      border-radius: 10px; padding: 12px 14px;
+      background: rgba(80,200,140,0.05);
+      border: 1px solid rgba(80,200,140,0.12);
+      font-size: 12px; color: rgba(125,219,165,0.75);
+      line-height: 1.6;
+      display: flex; gap: 8px;
+    }
+    .cs-finding__fix-icon { flex-shrink: 0; margin-top: 1px; }
+
+    /* Before / After comparison */
+    .cs-compare {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 24px;
+    }
+    .cs-compare-block {
+      border-radius: 20px; padding: 28px;
+      display: flex; flex-direction: column; gap: 20px;
+    }
+    .cs-compare-block__label {
+      font-size: 10px; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.12em;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .cs-compare-block__label--before { color: rgba(255,100,80,0.7); }
+    .cs-compare-block__label--after  { color: rgba(80,200,140,0.7); }
+    .cs-compare-block__label::after {
+      content: ''; flex: 1; height: 1px;
+    }
+    .cs-compare-block__label--before::after { background: rgba(255,100,80,0.15); }
+    .cs-compare-block__label--after::after  { background: rgba(80,200,140,0.15); }
+
+    .cs-compare-block__title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 15px; font-weight: 600;
+      color: rgba(255,255,255,0.75);
+    }
+    .cs-compare-block__points {
+      display: flex; flex-direction: column; gap: 8px;
+    }
+    .cs-compare-block__point {
+      display: flex; align-items: flex-start; gap: 10px;
+      font-size: 13px; color: rgba(255,255,255,0.45); line-height: 1.5;
+    }
+    .cs-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      flex-shrink: 0; margin-top: 6px;
+    }
+    .cs-dot--red { background: rgba(255,100,80,0.7); }
+    .cs-dot--green { background: rgba(80,200,140,0.7); }
+
+    /* Inline phone comparison */
+    .cs-phone-compare {
+      display: grid; grid-template-columns: 1fr auto 1fr; gap: 16px;
+      align-items: center;
+    }
+    .cs-arrow-label {
+      display: flex; flex-direction: column; align-items: center; gap: 6px;
+    }
+    .cs-arrow-label__text {
+      font-size: 10px; font-weight: 600; text-transform: uppercase;
+      letter-spacing: 0.1em; color: rgba(255,255,255,0.2);
+      white-space: nowrap;
+    }
+
+    /* Mini phone */
+    .cs-mini-phone {
+      border-radius: 20px;
+      border: 1.5px solid rgba(255,255,255,0.09);
+      background: #0a0a18;
+      overflow: hidden;
+      display: flex; flex-direction: column;
+    }
+    .cs-mini-phone--before { border-color: rgba(255,80,60,0.2); }
+    .cs-mini-phone--after  { border-color: rgba(80,200,140,0.2); }
+    .cs-mini-phone__status {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 7px 12px 4px;
+    }
+    .cs-mini-phone__notch {
+      width: 36px; height: 5px; border-radius: 10px;
+      background: rgba(255,255,255,0.06);
+    }
+    .cs-mini-phone__dot { width: 20px; height: 5px; border-radius: 3px; background: rgba(255,255,255,0.15); }
+    .cs-mini-phone__body { padding: 6px 10px 10px; display: flex; flex-direction: column; gap: 5px; }
+
+    /* Skeleton reuse */
+    .sk { border-radius: 3px; background: rgba(255,255,255,0.08); }
+    .sk--accent { background: rgba(91,143,255,0.22); }
+    .sk--red { background: rgba(255,80,60,0.25); }
+    .sk--green-sk { background: rgba(80,200,140,0.22); }
+    .sk-row { display: flex; gap: 6px; align-items: center; }
+    .sk-col { display: flex; flex-direction: column; gap: 4px; flex: 1; }
+    .sk-card-sm {
+      border-radius: 8px; background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.07);
+      padding: 7px 8px; display: flex; flex-direction: column; gap: 5px;
+    }
+    .sk-search-sm {
+      border-radius: 6px; border: 1px solid rgba(255,255,255,0.09);
+      background: rgba(255,255,255,0.04); height: 22px;
+      display: flex; align-items: center; gap: 5px; padding: 0 7px;
+    }
+    .sk-chips-sm { display: flex; gap: 4px; }
+    .sk-chip-sm { height: 16px; border-radius: 100px; background: rgba(91,143,255,0.12); border: 1px solid rgba(91,143,255,0.18); }
+
+    /* Quote */
+    .cs-quote {
+      border-radius: 20px; padding: 32px 36px;
+      position: relative;
+      border-left: 3px solid rgba(255,159,46,0.4);
+      background: rgba(255,159,46,0.04);
+    }
+    .cs-quote__mark {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 64px; line-height: 0.5;
+      color: rgba(255,159,46,0.2);
+      margin-bottom: 16px; display: block;
+    }
+    .cs-quote__text {
+      font-size: 18px; font-weight: 400;
+      color: rgba(255,255,255,0.65); line-height: 1.7;
+      font-style: italic;
+    }
+    .cs-quote__text strong { color: rgba(255,255,255,0.88); font-style: normal; font-weight: 500; }
+    .cs-quote__attr {
+      margin-top: 20px;
+      font-size: 12px; color: rgba(255,255,255,0.30);
+      display: flex; align-items: center; gap: 8px;
+    }
+    .cs-quote__attr::before {
+      content: ''; display: block; width: 20px; height: 1px;
+      background: rgba(255,255,255,0.15);
+    }
+  </style>
+  <script src="https://mcp.figma.com/mcp/html-to-design/capture.js" async></script>
+</head>
+<body>
+
+<section class="cs-ut" id="cs-usability">
+  <div class="cs-glows">
+    <div class="cs-glow cs-glow--1"></div>
+    <div class="cs-glow cs-glow--2"></div>
+  </div>
+  <div class="cs-grid"></div>
+
+  <div class="cs-inner">
+
+    <div class="cs-header">
+      <div>
+        <div class="cs-eyebrow">10 — Usability Testing</div>
+        <h2 class="cs-title">Where Users<br><span>Got Stuck</span></h2>
+      </div>
+      <div class="cs-ghost-num">10</div>
+    </div>
+
+    <!-- Fidelity strip -->
+    <div class="cs-fidelity">
+      <div class="cs-fidelity__step cs-fidelity__step--done">01 — Lo-Fi Wireframes</div>
+      <div class="cs-fidelity__step cs-fidelity__step--done">02 — Hi-Fi Design</div>
+      <div class="cs-fidelity__step cs-fidelity__step--active">03 — Usability Testing</div>
+      <div class="cs-fidelity__step">04 — Final Design</div>
+    </div>
+
+    <!-- Testing stats -->
+    <div class="cs-stats">
+      <div class="cs-stat cs-glass">
+        <div class="cs-stat__num">6</div>
+        <div class="cs-stat__label">Participants recruited across 2 rounds</div>
+        <div class="cs-stat__bar"><div class="cs-stat__fill" style="width:60%"></div></div>
+      </div>
+      <div class="cs-stat cs-glass">
+        <div class="cs-stat__num">5</div>
+        <div class="cs-stat__label">Core tasks per session tested</div>
+        <div class="cs-stat__bar"><div class="cs-stat__fill" style="width:50%"></div></div>
+      </div>
+      <div class="cs-stat cs-glass">
+        <div class="cs-stat__num">17</div>
+        <div class="cs-stat__label">Issues identified across all sessions</div>
+        <div class="cs-stat__bar"><div class="cs-stat__fill" style="width:100%"></div></div>
+      </div>
+      <div class="cs-stat cs-glass">
+        <div class="cs-stat__num">14</div>
+        <div class="cs-stat__label">Issues resolved before hi-fi handoff</div>
+        <div class="cs-stat__bar"><div class="cs-stat__fill" style="width:82%;background:linear-gradient(90deg,#3a9060,#7DDBA5)"></div></div>
+      </div>
+    </div>
+
+    <!-- Key findings -->
+    <div class="cs-findings">
+
+      <!-- Finding 1 -->
+      <div class="cs-finding cs-glass cs-finding--critical">
+        <div class="cs-finding__top">
+          <div class="cs-finding__icon cs-finding__icon--critical">
+            <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M9 3v7M9 13v1" stroke="#FF6060" stroke-width="2" stroke-linecap="round"/><circle cx="9" cy="9" r="7.5" stroke="#FF6060" stroke-width="1.2" opacity=".5"/></svg>
+          </div>
+          <div class="cs-badge cs-badge--critical">Critical</div>
+        </div>
+        <div>
+          <div class="cs-finding__title">Filter chips were invisible on load</div>
+          <div class="cs-finding__desc" style="margin-top:8px;">5 of 6 users scrolled straight past the filter chips and dove into doctor cards, missing specialty and location filters entirely. The chips sat flush to the search bar with no visual separation or label to indicate they were interactive.</div>
+        </div>
+        <div class="cs-finding__users">
+          <div class="cs-finding__avatars">
+            <div class="cs-finding__avatar"></div><div class="cs-finding__avatar"></div><div class="cs-finding__avatar"></div><div class="cs-finding__avatar"></div><div class="cs-finding__avatar"></div>
+          </div>
+          <div class="cs-finding__user-text">5 of 6 users affected</div>
+        </div>
+        <div class="cs-finding__fix">
+          <div class="cs-finding__fix-icon"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7l3.5 3.5L12 3" stroke="#7DDBA5" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          Fixed: Added a labelled "Filter by" header above the chips with clear visual separation from the search bar.
+        </div>
+      </div>
+
+      <!-- Finding 2 -->
+      <div class="cs-finding cs-glass cs-finding--critical">
+        <div class="cs-finding__top">
+          <div class="cs-finding__icon cs-finding__icon--critical">
+            <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><rect x="3" y="4" width="12" height="10" rx="2" stroke="#FF6060" stroke-width="1.2" opacity=".5"/><path d="M3 7h12M7 4v3M11 4v3" stroke="#FF6060" stroke-width="1.4" stroke-linecap="round"/></svg>
+          </div>
+          <div class="cs-badge cs-badge--critical">Critical</div>
+        </div>
+        <div>
+          <div class="cs-finding__title">Date and time selection caused drop-offs</div>
+          <div class="cs-finding__desc" style="margin-top:8px;">4 users tapped a date and immediately tried to confirm — not realising they still needed to pick a time slot below. The calendar and slot grid were visually separate with no indication of a two-step sequence.</div>
+        </div>
+        <div class="cs-finding__users">
+          <div class="cs-finding__avatars">
+            <div class="cs-finding__avatar"></div><div class="cs-finding__avatar"></div><div class="cs-finding__avatar"></div><div class="cs-finding__avatar"></div>
+          </div>
+          <div class="cs-finding__user-text">4 of 6 users affected</div>
+        </div>
+        <div class="cs-finding__fix">
+          <div class="cs-finding__fix-icon"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7l3.5 3.5L12 3" stroke="#7DDBA5" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          Fixed: Added a 2-step indicator "1 · Select Date → 2 · Pick Time" above the calendar so users always know where they are in the flow.
+        </div>
+      </div>
+
+      <!-- Finding 3 -->
+      <div class="cs-finding cs-glass cs-finding--critical">
+        <div class="cs-finding__top">
+          <div class="cs-finding__icon cs-finding__icon--critical">
+            <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="6" r="3" stroke="#FF6060" stroke-width="1.2" opacity=".5"/><path d="M3 16c0-3.3 2.7-6 6-6s6 2.7 6 6" stroke="#FF6060" stroke-width="1.4" stroke-linecap="round"/><path d="M13 3l2 2M15 3l-2 2" stroke="#FF6060" stroke-width="1.3" stroke-linecap="round"/></svg>
+          </div>
+          <div class="cs-badge cs-badge--critical">Critical</div>
+        </div>
+        <div>
+          <div class="cs-finding__title">Doctor profiles didn't build enough trust</div>
+          <div class="cs-finding__desc" style="margin-top:8px;">4 users spent over 3 minutes on a doctor's profile but still left without booking. They couldn't quickly verify credentials, see how many people had rated the doctor, or confirm the doctor was legitimate — leading to hesitation and abandonment.</div>
+        </div>
+        <div class="cs-finding__users">
+          <div class="cs-finding__avatars">
+            <div class="cs-finding__avatar"></div><div class="cs-finding__avatar"></div><div class="cs-finding__avatar"></div><div class="cs-finding__avatar"></div>
+          </div>
+          <div class="cs-finding__user-text">4 of 6 users affected</div>
+        </div>
+        <div class="cs-finding__fix">
+          <div class="cs-finding__fix-icon"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7l3.5 3.5L12 3" stroke="#7DDBA5" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          Fixed: Added a verified badge, rating with review count, years of experience, and hospital affiliation — all visible above the fold on the doctor profile.
+        </div>
+      </div>
+
+      <!-- Finding 4 -->
+      <div class="cs-finding cs-glass cs-finding--moderate">
+        <div class="cs-finding__top">
+          <div class="cs-finding__icon cs-finding__icon--moderate">
+            <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="7.5" stroke="#FF9F2E" stroke-width="1.2" opacity=".5"/><path d="M9 5v5l3 3" stroke="#FF9F2E" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <div class="cs-badge cs-badge--moderate">Moderate</div>
+        </div>
+        <div>
+          <div class="cs-finding__title">Post-booking screen felt like a dead end</div>
+          <div class="cs-finding__desc" style="margin-top:8px;">3 users who completed a booking didn't know what to do next. Several tapped the back button to check if the appointment had actually saved. There was no indication of next steps or what to expect before the visit.</div>
+        </div>
+        <div class="cs-finding__users">
+          <div class="cs-finding__avatars">
+            <div class="cs-finding__avatar"></div><div class="cs-finding__avatar"></div><div class="cs-finding__avatar"></div>
+          </div>
+          <div class="cs-finding__user-text">3 of 6 users affected</div>
+        </div>
+        <div class="cs-finding__fix">
+          <div class="cs-finding__fix-icon"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7l3.5 3.5L12 3" stroke="#7DDBA5" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          Fixed: Confirmation screen now shows a clear success state with appointment details, a pre-visit checklist teaser, and a prompt to view the upcoming appointment.
+        </div>
+      </div>
+
+      <!-- Finding 5 -->
+      <div class="cs-finding cs-glass cs-finding--moderate">
+        <div class="cs-finding__top">
+          <div class="cs-finding__icon cs-finding__icon--moderate">
+            <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><rect x="2" y="12" width="14" height="4" rx="1" stroke="#FF9F2E" stroke-width="1.2" opacity=".5"/><path d="M5 8.5h8M5 5.5h8" stroke="#FF9F2E" stroke-width="1.4" stroke-linecap="round"/><rect x="2" y="2" width="14" height="4" rx="1" stroke="#FF9F2E" stroke-width="1.2" opacity=".5"/></svg>
+          </div>
+          <div class="cs-badge cs-badge--moderate">Moderate</div>
+        </div>
+        <div>
+          <div class="cs-finding__title">Home screen didn't adapt after booking</div>
+          <div class="cs-finding__desc" style="margin-top:8px;">3 users who returned to the home screen after booking were confused to see the same empty state. There was no sign their appointment existed unless they navigated into the Appointments tab — the home screen had no awareness of their context.</div>
+        </div>
+        <div class="cs-finding__users">
+          <div class="cs-finding__avatars">
+            <div class="cs-finding__avatar"></div><div class="cs-finding__avatar"></div><div class="cs-finding__avatar"></div>
+          </div>
+          <div class="cs-finding__user-text">3 of 6 users affected</div>
+        </div>
+        <div class="cs-finding__fix">
+          <div class="cs-finding__fix-icon"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7l3.5 3.5L12 3" stroke="#7DDBA5" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          Fixed: Home now surfaces the upcoming appointment as a contextual card with doctor info, date, time, and a quick-action pre-visit checklist strip.
+        </div>
+      </div>
+
+      <!-- Finding 6 -->
+      <div class="cs-finding cs-glass cs-finding--moderate">
+        <div class="cs-finding__top">
+          <div class="cs-finding__icon cs-finding__icon--moderate">
+            <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M2 3h14a1 1 0 011 1v8a1 1 0 01-1 1H6l-4 4V4a1 1 0 011-1z" stroke="#FF9F2E" stroke-width="1.2" opacity=".5" stroke-linejoin="round"/><path d="M6 8h6M6 11h3" stroke="#FF9F2E" stroke-width="1.4" stroke-linecap="round"/></svg>
+          </div>
+          <div class="cs-badge cs-badge--moderate">Moderate</div>
+        </div>
+        <div>
+          <div class="cs-finding__title">No way to prepare or reach the doctor before a visit</div>
+          <div class="cs-finding__desc" style="margin-top:8px;">2 users felt anxious in the days before their appointment — unsure what to bring, how to prepare, or if they could ask the doctor a quick question without calling the clinic. The app offered no pre-visit touchpoint.</div>
+        </div>
+        <div class="cs-finding__users">
+          <div class="cs-finding__avatars">
+            <div class="cs-finding__avatar"></div><div class="cs-finding__avatar"></div>
+          </div>
+          <div class="cs-finding__user-text">2 of 6 users affected</div>
+        </div>
+        <div class="cs-finding__fix">
+          <div class="cs-finding__fix-icon"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7l3.5 3.5L12 3" stroke="#7DDBA5" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          Fixed: Added a pre-visit checklist with doctor-specific notes and a direct message CTA — giving users a way to prepare and communicate before arriving.
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Before / After comparison — Home screen -->
+    <div>
+      <div style="margin-bottom:28px;">
+        <div class="cs-eyebrow" style="margin-bottom:8px;">Key Change</div>
+        <div style="font-family:'Space Grotesk',sans-serif;font-size:24px;font-weight:600;color:rgba(255,255,255,0.85);letter-spacing:-0.5px;">Home screen — before & after testing</div>
+      </div>
+
+      <div class="cs-compare" style="margin-bottom:48px;">
+
+        <!-- Before -->
+        <div class="cs-compare-block cs-glass">
+          <div class="cs-compare-block__label cs-compare-block__label--before">Before testing</div>
+          <div style="max-width:240px;margin:0 auto;">
+            <div class="cs-mini-phone cs-mini-phone--before">
+              <div class="cs-mini-phone__status">
+                <div class="cs-mini-phone__dot"></div>
+                <div class="cs-mini-phone__notch"></div>
+                <div class="cs-mini-phone__dot"></div>
+              </div>
+              <div class="cs-mini-phone__body">
+                <!-- Greeting -->
+                <div class="sk-row" style="margin-bottom:6px;">
+                  <div class="sk-col"><div class="sk" style="height:7px;width:70%;"></div><div class="sk" style="height:4px;width:45%;margin-top:3px;opacity:.4;"></div></div>
+                  <div class="sk" style="width:22px;height:22px;border-radius:6px;"></div>
+                </div>
+                <!-- Appointment card -->
+                <div class="sk-card-sm" style="border-color:rgba(91,143,255,0.2);margin-bottom:6px;">
+                  <div class="sk-row"><div class="sk" style="width:30px;height:30px;border-radius:6px;"></div><div class="sk-col"><div class="sk" style="height:5px;width:80%;"></div><div class="sk" style="height:4px;width:55%;margin-top:3px;opacity:.5;"></div></div></div>
+                  <div class="sk-row"><div class="sk sk--accent" style="height:14px;flex:1;border-radius:4px;"></div><div class="sk" style="height:14px;flex:1;border-radius:4px;"></div></div>
+                </div>
+                <!-- PROBLEM: Icon row looks like second nav bar -->
+                <div style="display:flex;justify-content:space-around;padding:6px 0;border:1px solid rgba(255,80,60,0.2);border-radius:7px;background:rgba(255,80,60,0.04);margin-bottom:6px;">
+                  <div style="display:flex;flex-direction:column;align-items:center;gap:3px;"><div class="sk" style="width:18px;height:18px;border-radius:5px;background:rgba(91,143,255,0.25);"></div><div class="sk" style="width:22px;height:3px;opacity:.4;"></div></div>
+                  <div style="display:flex;flex-direction:column;align-items:center;gap:3px;"><div class="sk" style="width:18px;height:18px;border-radius:5px;background:rgba(167,139,250,0.25);"></div><div class="sk" style="width:22px;height:3px;opacity:.4;"></div></div>
+                  <div style="display:flex;flex-direction:column;align-items:center;gap:3px;"><div class="sk" style="width:18px;height:18px;border-radius:5px;background:rgba(61,214,140,0.2);"></div><div class="sk" style="width:22px;height:3px;opacity:.4;"></div></div>
+                  <div style="display:flex;flex-direction:column;align-items:center;gap:3px;"><div class="sk" style="width:18px;height:18px;border-radius:5px;background:rgba(245,158,11,0.2);"></div><div class="sk" style="width:22px;height:3px;opacity:.4;"></div></div>
+                </div>
+                <!-- Bottom nav — looks identical to above -->
+                <div style="display:flex;justify-content:space-around;padding:5px 0;border-top:1px solid rgba(255,255,255,0.06);margin-top:4px;">
+                  <div class="sk" style="width:16px;height:16px;border-radius:4px;background:rgba(91,143,255,0.35);"></div>
+                  <div class="sk" style="width:16px;height:16px;border-radius:4px;opacity:.25;"></div>
+                  <div class="sk" style="width:16px;height:16px;border-radius:4px;opacity:.25;"></div>
+                  <div class="sk" style="width:16px;height:16px;border-radius:4px;opacity:.25;"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="cs-compare-block__points">
+            <div class="cs-compare-block__point"><div class="cs-dot cs-dot--red"></div>4-icon horizontal row identical in structure to the bottom tab bar — double navigation signal</div>
+            <div class="cs-compare-block__point"><div class="cs-dot cs-dot--red"></div>"Find Doctor" in icon row duplicates the Search tab — users tapped either interchangeably</div>
+            <div class="cs-compare-block__point"><div class="cs-dot cs-dot--red"></div>4 of 6 users paused at the icon row unsure if it was a second nav or clickable shortcuts</div>
+          </div>
+        </div>
+
+        <!-- After -->
+        <div class="cs-compare-block cs-glass">
+          <div class="cs-compare-block__label cs-compare-block__label--after">After testing</div>
+          <div style="max-width:240px;margin:0 auto;">
+            <div class="cs-mini-phone cs-mini-phone--after">
+              <div class="cs-mini-phone__status">
+                <div class="cs-mini-phone__dot"></div>
+                <div class="cs-mini-phone__notch"></div>
+                <div class="cs-mini-phone__dot"></div>
+              </div>
+              <div class="cs-mini-phone__body">
+                <!-- Greeting -->
+                <div class="sk-row" style="margin-bottom:6px;">
+                  <div class="sk-col"><div class="sk" style="height:7px;width:70%;"></div><div class="sk" style="height:4px;width:45%;margin-top:3px;opacity:.4;"></div></div>
+                  <div class="sk" style="width:22px;height:22px;border-radius:6px;"></div>
+                </div>
+                <!-- Appointment card — with pre-visit strip -->
+                <div class="sk-card-sm" style="border-color:rgba(91,143,255,0.2);margin-bottom:6px;">
+                  <div class="sk-row"><div class="sk" style="width:30px;height:30px;border-radius:6px;"></div><div class="sk-col"><div class="sk" style="height:5px;width:80%;"></div><div class="sk" style="height:4px;width:55%;margin-top:3px;opacity:.5;"></div></div></div>
+                  <div class="sk-row"><div class="sk sk--accent" style="height:14px;flex:1;border-radius:4px;"></div><div class="sk" style="height:14px;flex:1;border-radius:4px;"></div></div>
+                  <!-- Pre-visit amber strip -->
+                  <div style="height:12px;border-radius:4px;background:rgba(245,158,11,0.15);border:1px solid rgba(245,158,11,0.25);"></div>
+                </div>
+                <!-- FIX: Wide feature cards — clearly content, not nav -->
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-bottom:6px;">
+                  <div style="border-radius:7px;background:rgba(167,139,250,0.1);border:1px solid rgba(167,139,250,0.2);padding:7px;">
+                    <div class="sk" style="width:18px;height:18px;border-radius:5px;background:rgba(167,139,250,0.25);margin-bottom:5px;"></div>
+                    <div class="sk" style="height:4px;width:65%;background:rgba(167,139,250,0.4);"></div>
+                    <div class="sk" style="height:3px;width:80%;margin-top:3px;opacity:.3;"></div>
+                  </div>
+                  <div style="border-radius:7px;background:rgba(91,143,255,0.1);border:1px solid rgba(91,143,255,0.2);padding:7px;">
+                    <div class="sk" style="width:18px;height:18px;border-radius:5px;background:rgba(91,143,255,0.25);margin-bottom:5px;"></div>
+                    <div class="sk" style="height:4px;width:65%;background:rgba(91,143,255,0.4);"></div>
+                    <div class="sk" style="height:3px;width:80%;margin-top:3px;opacity:.3;"></div>
+                  </div>
+                </div>
+                <!-- Bottom nav — clearly separate from content above -->
+                <div style="display:flex;justify-content:space-around;padding:5px 0;border-top:1px solid rgba(255,255,255,0.06);">
+                  <div class="sk" style="width:16px;height:16px;border-radius:4px;background:rgba(91,143,255,0.35);"></div>
+                  <div class="sk" style="width:16px;height:16px;border-radius:4px;opacity:.25;"></div>
+                  <div class="sk" style="width:16px;height:16px;border-radius:4px;opacity:.25;"></div>
+                  <div class="sk" style="width:16px;height:16px;border-radius:4px;opacity:.25;"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="cs-compare-block__points">
+            <div class="cs-compare-block__point"><div class="cs-dot cs-dot--green"></div>Wide cards with height, color, icon + subtitle read as content shortcuts — not a second nav bar</div>
+            <div class="cs-compare-block__point"><div class="cs-dot cs-dot--green"></div>Pre-visit checklist strip inside appointment card adds contextual depth without adding another section</div>
+            <div class="cs-compare-block__point"><div class="cs-dot cs-dot--green"></div>Navigation confusion dropped to 0 in round 2 — all users understood the bottom bar as the only nav</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Before / After comparison — Slot selection -->
+    <div>
+      <div style="margin-bottom:28px;">
+        <div class="cs-eyebrow" style="margin-bottom:8px;">Key Change</div>
+        <div style="font-family:'Space Grotesk',sans-serif;font-size:24px;font-weight:600;color:rgba(255,255,255,0.85);letter-spacing:-0.5px;">Slot selection — before & after testing</div>
+      </div>
+
+      <div class="cs-compare">
+
+        <!-- Before -->
+        <div class="cs-compare-block cs-glass">
+          <div class="cs-compare-block__label cs-compare-block__label--before">Before testing</div>
+          <div class="cs-phone-compare" style="grid-template-columns:1fr;max-width:240px;margin:0 auto;">
+            <div class="cs-mini-phone cs-mini-phone--before">
+              <div class="cs-mini-phone__status">
+                <div class="cs-mini-phone__dot"></div>
+                <div class="cs-mini-phone__notch"></div>
+                <div class="cs-mini-phone__dot"></div>
+              </div>
+              <div class="cs-mini-phone__body">
+                <!-- No step indicator -->
+                <div style="height:8px;"></div>
+                <!-- Calendar -->
+                <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:3px;">
+                  <div style="border-radius:5px;background:rgba(255,255,255,0.05);padding:4px 0;display:flex;flex-direction:column;align-items:center;gap:2px;">
+                    <div class="sk" style="width:14px;height:4px;opacity:.4;"></div>
+                    <div class="sk" style="width:10px;height:5px;opacity:.4;"></div>
+                  </div>
+                  <div style="border-radius:5px;background:rgba(91,143,255,0.2);border:1px solid rgba(91,143,255,0.4);padding:4px 0;display:flex;flex-direction:column;align-items:center;gap:2px;">
+                    <div class="sk" style="width:14px;height:4px;background:rgba(91,143,255,0.5);"></div>
+                    <div class="sk" style="width:10px;height:5px;background:rgba(91,143,255,0.6);"></div>
+                  </div>
+                  <div style="border-radius:5px;background:rgba(255,255,255,0.05);padding:4px 0;display:flex;flex-direction:column;align-items:center;gap:2px;">
+                    <div class="sk" style="width:14px;height:4px;opacity:.4;"></div>
+                    <div class="sk" style="width:10px;height:5px;opacity:.4;"></div>
+                  </div>
+                  <div style="border-radius:5px;background:rgba(255,255,255,0.05);padding:4px 0;display:flex;flex-direction:column;align-items:center;gap:2px;">
+                    <div class="sk" style="width:14px;height:4px;opacity:.4;"></div>
+                    <div class="sk" style="width:10px;height:5px;opacity:.4;"></div>
+                  </div>
+                  <div style="border-radius:5px;background:rgba(255,255,255,0.05);padding:4px 0;display:flex;flex-direction:column;align-items:center;gap:2px;">
+                    <div class="sk" style="width:14px;height:4px;opacity:.4;"></div>
+                    <div class="sk" style="width:10px;height:5px;opacity:.4;"></div>
+                  </div>
+                </div>
+                <!-- No label — gap jump straight to slots -->
+                <div style="height:6px;"></div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;">
+                  <div style="height:18px;border-radius:5px;border:1px solid rgba(91,143,255,0.15);background:rgba(91,143,255,0.07);"></div>
+                  <div style="height:18px;border-radius:5px;border:1px solid rgba(91,143,255,0.15);background:rgba(91,143,255,0.07);"></div>
+                  <div style="height:18px;border-radius:5px;border:1px solid rgba(91,143,255,0.15);background:rgba(91,143,255,0.07);"></div>
+                  <div style="height:18px;border-radius:5px;border:1px solid rgba(91,143,255,0.15);background:rgba(91,143,255,0.07);"></div>
+                </div>
+                <!-- Confirm button no connection context -->
+                <div style="height:22px;border-radius:6px;background:rgba(91,143,255,0.25);border:1px solid rgba(91,143,255,0.4);margin-top:8px;"></div>
+              </div>
+            </div>
+          </div>
+          <div class="cs-compare-block__points">
+            <div class="cs-compare-block__point">
+              <div class="cs-dot cs-dot--red"></div>
+              No step indicator — users didn't know they had to pick both a date AND a time
+            </div>
+            <div class="cs-compare-block__point">
+              <div class="cs-dot cs-dot--red"></div>
+              Slot grid appeared immediately with no visual relationship to the calendar above
+            </div>
+            <div class="cs-compare-block__point">
+              <div class="cs-dot cs-dot--red"></div>
+              4 of 6 users tapped Confirm without selecting a time slot
+            </div>
+          </div>
+        </div>
+
+        <!-- After -->
+        <div class="cs-compare-block cs-glass">
+          <div class="cs-compare-block__label cs-compare-block__label--after">After testing</div>
+          <div class="cs-phone-compare" style="grid-template-columns:1fr;max-width:240px;margin:0 auto;">
+            <div class="cs-mini-phone cs-mini-phone--after">
+              <div class="cs-mini-phone__status">
+                <div class="cs-mini-phone__dot"></div>
+                <div class="cs-mini-phone__notch"></div>
+                <div class="cs-mini-phone__dot"></div>
+              </div>
+              <div class="cs-mini-phone__body">
+                <!-- Step indicator -->
+                <div style="display:flex;gap:0;border-radius:6px;overflow:hidden;border:1px solid rgba(255,255,255,0.08);margin-bottom:8px;">
+                  <div style="flex:1;padding:5px 0;text-align:center;background:rgba(91,143,255,0.2);border-right:1px solid rgba(255,255,255,0.06);">
+                    <div class="sk" style="height:5px;width:60%;margin:0 auto;background:rgba(91,143,255,0.5);"></div>
+                  </div>
+                  <div style="flex:1;padding:5px 0;text-align:center;background:rgba(255,255,255,0.02);">
+                    <div class="sk" style="height:5px;width:60%;margin:0 auto;opacity:.3;"></div>
+                  </div>
+                </div>
+                <!-- Calendar -->
+                <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:3px;">
+                  <div style="border-radius:5px;background:rgba(255,255,255,0.05);padding:4px 0;display:flex;flex-direction:column;align-items:center;gap:2px;">
+                    <div class="sk" style="width:14px;height:4px;opacity:.4;"></div>
+                    <div class="sk" style="width:10px;height:5px;opacity:.4;"></div>
+                  </div>
+                  <div style="border-radius:5px;background:rgba(91,143,255,0.2);border:1px solid rgba(91,143,255,0.4);padding:4px 0;display:flex;flex-direction:column;align-items:center;gap:2px;">
+                    <div class="sk" style="width:14px;height:4px;background:rgba(91,143,255,0.5);"></div>
+                    <div class="sk" style="width:10px;height:5px;background:rgba(91,143,255,0.6);"></div>
+                  </div>
+                  <div style="border-radius:5px;background:rgba(255,255,255,0.05);padding:4px 0;display:flex;flex-direction:column;align-items:center;gap:2px;">
+                    <div class="sk" style="width:14px;height:4px;opacity:.4;"></div>
+                    <div class="sk" style="width:10px;height:5px;opacity:.4;"></div>
+                  </div>
+                  <div style="border-radius:5px;background:rgba(255,255,255,0.05);padding:4px 0;display:flex;flex-direction:column;align-items:center;gap:2px;">
+                    <div class="sk" style="width:14px;height:4px;opacity:.4;"></div>
+                    <div class="sk" style="width:10px;height:5px;opacity:.4;"></div>
+                  </div>
+                  <div style="border-radius:5px;background:rgba(255,255,255,0.05);padding:4px 0;display:flex;flex-direction:column;align-items:center;gap:2px;">
+                    <div class="sk" style="width:14px;height:4px;opacity:.4;"></div>
+                    <div class="sk" style="width:10px;height:5px;opacity:.4;"></div>
+                  </div>
+                </div>
+                <!-- Section label for times -->
+                <div style="display:flex;align-items:center;gap:5px;margin-top:8px;">
+                  <div class="sk sk--green-sk" style="height:5px;width:28%;"></div>
+                  <div style="flex:1;height:1px;background:rgba(80,200,140,0.15);"></div>
+                </div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-top:4px;">
+                  <div style="height:18px;border-radius:5px;border:1px solid rgba(91,143,255,0.15);background:rgba(91,143,255,0.07);"></div>
+                  <div style="height:18px;border-radius:5px;border:1px solid rgba(91,143,255,0.5);background:rgba(91,143,255,0.25);"></div>
+                  <div style="height:18px;border-radius:5px;border:1px solid rgba(91,143,255,0.15);background:rgba(91,143,255,0.07);"></div>
+                  <div style="height:18px;border-radius:5px;border:1px solid rgba(91,143,255,0.15);background:rgba(91,143,255,0.07);"></div>
+                </div>
+                <div style="height:22px;border-radius:6px;background:rgba(91,143,255,0.25);border:1px solid rgba(91,143,255,0.4);margin-top:8px;"></div>
+              </div>
+            </div>
+          </div>
+          <div class="cs-compare-block__points">
+            <div class="cs-compare-block__point">
+              <div class="cs-dot cs-dot--green"></div>
+              2-step indicator makes date → time sequence explicit and scannable
+            </div>
+            <div class="cs-compare-block__point">
+              <div class="cs-dot cs-dot--green"></div>
+              "Available times" label with a green divider visually connects the slot grid to the selected date
+            </div>
+            <div class="cs-compare-block__point">
+              <div class="cs-dot cs-dot--green"></div>
+              Task completion rate for slot selection improved from 33% to 100% in round 2
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- User quotes -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
+      <div class="cs-quote">
+        <span class="cs-quote__mark">"</span>
+        <div class="cs-quote__text">
+          I didn't realise I had to pick a time — I thought choosing the date <strong>was</strong> the booking. Once I saw the little step bar it all made sense immediately.
+        </div>
+        <div class="cs-quote__attr">Participant 3, Round 1 — Marketing professional, 31</div>
+      </div>
+      <div class="cs-quote">
+        <span class="cs-quote__mark">"</span>
+        <div class="cs-quote__text">
+          I kept looking between those four icons in the middle and the ones at the bottom — I wasn't sure which one actually took me places. They looked <strong>exactly the same</strong>.
+        </div>
+        <div class="cs-quote__attr">Participant 5, Round 1 — Nurse, 28</div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+</body>
+</html>

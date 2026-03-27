@@ -1,0 +1,964 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PulseCare — Section 11: Final Design</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: #05050E; color: #fff; font-family: 'DM Sans', sans-serif; -webkit-font-smoothing: antialiased; }
+    .cs-glass { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); backdrop-filter: blur(24px); }
+    .cs-fd { position: relative; padding: 120px 72px; overflow: hidden; }
+    .cs-glows { position: absolute; inset: 0; pointer-events: none; z-index: 0; }
+    .cs-glow { position: absolute; border-radius: 50%; filter: blur(120px); }
+    .cs-glow--1 { width: 600px; height: 600px; background: radial-gradient(circle, rgba(55,100,255,0.12) 0%, transparent 65%); top: -80px; left: -100px; }
+    .cs-glow--2 { width: 500px; height: 500px; background: radial-gradient(circle, rgba(110,60,255,0.09) 0%, transparent 65%); bottom: 200px; right: -60px; }
+    .cs-grid { position: absolute; inset: 0; z-index: 0; background-image: linear-gradient(rgba(255,255,255,0.02) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.02) 1px,transparent 1px); background-size: 64px 64px; }
+    .cs-inner { position: relative; z-index: 1; max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; gap: 64px; }
+    .cs-header { display: flex; align-items: flex-end; justify-content: space-between; }
+    .cs-eyebrow { display: inline-flex; align-items: center; gap: 8px; font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.12em; color: rgba(160,190,255,0.7); margin-bottom: 12px; }
+    .cs-eyebrow::before { content: ''; display: block; width: 24px; height: 1px; background: rgba(91,143,255,0.6); }
+    .cs-title { font-family: 'Space Grotesk', sans-serif; font-size: 52px; font-weight: 700; letter-spacing: -2px; line-height: 1; color: #fff; }
+    .cs-title span { background: linear-gradient(135deg,#6FA3FF 0%,#A78BFA 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .cs-ghost-num { font-family: 'Space Grotesk', sans-serif; font-size: 80px; font-weight: 700; color: rgba(255,255,255,0.04); letter-spacing: -4px; user-select: none; }
+
+    /* Fidelity strip */
+    .cs-fidelity { display: flex; border-radius: 100px; overflow: hidden; border: 1px solid rgba(255,255,255,0.08); }
+    .cs-fidelity__step { flex: 1; padding: 10px 0; text-align: center; font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.1em; color: rgba(255,255,255,0.22); background: rgba(255,255,255,0.02); border-right: 1px solid rgba(255,255,255,0.06); }
+    .cs-fidelity__step:last-child { border-right: none; }
+    .cs-fidelity__step--done { background: rgba(91,143,255,0.06); color: rgba(91,143,255,0.5); }
+    .cs-fidelity__step--active { background: rgba(91,143,255,0.14); color: rgba(160,190,255,0.9); }
+
+    /* What changed callouts */
+    .cs-changes { display: grid; grid-template-columns: repeat(3,1fr); gap: 16px; }
+    .cs-change { border-radius: 16px; padding: 22px; display: flex; flex-direction: column; gap: 10px; border-top: 2px solid; }
+    .cs-change--1 { border-top-color: rgba(91,143,255,0.5); background: rgba(91,143,255,0.04); }
+    .cs-change--2 { border-top-color: rgba(80,200,140,0.5); background: rgba(80,200,140,0.04); }
+    .cs-change--3 { border-top-color: rgba(255,159,46,0.5); background: rgba(255,159,46,0.04); }
+    .cs-change__tag { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; }
+    .cs-change--1 .cs-change__tag { color: rgba(91,143,255,0.8); }
+    .cs-change--2 .cs-change__tag { color: rgba(80,200,140,0.8); }
+    .cs-change--3 .cs-change__tag { color: rgba(255,159,46,0.8); }
+    .cs-change__title { font-family: 'Space Grotesk', sans-serif; font-size: 15px; font-weight: 600; color: rgba(255,255,255,0.85); }
+    .cs-change__text { font-size: 12px; color: rgba(255,255,255,0.40); line-height: 1.65; }
+
+    /* ── Phase container ── */
+    .cs-phase { display: flex; flex-direction: column; gap: 16px; }
+    .cs-phase-header { display: flex; align-items: center; gap: 14px; }
+    .cs-phase-badge { padding: 5px 14px; border-radius: 100px; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; border: 1px solid; white-space: nowrap; }
+    .cs-phase-badge--onboard  { background: rgba(91,143,255,0.10); border-color: rgba(91,143,255,0.25); color: rgba(91,143,255,0.9); }
+    .cs-phase-badge--discover { background: rgba(167,139,250,0.10); border-color: rgba(167,139,250,0.25); color: rgba(167,139,250,0.9); }
+    .cs-phase-badge--book     { background: rgba(80,200,140,0.10); border-color: rgba(80,200,140,0.25); color: rgba(80,200,140,0.9); }
+    .cs-phase-badge--care     { background: rgba(255,159,46,0.10); border-color: rgba(255,159,46,0.25); color: rgba(255,159,46,0.9); }
+    .cs-phase-line { flex: 1; height: 1px; background: rgba(255,255,255,0.06); }
+    .cs-phase-count { font-size: 11px; color: rgba(255,255,255,0.22); white-space: nowrap; }
+
+    /* Flow row with arrows */
+    .cs-flow-row { display: flex; align-items: flex-start; gap: 0; justify-content: center; }
+    .cs-flow-arrow { display: flex; align-items: flex-start; padding-top: 124px; flex-shrink: 0; }
+    .cs-flow-arrow svg { opacity: 0.25; }
+
+    /* ── Phone card ── */
+    .cs-screen-card { display: flex; flex-direction: column; gap: 10px; flex-shrink: 0; width: 260px; }
+    .cs-screen-meta { text-align: center; }
+    .cs-screen-num { font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(91,143,255,0.55); margin-bottom: 3px; }
+    .cs-screen-label { font-size: 11px; font-weight: 600; color: rgba(255,255,255,0.55); }
+
+    /* ── Phone frame — 210×454px fixed ── */
+    .cs-phone {
+      width: 260px; height: 562px;
+      border-radius: 28px;
+      border: 1.5px solid rgba(255,255,255,0.12);
+      background: #0d0d1f;
+      overflow: hidden;
+      display: flex; flex-direction: column;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.03);
+      flex-shrink: 0;
+    }
+    .p-status { display: flex; justify-content: space-between; align-items: center; padding: 11px 16px 5px; flex-shrink: 0; }
+    .p-time { font-size: 10px; font-weight: 700; color: rgba(255,255,255,0.80); }
+    .p-notch { width: 75px; height: 8px; border-radius: 10px; background: rgba(255,255,255,0.06); }
+    .p-icons { display: flex; gap: 3px; align-items: center; }
+    .p-sig { width: 9px; height: 6px; border-radius: 1.5px; background: rgba(255,255,255,0.5); }
+    .p-bat { width: 14px; height: 7px; border-radius: 2px; border: 1px solid rgba(255,255,255,0.35); display: flex; align-items: center; padding: 1px; position: relative; }
+    .p-bat::after { content:''; position:absolute; right:-2.5px; top:50%; transform:translateY(-50%); width:1.5px; height:3.5px; border-radius:1px; background:rgba(255,255,255,0.3); }
+    .p-bat-fill { background: rgba(255,255,255,0.65); border-radius: 1px; height: 100%; width: 70%; }
+    .p-body { flex: 1; overflow: hidden; display: flex; flex-direction: column; min-height: 0; }
+    .p-tabbar { display: flex; justify-content: space-around; align-items: center; padding: 8px 16px 12px; border-top: 1px solid rgba(255,255,255,0.07); background: rgba(13,13,31,0.98); flex-shrink: 0; }
+    .p-tab { display: flex; flex-direction: column; align-items: center; gap: 2px; color: rgba(255,255,255,0.22); }
+    .p-tab--on { color: #5B8FFF; }
+    .p-tab-dot { width: 3px; height: 3px; border-radius: 50%; background: #5B8FFF; }
+    .p-home { height: 20px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .p-home-bar { width: 88px; height: 4px; border-radius: 2px; background: rgba(255,255,255,0.18); }
+
+    /* ── Shared primitives (small scale) ── */
+    .f { font-size: 11px; }
+    .f-lg { font-size: 15px; }
+    .f-sm { font-size: 10px; }
+    .f-xs { font-size: 9px; }
+    .fw7 { font-weight: 700; }
+    .fw6 { font-weight: 600; }
+    .dim { color: rgba(255,255,255,0.35); }
+    .mid { color: rgba(255,255,255,0.60); }
+    .bright { color: rgba(255,255,255,0.88); }
+    .blue { color: #6FA3FF; }
+    .green-c { color: #7DDBA5; }
+    .pad { padding: 12px 14px; }
+    .gap4 { display: flex; flex-direction: column; gap: 5px; }
+    .gap6 { display: flex; flex-direction: column; gap: 8px; }
+    .gap8 { display: flex; flex-direction: column; gap: 8px; }
+    .row { display: flex; align-items: center; gap: 7px; }
+    .divider { height: 1px; background: rgba(255,255,255,0.07); margin: 5px 0; }
+
+    .mini-card { border-radius: 10px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.07); padding: 10px; }
+    .mini-btn { border-radius: 8px; padding: 11px 0; text-align: center; font-size: 11px; font-weight: 700; color: #fff; background: linear-gradient(135deg,#3A6FFF,#5B8FFF); }
+    .mini-btn-grn { border-radius: 8px; padding: 11px 0; text-align: center; font-size: 11px; font-weight: 700; color: #fff; background: linear-gradient(135deg,#1A8A6F,#3ABFA0); }
+    .mini-btn-ghost { border-radius: 8px; padding: 10px 0; text-align: center; font-size: 11px; font-weight: 600; color: rgba(255,255,255,0.45); background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.09); }
+    .mini-avatar { border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 700; color: #fff; flex-shrink: 0; overflow: hidden; }
+    .av-blue { background: linear-gradient(135deg,#3A6FFF,#7B5FD0); }
+    .av-teal { background: linear-gradient(135deg,#1A8A6F,#3ABFA0); }
+    .av-orange { background: linear-gradient(135deg,#FF6B6B,#FF8E53); }
+    .mini-chip { padding: 3px 9px; border-radius: 100px; font-size: 9px; font-weight: 600; }
+    .chip-blue-on { background: #5B8FFF; color: #fff; }
+    .chip-off { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.10); color: rgba(255,255,255,0.40); }
+    .chip-green { background: rgba(80,200,140,0.12); border: 1px solid rgba(80,200,140,0.20); color: rgba(80,200,140,0.85); font-size: 7px; padding: 2px 6px; border-radius: 100px; }
+    .mini-search { display: flex; align-items: center; gap: 7px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.10); border-radius: 9px; padding: 9px 11px; }
+    .mini-input { height: 33px; border-radius: 8px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.10); display: flex; align-items: center; padding: 0 9px; font-size: 9px; color: rgba(255,255,255,0.28); }
+    .mini-slot { border-radius: 7px; padding: 8px 0; text-align: center; font-size: 10px; font-weight: 500; }
+    .slot-free { background: rgba(91,143,255,0.07); border: 1px solid rgba(91,143,255,0.17); color: rgba(160,190,255,0.72); }
+    .slot-sel  { background: linear-gradient(135deg,#3A6FFF,#5B8FFF); color: #fff; font-weight: 700; }
+    .slot-gone { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06); color: rgba(255,255,255,0.17); text-decoration: line-through; }
+    .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; }
+    .grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 4px; }
+    .mini-bubble { border-radius: 10px; padding: 8px 10px; font-size: 10px; line-height: 1.55; max-width: 80%; }
+    .bubble-recv { background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.09); color: rgba(255,255,255,0.68); align-self: flex-start; border-bottom-left-radius: 2px; }
+    .bubble-sent { background: linear-gradient(135deg,#3A6FFF,#5B8FFF); color: #fff; align-self: flex-end; border-bottom-right-radius: 2px; }
+    .btime { font-size: 8px; color: rgba(255,255,255,0.24); margin-top: 2px; }
+    .btime-r { text-align: right; color: rgba(255,255,255,0.38); }
+
+    /* ── Design system ── */
+    .cs-ds { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+    .cs-ds-block { border-radius: 20px; padding: 28px; }
+    .cs-ds-title { font-family: 'Space Grotesk', sans-serif; font-size: 16px; font-weight: 600; color: rgba(255,255,255,0.8); margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
+    .cs-ds-title::after { content:''; flex:1; height:1px; background: rgba(255,255,255,0.07); }
+    .cs-colors { display: flex; flex-direction: column; gap: 10px; }
+    .cs-color-row { display: flex; align-items: center; gap: 12px; }
+    .cs-swatch { width: 40px; height: 40px; border-radius: 10px; flex-shrink: 0; }
+    .cs-color-info { flex: 1; }
+    .cs-color-name { font-size: 13px; font-weight: 600; color: rgba(255,255,255,0.75); }
+    .cs-color-hex { font-size: 11px; color: rgba(255,255,255,0.30); font-family: monospace; margin-top: 1px; }
+    .cs-color-role { font-size: 10px; color: rgba(255,255,255,0.25); margin-top: 2px; }
+    .cs-type-rows { display: flex; flex-direction: column; gap: 14px; }
+    .cs-type-row { display: flex; align-items: baseline; gap: 16px; padding-bottom: 14px; border-bottom: 1px solid rgba(255,255,255,0.06); }
+    .cs-type-row:last-child { border-bottom: none; padding-bottom: 0; }
+    .cs-type-meta { width: 90px; flex-shrink: 0; }
+    .cs-type-label { font-size: 10px; font-weight: 600; color: rgba(255,255,255,0.28); text-transform: uppercase; letter-spacing: 0.09em; }
+    .cs-type-spec  { font-size: 9px; color: rgba(255,255,255,0.20); margin-top: 2px; font-family: monospace; }
+    .cs-type-sample { color: rgba(255,255,255,0.80); }
+  </style>
+</head>
+<body>
+<section class="cs-fd">
+  <div class="cs-glows"><div class="cs-glow cs-glow--1"></div><div class="cs-glow cs-glow--2"></div></div>
+  <div class="cs-grid"></div>
+  <div class="cs-inner">
+
+    <!-- Header -->
+    <div class="cs-header">
+      <div>
+        <div class="cs-eyebrow">11 — Final Design</div>
+        <h2 class="cs-title">End-to-End<br><span>Experience</span></h2>
+      </div>
+      <div class="cs-ghost-num">11</div>
+    </div>
+
+    <!-- Fidelity strip -->
+    <div class="cs-fidelity">
+      <div class="cs-fidelity__step cs-fidelity__step--done">01 — Lo-Fi Wireframes</div>
+      <div class="cs-fidelity__step cs-fidelity__step--done">02 — Hi-Fi Design</div>
+      <div class="cs-fidelity__step cs-fidelity__step--done">03 — Usability Testing</div>
+      <div class="cs-fidelity__step cs-fidelity__step--active">04 — Final Design</div>
+    </div>
+
+    <!-- What changed -->
+    <div>
+      <div class="cs-eyebrow" style="margin-bottom:20px;">Refined after testing</div>
+      <div class="cs-changes">
+        <div class="cs-change cs-change--1 cs-glass">
+          <div class="cs-change__tag">Filter visibility</div>
+          <div class="cs-change__title">Filter chips elevated with section label</div>
+          <div class="cs-change__text">Added "Filter by" heading above chips with 12px separation from search bar. 5/6 users who missed filters in round 1 found them immediately in round 2.</div>
+        </div>
+        <div class="cs-change cs-change--2 cs-glass">
+          <div class="cs-change__tag">Slot selection</div>
+          <div class="cs-change__title">2-step indicator added to booking flow</div>
+          <div class="cs-change__text">Explicit "Select date → Pick time" stepper added. Task completion for slot selection jumped from 33% to 100% between test rounds.</div>
+        </div>
+        <div class="cs-change cs-change--3 cs-glass">
+          <div class="cs-change__tag">Payment transparency</div>
+          <div class="cs-change__title">Total shown before method selection</div>
+          <div class="cs-change__text">Consultation fee now displayed prominently in the booking summary card, anchored above payment method selection. Eliminated all hesitation drop-offs.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ════ PHASE 1: ONBOARD ════ -->
+    <div class="cs-phase">
+      <div class="cs-phase-header">
+        <div class="cs-phase-badge cs-phase-badge--onboard">Phase 1 — Onboard</div>
+        <div class="cs-phase-line"></div>
+        <div class="cs-phase-count">3 screens</div>
+      </div>
+      <div class="cs-flow-row">
+
+        <!-- S01 Splash -->
+        <div class="cs-screen-card">
+          <div class="cs-phone">
+            <div class="p-status"><div class="p-time">9:41</div><div class="p-notch"></div><div class="p-icons"><svg width="28" height="9" viewBox="0 0 30 10" fill="none"><rect x="0" y="6" width="2.5" height="4" rx="0.4" fill="rgba(255,255,255,0.75)"/><rect x="3.8" y="3.5" width="2.5" height="6.5" rx="0.4" fill="rgba(255,255,255,0.75)"/><rect x="7.6" y="1.5" width="2.5" height="8.5" rx="0.4" fill="rgba(255,255,255,0.55)"/><rect x="11.4" y="0" width="2.5" height="10" rx="0.4" fill="rgba(255,255,255,0.38)"/><circle cx="23" cy="9" r="1.2" fill="rgba(255,255,255,0.7)"/><path d="M20.2 6.5a3.8 3.8 0 015.6 0" stroke="rgba(255,255,255,0.7)" stroke-width="1.2" stroke-linecap="round"/><path d="M17.8 4a7.2 7.2 0 0110.4 0" stroke="rgba(255,255,255,0.7)" stroke-width="1.2" stroke-linecap="round"/></svg><div class="p-bat"><div class="p-bat-fill"></div></div></div></div>
+            <div class="p-body" style="background:linear-gradient(160deg,#0d1535 0%,#0d0d1f 50%,#130d2a 100%);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;gap:0;">
+              <div style="width:52px;height:52px;border-radius:16px;background:linear-gradient(135deg,#3A6FFF,#7B5FD0);display:flex;align-items:center;justify-content:center;margin-bottom:14px;box-shadow:0 8px 24px rgba(58,111,255,0.4);">
+                <svg width="26" height="26" viewBox="0 0 26 26" fill="none"><path d="M13 4C13 4 7 8 7 14a6 6 0 0012 0c0-6-6-10-6-10z" fill="rgba(255,255,255,0.9)"/><circle cx="13" cy="14" r="2.5" fill="#3A6FFF"/></svg>
+              </div>
+              <div style="font-family:'Space Grotesk',sans-serif;font-size:18px;font-weight:700;color:#fff;letter-spacing:-0.5px;margin-bottom:5px;">PulseCare</div>
+              <div style="font-size:9px;color:rgba(255,255,255,0.4);text-align:center;line-height:1.6;margin-bottom:28px;">Healthcare, simplified.<br>Book. Connect. Heal.</div>
+              <div style="width:100%;padding:10px 0;border-radius:10px;background:linear-gradient(135deg,#3A6FFF,#5B8FFF);text-align:center;font-size:10px;font-weight:700;color:#fff;margin-bottom:8px;">Get Started</div>
+              <div style="font-size:10px;color:rgba(255,255,255,0.30);text-align:center;">Already have an account? <span style="color:#6FA3FF;">Sign in</span></div>
+            </div>
+            <div class="p-home"><div class="p-home-bar"></div></div>
+          </div>
+          <div class="cs-screen-meta"><div class="cs-screen-num">S01</div><div class="cs-screen-label">Splash</div></div>
+        </div>
+
+        <div class="cs-flow-arrow"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="#fff" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+
+        <!-- S02 Login -->
+        <div class="cs-screen-card">
+          <div class="cs-phone">
+            <div class="p-status"><div class="p-time">9:41</div><div class="p-notch"></div><div class="p-icons"><svg width="28" height="9" viewBox="0 0 30 10" fill="none"><rect x="0" y="6" width="2.5" height="4" rx="0.4" fill="rgba(255,255,255,0.75)"/><rect x="3.8" y="3.5" width="2.5" height="6.5" rx="0.4" fill="rgba(255,255,255,0.75)"/><rect x="7.6" y="1.5" width="2.5" height="8.5" rx="0.4" fill="rgba(255,255,255,0.55)"/><rect x="11.4" y="0" width="2.5" height="10" rx="0.4" fill="rgba(255,255,255,0.38)"/><circle cx="23" cy="9" r="1.2" fill="rgba(255,255,255,0.7)"/><path d="M20.2 6.5a3.8 3.8 0 015.6 0" stroke="rgba(255,255,255,0.7)" stroke-width="1.2" stroke-linecap="round"/><path d="M17.8 4a7.2 7.2 0 0110.4 0" stroke="rgba(255,255,255,0.7)" stroke-width="1.2" stroke-linecap="round"/></svg><div class="p-bat"><div class="p-bat-fill"></div></div></div></div>
+            <div class="p-body pad gap6" style="padding-top:16px;">
+              <div style="font-family:'Space Grotesk',sans-serif;font-size:16px;font-weight:700;color:#fff;letter-spacing:-0.3px;margin-bottom:2px;">Welcome back</div>
+              <div style="font-size:9px;color:rgba(255,255,255,0.35);margin-bottom:10px;">Sign in to your PulseCare account</div>
+              <div style="font-size:10px;color:rgba(255,255,255,0.35);margin-bottom:3px;">Email address</div>
+              <div class="mini-input">emily@example.com</div>
+              <div style="font-size:10px;color:rgba(255,255,255,0.35);margin-bottom:3px;margin-top:4px;">Password</div>
+              <div class="mini-input" style="justify-content:space-between;">
+                <span>••••••••</span>
+                <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><ellipse cx="6" cy="6" rx="5" ry="3.5" stroke="rgba(255,255,255,0.3)" stroke-width="1"/><circle cx="6" cy="6" r="1.5" fill="rgba(255,255,255,0.3)"/></svg>
+              </div>
+              <div style="text-align:right;font-size:10px;color:#6FA3FF;margin-top:2px;">Forgot password?</div>
+              <div class="mini-btn" style="margin-top:8px;">Sign In</div>
+              <div style="display:flex;align-items:center;gap:8px;margin:4px 0;">
+                <div style="flex:1;height:1px;background:rgba(255,255,255,0.08);"></div>
+                <div style="font-size:10px;color:rgba(255,255,255,0.25);">or continue with</div>
+                <div style="flex:1;height:1px;background:rgba(255,255,255,0.08);"></div>
+              </div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:5px;">
+                <div class="mini-btn-ghost" style="display:flex;align-items:center;justify-content:center;gap:5px;padding:8px 0;">
+                  <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M9 5.1c0-.33-.03-.65-.08-.95H5v1.8h2.24A1.92 1.92 0 015.92 7.1v1.1h1.55C8.5 7.33 9 6.32 9 5.1z" fill="#4285F4"/><path d="M5 9c1.13 0 2.07-.37 2.76-1l-1.55-1.1A2.7 2.7 0 015 7.3C3.92 7.3 3 6.6 2.67 5.6H1.07v1.07A4 4 0 005 9z" fill="#34A853"/><path d="M2.67 5.6a2.4 2.4 0 010-1.5V3.03H1.07A4 4 0 001 5a4 4 0 00.07.97L2.67 5.6z" fill="#FBBC04"/><path d="M5 2.7c.65 0 1.23.22 1.69.66l1.26-1.26A4 4 0 005 1 4 4 0 001.07 3.03l1.6 1.07A2.39 2.39 0 015 2.7z" fill="#EA4335"/></svg>
+                  <span style="font-size:10px;">Google</span>
+                </div>
+                <div class="mini-btn-ghost" style="display:flex;align-items:center;justify-content:center;gap:5px;padding:8px 0;">
+                  <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M8 3.5a2.2 2.2 0 01-1.04 1.85A2.2 2.2 0 018 7.18c0 .88-.5 1.62-1.25 2A2.67 2.67 0 015.5 9c-.42 0-.82-.1-1.17-.3C4 8.5 3.67 8.3 3.33 8.3c-.35 0-.68.2-1 .4A2.67 2.67 0 011 9C.5 8.62 0 7.88 0 7.18A2.2 2.2 0 011.04 5.35 2.2 2.2 0 010 3.5 2.2 2.2 0 012.2 1.3c.4 0 .78.12 1.13.35C3.7 1.88 4.07 2 4.47 2c.38 0 .74-.12 1.07-.35A2.2 2.2 0 016.8 1.3 2.2 2.2 0 018 3.5zM5.5 1a1.5 1.5 0 01-1.5 1.5A1.5 1.5 0 015.5 1z" fill="rgba(255,255,255,0.7)"/></svg>
+                  <span style="font-size:10px;">Apple</span>
+                </div>
+              </div>
+              <div style="text-align:center;font-size:10px;color:rgba(255,255,255,0.28);margin-top:4px;">Don't have an account? <span style="color:#6FA3FF;">Sign up</span></div>
+            </div>
+            <div class="p-home"><div class="p-home-bar"></div></div>
+          </div>
+          <div class="cs-screen-meta"><div class="cs-screen-num">S02</div><div class="cs-screen-label">Login</div></div>
+        </div>
+
+        <div class="cs-flow-arrow"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="#fff" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+
+        <!-- S03 Home Dashboard -->
+        <div class="cs-screen-card">
+          <div class="cs-phone">
+            <div class="p-status"><div class="p-time">9:41</div><div class="p-notch"></div><div class="p-icons"><svg width="28" height="9" viewBox="0 0 30 10" fill="none"><rect x="0" y="6" width="2.5" height="4" rx="0.4" fill="rgba(255,255,255,0.75)"/><rect x="3.8" y="3.5" width="2.5" height="6.5" rx="0.4" fill="rgba(255,255,255,0.75)"/><rect x="7.6" y="1.5" width="2.5" height="8.5" rx="0.4" fill="rgba(255,255,255,0.55)"/><rect x="11.4" y="0" width="2.5" height="10" rx="0.4" fill="rgba(255,255,255,0.38)"/><circle cx="23" cy="9" r="1.2" fill="rgba(255,255,255,0.7)"/><path d="M20.2 6.5a3.8 3.8 0 015.6 0" stroke="rgba(255,255,255,0.7)" stroke-width="1.2" stroke-linecap="round"/><path d="M17.8 4a7.2 7.2 0 0110.4 0" stroke="rgba(255,255,255,0.7)" stroke-width="1.2" stroke-linecap="round"/></svg><div class="p-bat"><div class="p-bat-fill"></div></div></div></div>
+            <div class="p-body pad gap6">
+              <div class="row" style="margin-bottom:4px;">
+                <div class="gap4" style="flex:1;">
+                  <div class="f-xs dim">Good morning 👋</div>
+                  <div class="f-lg fw7 bright" style="font-family:'Space Grotesk',sans-serif;">Emily</div>
+                </div>
+                <div class="mini-avatar av-orange" style="width:30px;height:30px;font-size:11px;border-radius:50%;"><img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=200&h=200&fit=crop&q=80" style="width:100%;height:100%;object-fit:cover;" alt="Emily"/></div>
+              </div>
+              <!-- Upcoming -->
+              <div style="font-size:10px;font-weight:600;color:rgba(255,255,255,0.28);text-transform:uppercase;letter-spacing:0.08em;">Upcoming</div>
+              <div style="border-radius:10px;padding:10px;background:linear-gradient(135deg,rgba(58,111,255,0.18),rgba(91,143,255,0.10));border:1px solid rgba(91,143,255,0.25);">
+                <div class="row" style="margin-bottom:6px;">
+                  <div class="mini-avatar av-blue" style="width:28px;height:28px;font-size:9px;"><img src="https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=200&h=200&fit=crop&q=80" style="width:100%;height:100%;object-fit:cover;" alt="Dr. Mitchell"/></div>
+                  <div class="gap4" style="flex:1;">
+                    <div class="f fw6 bright">Dr. James Mitchell</div>
+                    <div class="f-xs dim">Cardiology · In-person</div>
+                  </div>
+                </div>
+                <div class="divider"></div>
+                <div class="row">
+                  <div class="f-xs dim">Wed 20 Mar · 2:00 PM</div>
+                  <div style="margin-left:auto;"><div class="mini-chip chip-blue-on" style="font-size:8px;padding:2px 7px;">In 2 days</div></div>
+                </div>
+              </div>
+              <!-- Quick actions -->
+              <div style="font-size:10px;font-weight:600;color:rgba(255,255,255,0.28);text-transform:uppercase;letter-spacing:0.08em;">Quick Actions</div>
+              <div class="grid3">
+                <div style="border-radius:9px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);padding:8px 4px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:4px;">
+                  <div style="width:22px;height:22px;border-radius:7px;background:rgba(91,143,255,0.15);display:flex;align-items:center;justify-content:center;"><svg width="11" height="11" viewBox="0 0 11 11" fill="none"><circle cx="5" cy="5" r="3.5" stroke="#5B8FFF" stroke-width="1.1"/><line x1="8" y1="8" x2="10" y2="10" stroke="#5B8FFF" stroke-width="1.1" stroke-linecap="round"/></svg></div>
+                  <div class="f-xs dim">Find Doctor</div>
+                </div>
+                <div style="border-radius:9px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);padding:8px 4px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:4px;">
+                  <div style="width:22px;height:22px;border-radius:7px;background:rgba(80,200,140,0.15);display:flex;align-items:center;justify-content:center;"><svg width="11" height="11" viewBox="0 0 11 11" fill="none"><rect x="1.5" y="2" width="8" height="7" rx="1.5" stroke="#7DDBA5" stroke-width="1.1"/><path d="M4 5.5h3M5.5 4v3" stroke="#7DDBA5" stroke-width="1.1" stroke-linecap="round"/></svg></div>
+                  <div class="f-xs dim">Records</div>
+                </div>
+                <div style="border-radius:9px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);padding:8px 4px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:4px;">
+                  <div style="width:22px;height:22px;border-radius:7px;background:rgba(167,139,250,0.15);display:flex;align-items:center;justify-content:center;"><svg width="11" height="11" viewBox="0 0 11 11" fill="none"><path d="M2 3h7a1 1 0 011 1v4a1 1 0 01-1 1H3L1 10V4a1 1 0 011-1z" stroke="#A78BFA" stroke-width="1.1"/></svg></div>
+                  <div class="f-xs dim">Messages</div>
+                </div>
+              </div>
+              <!-- Recent doctors -->
+              <div style="font-size:10px;font-weight:600;color:rgba(255,255,255,0.28);text-transform:uppercase;letter-spacing:0.08em;">Recent Doctors</div>
+              <div class="mini-card row">
+                <div class="mini-avatar av-teal" style="width:26px;height:26px;font-size:10px;"><img src="https://images.unsplash.com/photo-1594824476967-48c8b964273f?w=200&h=200&fit=crop&q=80" style="width:100%;height:100%;object-fit:cover;" alt="Dr. Reyes"/></div>
+                <div class="gap4" style="flex:1;"><div class="f fw6 bright">Dr. Sophia Reyes</div><div class="f-xs dim">Last visit: Mar 10</div></div>
+                <div class="f-xs blue">Rebook</div>
+              </div>
+            </div>
+            <div class="p-tabbar">
+            <div class="p-tab p-tab--on">
+              <svg width="18" height="18" viewBox="0 0 22 22" fill="none"><path d="M3 10.5L11 3l8 7.5V19a1 1 0 01-1 1H4a1 1 0 01-1-1v-8.5z" stroke="currentColor" stroke-width="1.6" fill="currentColor" fill-opacity="0.12" stroke-linecap="round" stroke-linejoin="round"/><path d="M8 20v-6h6v6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              <div class="p-tab-dot"></div>
+            </div>
+            <div class="p-tab">
+              <svg width="18" height="18" viewBox="0 0 22 22" fill="none"><rect x="2.5" y="3.5" width="17" height="16" rx="2.5" stroke="currentColor" stroke-width="1.6"/><path d="M7 1.5v4M15 1.5v4M2.5 8.5h17" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+            </div>
+            <div class="p-tab">
+              <svg width="18" height="18" viewBox="0 0 22 22" fill="none"><path d="M2 5a2 2 0 012-2h14a2 2 0 012 2v9a2 2 0 01-2 2H8l-6 4V5z" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+            <div class="p-tab">
+              <svg width="18" height="18" viewBox="0 0 22 22" fill="none"><circle cx="11" cy="7.5" r="4" stroke="currentColor" stroke-width="1.6"/><path d="M3 20c0-4.418 3.582-8 8-8s8 3.582 8 8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+            </div>
+            </div>
+            <div class="p-home"><div class="p-home-bar"></div></div>
+          </div>
+          <div class="cs-screen-meta"><div class="cs-screen-num">S03</div><div class="cs-screen-label">Home Dashboard</div></div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ════ PHASE 2: DISCOVER ════ -->
+    <div class="cs-phase">
+      <div class="cs-phase-header">
+        <div class="cs-phase-badge cs-phase-badge--discover">Phase 2 — Discover</div>
+        <div class="cs-phase-line"></div>
+        <div class="cs-phase-count">3 screens</div>
+      </div>
+      <div class="cs-flow-row">
+
+        <!-- S04 Search -->
+        <div class="cs-screen-card">
+          <div class="cs-phone">
+            <div class="p-status"><div class="p-time">9:41</div><div class="p-notch"></div><div class="p-icons"><svg width="28" height="9" viewBox="0 0 30 10" fill="none"><rect x="0" y="6" width="2.5" height="4" rx="0.4" fill="rgba(255,255,255,0.75)"/><rect x="3.8" y="3.5" width="2.5" height="6.5" rx="0.4" fill="rgba(255,255,255,0.75)"/><rect x="7.6" y="1.5" width="2.5" height="8.5" rx="0.4" fill="rgba(255,255,255,0.55)"/><rect x="11.4" y="0" width="2.5" height="10" rx="0.4" fill="rgba(255,255,255,0.38)"/><circle cx="23" cy="9" r="1.2" fill="rgba(255,255,255,0.7)"/><path d="M20.2 6.5a3.8 3.8 0 015.6 0" stroke="rgba(255,255,255,0.7)" stroke-width="1.2" stroke-linecap="round"/><path d="M17.8 4a7.2 7.2 0 0110.4 0" stroke="rgba(255,255,255,0.7)" stroke-width="1.2" stroke-linecap="round"/></svg><div class="p-bat"><div class="p-bat-fill"></div></div></div></div>
+            <div class="p-body pad gap6">
+              <div class="f-lg fw7 bright" style="font-family:'Space Grotesk',sans-serif;margin-bottom:4px;">Find a Doctor</div>
+              <div class="mini-search">
+                <svg width="11" height="11" viewBox="0 0 11 11" fill="none" style="opacity:.3;flex-shrink:0;"><circle cx="5" cy="5" r="3.5" stroke="#fff" stroke-width="1.2"/><line x1="8" y1="8" x2="10.5" y2="10.5" stroke="#fff" stroke-width="1.2" stroke-linecap="round"/></svg>
+                <div class="f-xs dim">Specialty, doctor name…</div>
+              </div>
+              <!-- Filter by label — usability fix -->
+              <div style="font-size:10px;font-weight:600;color:rgba(255,255,255,0.28);text-transform:uppercase;letter-spacing:0.08em;margin-top:4px;">Filter by</div>
+              <div style="display:flex;gap:5px;flex-wrap:wrap;">
+                <div class="mini-chip chip-blue-on">Cardiology</div>
+                <div class="mini-chip chip-off">Near me</div>
+                <div class="mini-chip chip-off">Today</div>
+                <div class="mini-chip chip-off">Video</div>
+              </div>
+              <div style="font-size:10px;font-weight:600;color:rgba(255,255,255,0.28);text-transform:uppercase;letter-spacing:0.08em;margin-top:4px;">Specialties</div>
+              <div class="grid3" style="gap:5px;">
+                <div style="border-radius:8px;background:rgba(91,143,255,0.10);border:1px solid rgba(91,143,255,0.20);padding:8px 4px;text-align:center;"><div class="f-xs" style="color:rgba(160,190,255,0.8);">Heart</div></div>
+                <div style="border-radius:8px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);padding:8px 4px;text-align:center;"><div class="f-xs dim">Skin</div></div>
+                <div style="border-radius:8px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);padding:8px 4px;text-align:center;"><div class="f-xs dim">Dental</div></div>
+                <div style="border-radius:8px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);padding:8px 4px;text-align:center;"><div class="f-xs dim">Eye</div></div>
+                <div style="border-radius:8px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);padding:8px 4px;text-align:center;"><div class="f-xs dim">Ortho</div></div>
+                <div style="border-radius:8px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);padding:8px 4px;text-align:center;"><div class="f-xs dim">GP</div></div>
+              </div>
+              <div style="font-size:10px;font-weight:600;color:rgba(255,255,255,0.28);text-transform:uppercase;letter-spacing:0.08em;margin-top:4px;">Top Rated Near You</div>
+              <div class="mini-card row">
+                <div class="mini-avatar av-blue" style="width:28px;height:28px;font-size:9px;"><img src="https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=200&h=200&fit=crop&q=80" style="width:100%;height:100%;object-fit:cover;" alt="Dr. Mitchell"/></div>
+                <div class="gap4" style="flex:1;"><div class="f fw6 bright">Dr. James Mitchell</div><div class="f-xs dim">Cardiologist · ★ 4.9</div></div>
+                <div class="chip-green f-xs">Today</div>
+              </div>
+            </div>
+                        <div class="p-tabbar">
+            <div class="p-tab p-tab--on">
+              <svg width="18" height="18" viewBox="0 0 22 22" fill="none"><path d="M3 10.5L11 3l8 7.5V19a1 1 0 01-1 1H4a1 1 0 01-1-1v-8.5z" stroke="currentColor" stroke-width="1.6" fill="currentColor" fill-opacity="0.12" stroke-linecap="round" stroke-linejoin="round"/><path d="M8 20v-6h6v6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              <div class="p-tab-dot"></div>
+            </div>
+            <div class="p-tab">
+              <svg width="18" height="18" viewBox="0 0 22 22" fill="none"><rect x="2.5" y="3.5" width="17" height="16" rx="2.5" stroke="currentColor" stroke-width="1.6"/><path d="M7 1.5v4M15 1.5v4M2.5 8.5h17" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+            </div>
+            <div class="p-tab">
+              <svg width="18" height="18" viewBox="0 0 22 22" fill="none"><path d="M2 5a2 2 0 012-2h14a2 2 0 012 2v9a2 2 0 01-2 2H8l-6 4V5z" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+            <div class="p-tab">
+              <svg width="18" height="18" viewBox="0 0 22 22" fill="none"><circle cx="11" cy="7.5" r="4" stroke="currentColor" stroke-width="1.6"/><path d="M3 20c0-4.418 3.582-8 8-8s8 3.582 8 8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+            </div>
+            </div>
+            <div class="p-home"><div class="p-home-bar"></div></div>
+          </div>
+          <div class="cs-screen-meta"><div class="cs-screen-num">S04</div><div class="cs-screen-label">Search & Filter</div></div>
+        </div>
+
+        <div class="cs-flow-arrow"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="#fff" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+
+        <!-- S05 Results -->
+        <div class="cs-screen-card">
+          <div class="cs-phone">
+            <div class="p-status"><div class="p-time">9:41</div><div class="p-notch"></div><div class="p-icons"><svg width="28" height="9" viewBox="0 0 30 10" fill="none"><rect x="0" y="6" width="2.5" height="4" rx="0.4" fill="rgba(255,255,255,0.75)"/><rect x="3.8" y="3.5" width="2.5" height="6.5" rx="0.4" fill="rgba(255,255,255,0.75)"/><rect x="7.6" y="1.5" width="2.5" height="8.5" rx="0.4" fill="rgba(255,255,255,0.55)"/><rect x="11.4" y="0" width="2.5" height="10" rx="0.4" fill="rgba(255,255,255,0.38)"/><circle cx="23" cy="9" r="1.2" fill="rgba(255,255,255,0.7)"/><path d="M20.2 6.5a3.8 3.8 0 015.6 0" stroke="rgba(255,255,255,0.7)" stroke-width="1.2" stroke-linecap="round"/><path d="M17.8 4a7.2 7.2 0 0110.4 0" stroke="rgba(255,255,255,0.7)" stroke-width="1.2" stroke-linecap="round"/></svg><div class="p-bat"><div class="p-bat-fill"></div></div></div></div>
+            <div class="p-body pad gap6">
+              <div class="row">
+                <div class="f fw6 bright" style="flex:1;">Cardiologists</div>
+                <div class="f-xs dim">Sort ↕</div>
+              </div>
+              <div style="display:flex;gap:5px;align-items:center;flex-wrap:nowrap;overflow:hidden;">
+                <div class="mini-chip chip-blue-on">Cardiology ✕</div>
+                <div class="mini-chip chip-off">Today ✕</div>
+              </div>
+              <div class="f-xs dim">14 doctors found</div>
+              <!-- Results list -->
+              <div class="mini-card gap4">
+                <div class="row">
+                  <div class="mini-avatar av-blue" style="width:34px;height:34px;font-size:11px;"><img src="https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=200&h=200&fit=crop&q=80" style="width:100%;height:100%;object-fit:cover;" alt="Dr. Mitchell"/></div>
+                  <div class="gap4" style="flex:1;">
+                    <div class="f fw7 bright">Dr. James Mitchell</div>
+                    <div class="f-xs dim">Cardiologist · NYU Langone</div>
+                    <div class="row" style="gap:5px;">
+                      <div class="f-xs" style="color:#FFB547;">★ 4.9</div>
+                      <div class="f-xs dim">·</div>
+                      <div class="f-xs dim">312 reviews</div>
+                    </div>
+                  </div>
+                </div>
+                <div class="divider"></div>
+                <div class="row">
+                  <div class="chip-green f-xs">Today 2pm</div>
+                  <div style="margin-left:auto;"><div class="mini-btn" style="padding:5px 10px;border-radius:6px;font-size:10px;">Book</div></div>
+                </div>
+              </div>
+              <div class="mini-card gap4">
+                <div class="row">
+                  <div class="mini-avatar av-teal" style="width:34px;height:34px;font-size:11px;"><img src="https://images.unsplash.com/photo-1594824476967-48c8b964273f?w=200&h=200&fit=crop&q=80" style="width:100%;height:100%;object-fit:cover;" alt="Dr. Reyes"/></div>
+                  <div class="gap4" style="flex:1;">
+                    <div class="f fw7 bright">Dr. Sophia Reyes</div>
+                    <div class="f-xs dim">Cardiologist · Mount Sinai</div>
+                    <div class="row" style="gap:5px;">
+                      <div class="f-xs" style="color:#FFB547;">★ 4.7</div>
+                      <div class="f-xs dim">·</div>
+                      <div class="f-xs dim">198 reviews</div>
+                    </div>
+                  </div>
+                </div>
+                <div class="divider"></div>
+                <div class="row">
+                  <div class="f-xs dim">Tomorrow 10am</div>
+                  <div style="margin-left:auto;"><div class="mini-btn" style="padding:5px 10px;border-radius:6px;font-size:10px;">Book</div></div>
+                </div>
+              </div>
+              <div class="mini-card gap4" style="opacity:.6;">
+                <div class="row">
+                  <div class="mini-avatar" style="width:34px;height:34px;font-size:11px;background:linear-gradient(135deg,#8B5FFF,#5B3FD0);"><img src="https://images.unsplash.com/photo-1622253692010-333f2da6031d?w=200&h=200&fit=crop&q=80" style="width:100%;height:100%;object-fit:cover;" alt="Dr. Park"/></div>
+                  <div class="gap4" style="flex:1;">
+                    <div class="f fw7 bright">Dr. Kevin Park</div>
+                    <div class="f-xs dim">Cardiologist · Columbia</div>
+                    <div class="row" style="gap:5px;"><div class="f-xs" style="color:#FFB547;">★ 4.6</div><div class="f-xs dim">· 89 reviews</div></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="p-home"><div class="p-home-bar"></div></div>
+          </div>
+          <div class="cs-screen-meta"><div class="cs-screen-num">S05</div><div class="cs-screen-label">Search Results</div></div>
+        </div>
+
+        <div class="cs-flow-arrow"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="#fff" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+
+        <!-- S06 Profile -->
+        <div class="cs-screen-card">
+          <div class="cs-phone">
+            <div class="p-status"><div class="p-time">9:41</div><div class="p-notch"></div><div class="p-icons"><svg width="28" height="9" viewBox="0 0 30 10" fill="none"><rect x="0" y="6" width="2.5" height="4" rx="0.4" fill="rgba(255,255,255,0.75)"/><rect x="3.8" y="3.5" width="2.5" height="6.5" rx="0.4" fill="rgba(255,255,255,0.75)"/><rect x="7.6" y="1.5" width="2.5" height="8.5" rx="0.4" fill="rgba(255,255,255,0.55)"/><rect x="11.4" y="0" width="2.5" height="10" rx="0.4" fill="rgba(255,255,255,0.38)"/><circle cx="23" cy="9" r="1.2" fill="rgba(255,255,255,0.7)"/><path d="M20.2 6.5a3.8 3.8 0 015.6 0" stroke="rgba(255,255,255,0.7)" stroke-width="1.2" stroke-linecap="round"/><path d="M17.8 4a7.2 7.2 0 0110.4 0" stroke="rgba(255,255,255,0.7)" stroke-width="1.2" stroke-linecap="round"/></svg><div class="p-bat"><div class="p-bat-fill"></div></div></div></div>
+            <div class="p-body pad gap6">
+              <div class="row" style="margin-bottom:6px;">
+                <div class="mini-avatar av-blue" style="width:46px;height:46px;font-size:15px;border-radius:13px;"><img src="https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=200&h=200&fit=crop&q=80" style="width:100%;height:100%;object-fit:cover;" alt="Dr. Mitchell"/></div>
+                <div class="gap4" style="flex:1;">
+                  <div class="f fw7 bright" style="font-family:'Space Grotesk',sans-serif;">Dr. James Mitchell</div>
+                  <div class="f-xs dim">Cardiologist · NYU Langone</div>
+                  <div class="chip-green" style="display:inline-block;margin-top:2px;">✓ Verified</div>
+                </div>
+              </div>
+              <div class="grid3" style="gap:5px;">
+                <div style="border-radius:8px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);padding:7px;text-align:center;">
+                  <div style="font-size:13px;font-weight:700;background:linear-gradient(135deg,#6FA3FF,#A78BFA);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">4.9</div>
+                  <div class="f-xs dim">Rating</div>
+                </div>
+                <div style="border-radius:8px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);padding:7px;text-align:center;">
+                  <div style="font-size:13px;font-weight:700;background:linear-gradient(135deg,#6FA3FF,#A78BFA);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">14</div>
+                  <div class="f-xs dim">Yrs exp</div>
+                </div>
+                <div style="border-radius:8px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);padding:7px;text-align:center;">
+                  <div style="font-size:13px;font-weight:700;background:linear-gradient(135deg,#6FA3FF,#A78BFA);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">312</div>
+                  <div class="f-xs dim">Reviews</div>
+                </div>
+              </div>
+              <div class="divider"></div>
+              <div class="f-xs dim" style="text-transform:uppercase;letter-spacing:0.08em;font-weight:600;">About</div>
+              <div class="f-xs dim" style="line-height:1.6;">Board-certified cardiologist specialising in preventive care and non-invasive imaging. Available for in-person and video consults.</div>
+              <div class="divider"></div>
+              <div class="f-xs dim" style="text-transform:uppercase;letter-spacing:0.08em;font-weight:600;">Recent Review</div>
+              <div class="mini-card row" style="align-items:flex-start;gap:6px;">
+                <div class="mini-avatar av-orange" style="width:22px;height:22px;font-size:10px;border-radius:7px;">E</div>
+                <div class="gap4">
+                  <div class="f-xs fw6 bright">Emily C. · ★★★★★</div>
+                  <div class="f-xs dim" style="line-height:1.5;">"Incredibly thorough and easy to talk to."</div>
+                </div>
+              </div>
+              <div class="mini-btn" style="margin-top:auto;">Book Appointment</div>
+            </div>
+            <div class="p-home"><div class="p-home-bar"></div></div>
+          </div>
+          <div class="cs-screen-meta"><div class="cs-screen-num">S06</div><div class="cs-screen-label">Doctor Profile</div></div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ════ PHASE 3: BOOK ════ -->
+    <div class="cs-phase">
+      <div class="cs-phase-header">
+        <div class="cs-phase-badge cs-phase-badge--book">Phase 3 — Book</div>
+        <div class="cs-phase-line"></div>
+        <div class="cs-phase-count">4 screens</div>
+      </div>
+      <div class="cs-flow-row">
+
+        <!-- S07 Slot Selection -->
+        <div class="cs-screen-card">
+          <div class="cs-phone">
+            <div class="p-status"><div class="p-time">9:41</div><div class="p-notch"></div><div class="p-icons"><svg width="28" height="9" viewBox="0 0 30 10" fill="none"><rect x="0" y="6" width="2.5" height="4" rx="0.4" fill="rgba(255,255,255,0.75)"/><rect x="3.8" y="3.5" width="2.5" height="6.5" rx="0.4" fill="rgba(255,255,255,0.75)"/><rect x="7.6" y="1.5" width="2.5" height="8.5" rx="0.4" fill="rgba(255,255,255,0.55)"/><rect x="11.4" y="0" width="2.5" height="10" rx="0.4" fill="rgba(255,255,255,0.38)"/><circle cx="23" cy="9" r="1.2" fill="rgba(255,255,255,0.7)"/><path d="M20.2 6.5a3.8 3.8 0 015.6 0" stroke="rgba(255,255,255,0.7)" stroke-width="1.2" stroke-linecap="round"/><path d="M17.8 4a7.2 7.2 0 0110.4 0" stroke="rgba(255,255,255,0.7)" stroke-width="1.2" stroke-linecap="round"/></svg><div class="p-bat"><div class="p-bat-fill"></div></div></div></div>
+            <div class="p-body pad gap6">
+              <div class="f fw7 bright" style="font-family:'Space Grotesk',sans-serif;text-align:center;">Select Appointment</div>
+              <!-- Step indicator — usability fix -->
+              <div style="display:flex;border-radius:7px;overflow:hidden;border:1px solid rgba(255,255,255,0.08);">
+                <div style="flex:1;padding:6px 0;text-align:center;background:rgba(91,143,255,0.2);font-size:10px;font-weight:600;color:#8BB4FF;border-right:1px solid rgba(255,255,255,0.08);">1 · Select Date</div>
+                <div style="flex:1;padding:6px 0;text-align:center;background:rgba(255,255,255,0.02);font-size:10px;color:rgba(255,255,255,0.24);">2 · Pick Time</div>
+              </div>
+              <div style="display:flex;justify-content:space-between;align-items:center;">
+                <div style="font-size:9px;color:rgba(255,255,255,0.4);">‹</div>
+                <div class="f-xs fw6 mid">March 2026</div>
+                <div style="font-size:9px;color:rgba(255,255,255,0.4);">›</div>
+              </div>
+              <div class="grid3" style="grid-template-columns:repeat(5,1fr);gap:4px;">
+                <div style="border-radius:7px;padding:5px 0;text-align:center;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);"><div class="f-xs dim">M</div><div class="f-xs mid fw7">18</div></div>
+                <div style="border-radius:7px;padding:5px 0;text-align:center;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);"><div class="f-xs dim">T</div><div class="f-xs mid fw7">19</div></div>
+                <div style="border-radius:7px;padding:5px 0;text-align:center;background:linear-gradient(135deg,rgba(58,111,255,0.3),rgba(91,143,255,0.2));border:1px solid rgba(91,143,255,0.5);"><div class="f-xs" style="color:rgba(91,143,255,0.9);">W</div><div class="f-xs fw7 bright">20</div></div>
+                <div style="border-radius:7px;padding:5px 0;text-align:center;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);"><div class="f-xs dim">T</div><div class="f-xs mid fw7">21</div></div>
+                <div style="border-radius:7px;padding:5px 0;text-align:center;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);"><div class="f-xs dim">F</div><div class="f-xs mid fw7">22</div></div>
+              </div>
+              <div class="f-xs dim" style="text-transform:uppercase;letter-spacing:0.08em;font-weight:600;display:flex;align-items:center;gap:6px;">Available Times <span style="flex:1;height:1px;background:rgba(91,143,255,0.18);"></span></div>
+              <div class="grid2" style="gap:5px;">
+                <div class="mini-slot slot-free">9:00 AM</div>
+                <div class="mini-slot slot-sel">2:00 PM ✓</div>
+                <div class="mini-slot slot-gone">10:30 AM</div>
+                <div class="mini-slot slot-free">4:00 PM</div>
+                <div class="mini-slot slot-free">11:00 AM</div>
+                <div class="mini-slot slot-free">5:30 PM</div>
+              </div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:5px;">
+                <div style="border-radius:7px;padding:8px 0;text-align:center;font-size:9px;font-weight:700;background:linear-gradient(135deg,#3A6FFF,#5B8FFF);color:#fff;">In-Person</div>
+                <div style="border-radius:7px;padding:8px 0;text-align:center;font-size:9px;font-weight:600;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.09);color:rgba(255,255,255,0.35);">Video Call</div>
+              </div>
+              <div class="mini-btn" style="margin-top:auto;">Confirm Slot</div>
+            </div>
+            <div class="p-home"><div class="p-home-bar"></div></div>
+          </div>
+          <div class="cs-screen-meta"><div class="cs-screen-num">S07</div><div class="cs-screen-label">Slot Selection</div></div>
+        </div>
+
+        <div class="cs-flow-arrow"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="#fff" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+
+        <!-- S08 Booking Summary -->
+        <div class="cs-screen-card">
+          <div class="cs-phone">
+            <div class="p-status"><div class="p-time">9:41</div><div class="p-notch"></div><div class="p-icons"><svg width="28" height="9" viewBox="0 0 30 10" fill="none"><rect x="0" y="6" width="2.5" height="4" rx="0.4" fill="rgba(255,255,255,0.75)"/><rect x="3.8" y="3.5" width="2.5" height="6.5" rx="0.4" fill="rgba(255,255,255,0.75)"/><rect x="7.6" y="1.5" width="2.5" height="8.5" rx="0.4" fill="rgba(255,255,255,0.55)"/><rect x="11.4" y="0" width="2.5" height="10" rx="0.4" fill="rgba(255,255,255,0.38)"/><circle cx="23" cy="9" r="1.2" fill="rgba(255,255,255,0.7)"/><path d="M20.2 6.5a3.8 3.8 0 015.6 0" stroke="rgba(255,255,255,0.7)" stroke-width="1.2" stroke-linecap="round"/><path d="M17.8 4a7.2 7.2 0 0110.4 0" stroke="rgba(255,255,255,0.7)" stroke-width="1.2" stroke-linecap="round"/></svg><div class="p-bat"><div class="p-bat-fill"></div></div></div></div>
+            <div class="p-body pad gap6">
+              <div class="f fw7 bright" style="font-family:'Space Grotesk',sans-serif;text-align:center;">Review Booking</div>
+              <div style="border-radius:10px;padding:11px;background:rgba(91,143,255,0.07);border:1px solid rgba(91,143,255,0.18);">
+                <div class="row" style="margin-bottom:8px;">
+                  <div class="mini-avatar av-blue" style="width:32px;height:32px;font-size:10px;"><img src="https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=200&h=200&fit=crop&q=80" style="width:100%;height:100%;object-fit:cover;" alt="Dr. Mitchell"/></div>
+                  <div class="gap4" style="flex:1;">
+                    <div class="f fw7 bright">Dr. James Mitchell</div>
+                    <div class="f-xs dim">Cardiologist · NYU Langone</div>
+                  </div>
+                </div>
+                <div class="divider" style="background:rgba(91,143,255,0.15);"></div>
+                <div style="display:flex;flex-direction:column;gap:5px;margin-top:6px;">
+                  <div style="display:flex;justify-content:space-between;font-size:9px;"><div class="dim">Date</div><div class="mid fw6">Wed, 20 March 2026</div></div>
+                  <div style="display:flex;justify-content:space-between;font-size:9px;"><div class="dim">Time</div><div class="mid fw6">2:00 PM</div></div>
+                  <div style="display:flex;justify-content:space-between;font-size:9px;"><div class="dim">Visit type</div><div class="mid fw6">In-Person</div></div>
+                  <div style="display:flex;justify-content:space-between;font-size:9px;"><div class="dim">Location</div><div class="mid fw6">NYU Langone, NY</div></div>
+                  <div class="divider" style="background:rgba(91,143,255,0.15);"></div>
+                  <div style="display:flex;justify-content:space-between;font-size:10px;align-items:center;"><div class="dim fw6">Consultation fee</div><div style="color:#6FA3FF;font-weight:700;font-size:13px;">$120.00</div></div>
+                </div>
+              </div>
+              <div class="mini-card gap4">
+                <div class="f-xs dim fw6" style="text-transform:uppercase;letter-spacing:0.08em;">Cancellation Policy</div>
+                <div class="f-xs dim" style="line-height:1.55;">Free cancellation up to 24hrs before your appointment. After that a $20 fee applies.</div>
+              </div>
+              <div style="display:flex;align-items:center;gap:6px;background:rgba(80,200,140,0.07);border:1px solid rgba(80,200,140,0.15);border-radius:8px;padding:8px;">
+                <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l2.5 2.5L10 3.5" stroke="#7DDBA5" stroke-width="1.4" stroke-linecap="round"/></svg>
+                <div class="f-xs" style="color:rgba(80,200,140,0.85);">Appointment confirmed instantly on payment</div>
+              </div>
+              <div class="mini-btn" style="margin-top:auto;">Proceed to Payment</div>
+            </div>
+            <div class="p-home"><div class="p-home-bar"></div></div>
+          </div>
+          <div class="cs-screen-meta"><div class="cs-screen-num">S08</div><div class="cs-screen-label">Booking Summary</div></div>
+        </div>
+
+        <div class="cs-flow-arrow"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="#fff" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+
+        <!-- S09 Payment -->
+        <div class="cs-screen-card">
+          <div class="cs-phone">
+            <div class="p-status"><div class="p-time">9:41</div><div class="p-notch"></div><div class="p-icons"><svg width="28" height="9" viewBox="0 0 30 10" fill="none"><rect x="0" y="6" width="2.5" height="4" rx="0.4" fill="rgba(255,255,255,0.75)"/><rect x="3.8" y="3.5" width="2.5" height="6.5" rx="0.4" fill="rgba(255,255,255,0.75)"/><rect x="7.6" y="1.5" width="2.5" height="8.5" rx="0.4" fill="rgba(255,255,255,0.55)"/><rect x="11.4" y="0" width="2.5" height="10" rx="0.4" fill="rgba(255,255,255,0.38)"/><circle cx="23" cy="9" r="1.2" fill="rgba(255,255,255,0.7)"/><path d="M20.2 6.5a3.8 3.8 0 015.6 0" stroke="rgba(255,255,255,0.7)" stroke-width="1.2" stroke-linecap="round"/><path d="M17.8 4a7.2 7.2 0 0110.4 0" stroke="rgba(255,255,255,0.7)" stroke-width="1.2" stroke-linecap="round"/></svg><div class="p-bat"><div class="p-bat-fill"></div></div></div></div>
+            <div class="p-body pad gap6">
+              <div class="f fw7 bright" style="font-family:'Space Grotesk',sans-serif;text-align:center;">Confirm & Pay</div>
+              <!-- Summary pinned — usability fix: total shown first -->
+              <div style="border-radius:10px;padding:10px;background:rgba(91,143,255,0.07);border:1px solid rgba(91,143,255,0.18);">
+                <div class="row" style="margin-bottom:6px;">
+                  <div class="mini-avatar av-blue" style="width:28px;height:28px;font-size:9px;"><img src="https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=200&h=200&fit=crop&q=80" style="width:100%;height:100%;object-fit:cover;" alt="Dr. Mitchell"/></div>
+                  <div class="gap4" style="flex:1;"><div class="f fw7 bright">Dr. James Mitchell</div><div class="f-xs dim">Wed 20 Mar · 2:00 PM</div></div>
+                </div>
+                <div class="divider" style="background:rgba(91,143,255,0.15);"></div>
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-top:5px;"><div class="f-xs dim">Total due</div><div style="color:#6FA3FF;font-weight:700;font-size:14px;">$120.00</div></div>
+              </div>
+              <div class="f-xs dim fw6" style="text-transform:uppercase;letter-spacing:0.08em;">Payment Method</div>
+              <div class="grid2" style="gap:5px;">
+                <div style="border-radius:8px;padding:9px 6px;display:flex;flex-direction:column;align-items:center;gap:4px;background:rgba(91,143,255,0.12);border:2px solid rgba(91,143,255,0.5);">
+                  <svg width="16" height="11" viewBox="0 0 16 11" fill="none"><rect x="1" y="1" width="14" height="9" rx="2" stroke="#5B8FFF" stroke-width="1.2"/><line x1="1" y1="4.5" x2="15" y2="4.5" stroke="#5B8FFF" stroke-width="1.2"/><rect x="2.5" y="6.5" width="3" height="1.5" rx="0.5" fill="#5B8FFF" opacity=".5"/></svg>
+                  <div class="f-xs fw6" style="color:#8BB4FF;">Credit Card</div>
+                  <div class="f-xs dim">·· 4242</div>
+                </div>
+                <div style="border-radius:8px;padding:9px 6px;display:flex;flex-direction:column;align-items:center;gap:4px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);">
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6.5" stroke="rgba(255,255,255,0.2)" stroke-width="1.2"/><path d="M8 5v6M5.5 8h5" stroke="rgba(255,255,255,0.2)" stroke-width="1.2" stroke-linecap="round"/></svg>
+                  <div class="f-xs fw6 dim">Wallet</div>
+                  <div class="f-xs dim">$0.00</div>
+                </div>
+              </div>
+              <div style="display:flex;justify-content:space-between;align-items:center;border-top:1px solid rgba(255,255,255,0.08);padding-top:8px;">
+                <div class="f-xs dim">Total due today</div>
+                <div style="font-size:20px;font-weight:700;color:#fff;letter-spacing:-0.5px;">$120</div>
+              </div>
+              <div class="mini-btn-grn" style="margin-top:auto;">Pay & Confirm Booking</div>
+            </div>
+            <div class="p-home"><div class="p-home-bar"></div></div>
+          </div>
+          <div class="cs-screen-meta"><div class="cs-screen-num">S09</div><div class="cs-screen-label">Payment</div></div>
+        </div>
+
+        <div class="cs-flow-arrow"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="#fff" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+
+        <!-- S10 Confirmed -->
+        <div class="cs-screen-card">
+          <div class="cs-phone">
+            <div class="p-status"><div class="p-time">9:41</div><div class="p-notch"></div><div class="p-icons"><svg width="28" height="9" viewBox="0 0 30 10" fill="none"><rect x="0" y="6" width="2.5" height="4" rx="0.4" fill="rgba(255,255,255,0.75)"/><rect x="3.8" y="3.5" width="2.5" height="6.5" rx="0.4" fill="rgba(255,255,255,0.75)"/><rect x="7.6" y="1.5" width="2.5" height="8.5" rx="0.4" fill="rgba(255,255,255,0.55)"/><rect x="11.4" y="0" width="2.5" height="10" rx="0.4" fill="rgba(255,255,255,0.38)"/><circle cx="23" cy="9" r="1.2" fill="rgba(255,255,255,0.7)"/><path d="M20.2 6.5a3.8 3.8 0 015.6 0" stroke="rgba(255,255,255,0.7)" stroke-width="1.2" stroke-linecap="round"/><path d="M17.8 4a7.2 7.2 0 0110.4 0" stroke="rgba(255,255,255,0.7)" stroke-width="1.2" stroke-linecap="round"/></svg><div class="p-bat"><div class="p-bat-fill"></div></div></div></div>
+            <div class="p-body" style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:16px;gap:0;">
+              <div style="width:60px;height:60px;border-radius:50%;background:radial-gradient(circle,rgba(80,200,140,0.2) 0%,rgba(80,200,140,0.05) 70%);border:2px solid rgba(80,200,140,0.35);display:flex;align-items:center;justify-content:center;box-shadow:0 0 24px rgba(80,200,140,0.2);margin-bottom:12px;">
+                <svg width="26" height="26" viewBox="0 0 26 26" fill="none"><path d="M5 13l5.5 5.5L21 8" stroke="#5BC98A" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </div>
+              <div class="f fw7 bright" style="font-family:'Space Grotesk',sans-serif;font-size:14px;letter-spacing:-0.3px;margin-bottom:4px;">Booking Confirmed!</div>
+              <div class="f-xs dim" style="text-align:center;line-height:1.6;margin-bottom:14px;">Confirmation sent to your email.</div>
+              <div style="width:100%;border-radius:9px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);padding:10px;display:flex;flex-direction:column;gap:6px;margin-bottom:12px;">
+                <div style="display:flex;justify-content:space-between;font-size:9px;"><div class="dim">Doctor</div><div class="mid fw6">Dr. James Mitchell</div></div>
+                <div style="height:1px;background:rgba(255,255,255,0.07);"></div>
+                <div style="display:flex;justify-content:space-between;font-size:9px;"><div class="dim">Date</div><div class="mid fw6">Wed, 20 Mar 2026</div></div>
+                <div style="height:1px;background:rgba(255,255,255,0.07);"></div>
+                <div style="display:flex;justify-content:space-between;font-size:9px;"><div class="dim">Time</div><div class="mid fw6">2:00 PM</div></div>
+                <div style="height:1px;background:rgba(255,255,255,0.07);"></div>
+                <div style="display:flex;justify-content:space-between;font-size:9px;"><div class="dim">Location</div><div class="mid fw6">NYU Langone, NY</div></div>
+              </div>
+              <div style="font-size:9px;color:rgba(255,255,255,0.22);letter-spacing:0.06em;margin-bottom:12px;">Ref: PC-2026-03-8841</div>
+              <div class="mini-btn" style="width:100%;margin-bottom:6px;">Add to Calendar</div>
+              <div class="mini-btn-ghost" style="width:100%;">Message Dr. Mitchell</div>
+            </div>
+            <div class="p-home"><div class="p-home-bar"></div></div>
+          </div>
+          <div class="cs-screen-meta"><div class="cs-screen-num">S10</div><div class="cs-screen-label">Booking Confirmed</div></div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ════ PHASE 4: CARE ════ -->
+    <div class="cs-phase">
+      <div class="cs-phase-header">
+        <div class="cs-phase-badge cs-phase-badge--care">Phase 4 — Care</div>
+        <div class="cs-phase-line"></div>
+        <div class="cs-phase-count">4 screens</div>
+      </div>
+      <div class="cs-flow-row">
+
+        <!-- S11 My Appointments -->
+        <div class="cs-screen-card">
+          <div class="cs-phone">
+            <div class="p-status"><div class="p-time">9:41</div><div class="p-notch"></div><div class="p-icons"><svg width="28" height="9" viewBox="0 0 30 10" fill="none"><rect x="0" y="6" width="2.5" height="4" rx="0.4" fill="rgba(255,255,255,0.75)"/><rect x="3.8" y="3.5" width="2.5" height="6.5" rx="0.4" fill="rgba(255,255,255,0.75)"/><rect x="7.6" y="1.5" width="2.5" height="8.5" rx="0.4" fill="rgba(255,255,255,0.55)"/><rect x="11.4" y="0" width="2.5" height="10" rx="0.4" fill="rgba(255,255,255,0.38)"/><circle cx="23" cy="9" r="1.2" fill="rgba(255,255,255,0.7)"/><path d="M20.2 6.5a3.8 3.8 0 015.6 0" stroke="rgba(255,255,255,0.7)" stroke-width="1.2" stroke-linecap="round"/><path d="M17.8 4a7.2 7.2 0 0110.4 0" stroke="rgba(255,255,255,0.7)" stroke-width="1.2" stroke-linecap="round"/></svg><div class="p-bat"><div class="p-bat-fill"></div></div></div></div>
+            <div class="p-body pad gap6">
+              <div class="f fw7 bright" style="font-family:'Space Grotesk',sans-serif;">My Appointments</div>
+              <!-- Tabs -->
+              <div style="display:flex;border-radius:8px;overflow:hidden;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);">
+                <div style="flex:1;padding:7px 0;text-align:center;font-size:9px;font-weight:600;background:rgba(91,143,255,0.2);color:#8BB4FF;">Upcoming</div>
+                <div style="flex:1;padding:7px 0;text-align:center;font-size:9px;color:rgba(255,255,255,0.30);">Past</div>
+              </div>
+              <!-- Upcoming card -->
+              <div style="border-radius:10px;padding:10px;background:rgba(91,143,255,0.07);border:1px solid rgba(91,143,255,0.20);">
+                <div class="row" style="margin-bottom:7px;">
+                  <div class="mini-avatar av-blue" style="width:30px;height:30px;font-size:9px;"><img src="https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=200&h=200&fit=crop&q=80" style="width:100%;height:100%;object-fit:cover;" alt="Dr. Mitchell"/></div>
+                  <div class="gap4" style="flex:1;"><div class="f fw7 bright">Dr. James Mitchell</div><div class="f-xs dim">Cardiologist</div></div>
+                  <div class="mini-chip chip-blue-on" style="font-size:8px;">In 2 days</div>
+                </div>
+                <div class="divider" style="background:rgba(91,143,255,0.15);"></div>
+                <div style="display:flex;justify-content:space-between;font-size:9px;margin-top:5px;"><div class="dim">Wed 20 Mar · 2:00 PM</div><div class="mid">In-Person</div></div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-top:7px;">
+                  <div style="border-radius:6px;padding:6px 0;text-align:center;font-size:10px;font-weight:600;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.09);color:rgba(255,255,255,0.5);">Reschedule</div>
+                  <div class="mini-btn" style="padding:6px 0;font-size:10px;">Directions</div>
+                </div>
+              </div>
+              <div style="font-size:10px;font-weight:600;color:rgba(255,255,255,0.28);text-transform:uppercase;letter-spacing:0.08em;">Next Week</div>
+              <div class="mini-card gap4" style="opacity:.7;">
+                <div class="row">
+                  <div class="mini-avatar av-teal" style="width:26px;height:26px;font-size:10px;"><img src="https://images.unsplash.com/photo-1594824476967-48c8b964273f?w=200&h=200&fit=crop&q=80" style="width:100%;height:100%;object-fit:cover;" alt="Dr. Reyes"/></div>
+                  <div class="gap4" style="flex:1;"><div class="f fw6 bright">Dr. Sophia Reyes</div><div class="f-xs dim">Fri 27 Mar · 10:00 AM</div></div>
+                </div>
+              </div>
+            </div>
+                        <div class="p-tabbar">
+            <div class="p-tab">
+              <svg width="18" height="18" viewBox="0 0 22 22" fill="none"><path d="M3 10.5L11 3l8 7.5V19a1 1 0 01-1 1H4a1 1 0 01-1-1v-8.5z" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M8 20v-6h6v6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+            <div class="p-tab p-tab--on">
+              <svg width="18" height="18" viewBox="0 0 22 22" fill="none"><rect x="2.5" y="3.5" width="17" height="16" rx="2.5" stroke="currentColor" stroke-width="1.6" fill="currentColor" fill-opacity="0.12"/><path d="M7 1.5v4M15 1.5v4M2.5 8.5h17" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+              <div class="p-tab-dot"></div>
+            </div>
+            <div class="p-tab">
+              <svg width="18" height="18" viewBox="0 0 22 22" fill="none"><path d="M2 5a2 2 0 012-2h14a2 2 0 012 2v9a2 2 0 01-2 2H8l-6 4V5z" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+            <div class="p-tab">
+              <svg width="18" height="18" viewBox="0 0 22 22" fill="none"><circle cx="11" cy="7.5" r="4" stroke="currentColor" stroke-width="1.6"/><path d="M3 20c0-4.418 3.582-8 8-8s8 3.582 8 8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+            </div>
+            </div>
+            <div class="p-home"><div class="p-home-bar"></div></div>
+          </div>
+          <div class="cs-screen-meta"><div class="cs-screen-num">S11</div><div class="cs-screen-label">My Appointments</div></div>
+        </div>
+
+        <div class="cs-flow-arrow"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="#fff" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+
+        <!-- S12 Pre-visit Reminder -->
+        <div class="cs-screen-card">
+          <div class="cs-phone">
+            <div class="p-status"><div class="p-time">9:41</div><div class="p-notch"></div><div class="p-icons"><svg width="28" height="9" viewBox="0 0 30 10" fill="none"><rect x="0" y="6" width="2.5" height="4" rx="0.4" fill="rgba(255,255,255,0.75)"/><rect x="3.8" y="3.5" width="2.5" height="6.5" rx="0.4" fill="rgba(255,255,255,0.75)"/><rect x="7.6" y="1.5" width="2.5" height="8.5" rx="0.4" fill="rgba(255,255,255,0.55)"/><rect x="11.4" y="0" width="2.5" height="10" rx="0.4" fill="rgba(255,255,255,0.38)"/><circle cx="23" cy="9" r="1.2" fill="rgba(255,255,255,0.7)"/><path d="M20.2 6.5a3.8 3.8 0 015.6 0" stroke="rgba(255,255,255,0.7)" stroke-width="1.2" stroke-linecap="round"/><path d="M17.8 4a7.2 7.2 0 0110.4 0" stroke="rgba(255,255,255,0.7)" stroke-width="1.2" stroke-linecap="round"/></svg><div class="p-bat"><div class="p-bat-fill"></div></div></div></div>
+            <div class="p-body pad gap6">
+              <div class="f fw7 bright" style="font-family:'Space Grotesk',sans-serif;">Reminders</div>
+              <!-- Push notification card -->
+              <div style="border-radius:12px;padding:12px;background:linear-gradient(135deg,rgba(255,159,46,0.12),rgba(255,100,80,0.08));border:1px solid rgba(255,159,46,0.25);">
+                <div class="row" style="margin-bottom:8px;">
+                  <div style="width:28px;height:28px;border-radius:8px;background:rgba(255,159,46,0.2);border:1px solid rgba(255,159,46,0.3);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                    <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M6.5 1.5v1M6.5 1.5C4.3 1.5 2.5 3.3 2.5 5.5v2L1 9h11l-1.5-1.5v-2c0-2.2-1.8-4-4-4z" stroke="#FFB547" stroke-width="1.1"/><path d="M5 9c0 .83.67 1.5 1.5 1.5S8 9.83 8 9" stroke="#FFB547" stroke-width="1.1"/></svg>
+                  </div>
+                  <div class="gap4" style="flex:1;">
+                    <div class="f fw7 bright">Tomorrow's Appointment</div>
+                    <div class="f-xs" style="color:rgba(255,159,46,0.8);">PulseCare · Just now</div>
+                  </div>
+                </div>
+                <div class="f-xs mid" style="line-height:1.6;margin-bottom:8px;">Your appointment with <strong style="color:#fff;">Dr. James Mitchell</strong> is tomorrow at 2:00 PM at NYU Langone.</div>
+                <div class="divider" style="background:rgba(255,159,46,0.15);"></div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-top:8px;">
+                  <div style="border-radius:6px;padding:7px 0;text-align:center;font-size:10px;font-weight:600;background:rgba(255,159,46,0.15);border:1px solid rgba(255,159,46,0.25);color:rgba(255,159,46,0.9);">Get Directions</div>
+                  <div class="mini-btn" style="padding:7px 0;font-size:10px;">Confirm Visit</div>
+                </div>
+              </div>
+              <!-- Prep checklist -->
+              <div style="font-size:10px;font-weight:600;color:rgba(255,255,255,0.28);text-transform:uppercase;letter-spacing:0.08em;">Visit Prep</div>
+              <div class="mini-card gap4">
+                <div class="row"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><circle cx="5" cy="5" r="4" stroke="rgba(80,200,140,0.5)" stroke-width="1"/><path d="M3 5l1.5 1.5L7 3.5" stroke="#7DDBA5" stroke-width="1" stroke-linecap="round"/></svg><div class="f-xs mid">Bring insurance card</div></div>
+                <div class="row"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><circle cx="5" cy="5" r="4" stroke="rgba(80,200,140,0.5)" stroke-width="1"/><path d="M3 5l1.5 1.5L7 3.5" stroke="#7DDBA5" stroke-width="1" stroke-linecap="round"/></svg><div class="f-xs mid">Fast 4hrs before visit</div></div>
+                <div class="row"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><circle cx="5" cy="5" r="4" stroke="rgba(255,255,255,0.15)" stroke-width="1"/></svg><div class="f-xs dim">List current medications</div></div>
+                <div class="row"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><circle cx="5" cy="5" r="4" stroke="rgba(255,255,255,0.15)" stroke-width="1"/></svg><div class="f-xs dim">Note symptoms to discuss</div></div>
+              </div>
+            </div>
+            <div class="p-home"><div class="p-home-bar"></div></div>
+          </div>
+          <div class="cs-screen-meta"><div class="cs-screen-num">S12</div><div class="cs-screen-label">Pre-visit Reminder</div></div>
+        </div>
+
+        <div class="cs-flow-arrow"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="#fff" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+
+        <!-- S13 Chat -->
+        <div class="cs-screen-card">
+          <div class="cs-phone">
+            <div class="p-status"><div class="p-time">9:41</div><div class="p-notch"></div><div class="p-icons"><svg width="28" height="9" viewBox="0 0 30 10" fill="none"><rect x="0" y="6" width="2.5" height="4" rx="0.4" fill="rgba(255,255,255,0.75)"/><rect x="3.8" y="3.5" width="2.5" height="6.5" rx="0.4" fill="rgba(255,255,255,0.75)"/><rect x="7.6" y="1.5" width="2.5" height="8.5" rx="0.4" fill="rgba(255,255,255,0.55)"/><rect x="11.4" y="0" width="2.5" height="10" rx="0.4" fill="rgba(255,255,255,0.38)"/><circle cx="23" cy="9" r="1.2" fill="rgba(255,255,255,0.7)"/><path d="M20.2 6.5a3.8 3.8 0 015.6 0" stroke="rgba(255,255,255,0.7)" stroke-width="1.2" stroke-linecap="round"/><path d="M17.8 4a7.2 7.2 0 0110.4 0" stroke="rgba(255,255,255,0.7)" stroke-width="1.2" stroke-linecap="round"/></svg><div class="p-bat"><div class="p-bat-fill"></div></div></div></div>
+            <div class="p-body" style="display:flex;flex-direction:column;">
+              <div style="padding:7px 12px 9px;border-bottom:1px solid rgba(255,255,255,0.07);">
+                <div class="row">
+                  <div style="width:26px;height:26px;border-radius:7px;background:rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><svg width="7" height="11" viewBox="0 0 7 11" fill="none"><path d="M6 1L1 5.5 6 10" stroke="rgba(255,255,255,0.5)" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+                  <div class="mini-avatar av-blue" style="width:28px;height:28px;font-size:9px;position:relative;"><img src="https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=200&h=200&fit=crop&q=80" style="width:100%;height:100%;object-fit:cover;" alt="Dr. Mitchell"/><div style="position:absolute;bottom:-1px;right:-1px;width:7px;height:7px;border-radius:50%;background:#5BC98A;border:1.5px solid #0d0d1f;"></div></div>
+                  <div class="gap4" style="flex:1;">
+                    <div class="f fw7 bright">Dr. James Mitchell</div>
+                    <div class="f-xs" style="color:rgba(80,200,140,0.8);">● Online</div>
+                  </div>
+                  <div style="width:26px;height:26px;border-radius:7px;background:rgba(91,143,255,0.12);border:1px solid rgba(91,143,255,0.22);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><svg width="11" height="11" viewBox="0 0 11 11" fill="none"><path d="M1.5 2C1.5 2 2.5 4 4.5 6C6.5 8 8.5 9 8.5 9L9.5 8C9.5 8 7.5 6.5 7.5 6C7.5 5.5 9.5 4 9.5 3.5L8 2C8 2 6.5 3 6 3C5.5 3 1.5 2 1.5 2Z" stroke="#5B8FFF" stroke-width="0.9"/></svg></div>
+                </div>
+              </div>
+              <div style="flex:1;padding:10px 12px;display:flex;flex-direction:column;gap:7px;overflow:hidden;min-height:0;">
+                <div class="mini-bubble bubble-recv">Hi Emily! How are you feeling after yesterday's visit?<div class="btime">2:14 PM</div></div>
+                <div class="mini-bubble bubble-sent">Much better! Quick question on the medication dosage.<div class="btime btime-r">2:16 PM</div></div>
+                <div class="mini-bubble bubble-recv">Take 10mg once daily with food. Note any side effects.<div class="btime">2:18 PM</div></div>
+                <div class="mini-bubble bubble-sent">Got it. Thanks so much!<div class="btime btime-r">2:19 PM</div></div>
+                <div class="mini-bubble bubble-recv">Happy to help. See you at your next visit 🙌<div class="btime">2:20 PM</div></div>
+              </div>
+              <div style="padding:7px 12px 4px;border-top:1px solid rgba(255,255,255,0.07);display:flex;gap:6px;align-items:center;flex-shrink:0;">
+                <div style="flex:1;height:30px;border-radius:8px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.10);display:flex;align-items:center;padding:0 9px;font-size:10px;color:rgba(255,255,255,0.26);">Type a message…</div>
+                <div style="width:30px;height:30px;border-radius:8px;background:linear-gradient(135deg,#3A6FFF,#5B8FFF);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M1.5 6h9M7 2.5l4 3.5L7 9.5" stroke="#fff" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+              </div>
+            </div>
+            <div class="p-home"><div class="p-home-bar"></div></div>
+          </div>
+          <div class="cs-screen-meta"><div class="cs-screen-num">S13</div><div class="cs-screen-label">Post-Visit Chat</div></div>
+        </div>
+
+        <div class="cs-flow-arrow"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="#fff" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+
+        <!-- S14 Visit History -->
+        <div class="cs-screen-card">
+          <div class="cs-phone">
+            <div class="p-status"><div class="p-time">9:41</div><div class="p-notch"></div><div class="p-icons"><svg width="28" height="9" viewBox="0 0 30 10" fill="none"><rect x="0" y="6" width="2.5" height="4" rx="0.4" fill="rgba(255,255,255,0.75)"/><rect x="3.8" y="3.5" width="2.5" height="6.5" rx="0.4" fill="rgba(255,255,255,0.75)"/><rect x="7.6" y="1.5" width="2.5" height="8.5" rx="0.4" fill="rgba(255,255,255,0.55)"/><rect x="11.4" y="0" width="2.5" height="10" rx="0.4" fill="rgba(255,255,255,0.38)"/><circle cx="23" cy="9" r="1.2" fill="rgba(255,255,255,0.7)"/><path d="M20.2 6.5a3.8 3.8 0 015.6 0" stroke="rgba(255,255,255,0.7)" stroke-width="1.2" stroke-linecap="round"/><path d="M17.8 4a7.2 7.2 0 0110.4 0" stroke="rgba(255,255,255,0.7)" stroke-width="1.2" stroke-linecap="round"/></svg><div class="p-bat"><div class="p-bat-fill"></div></div></div></div>
+            <div class="p-body pad gap6">
+              <div class="f fw7 bright" style="font-family:'Space Grotesk',sans-serif;">Visit History</div>
+              <div style="display:flex;border-radius:8px;overflow:hidden;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);">
+                <div style="flex:1;padding:7px 0;text-align:center;font-size:9px;font-weight:600;background:rgba(91,143,255,0.2);color:#8BB4FF;">Records</div>
+                <div style="flex:1;padding:7px 0;text-align:center;font-size:9px;color:rgba(255,255,255,0.30);">Prescriptions</div>
+              </div>
+              <!-- Past visits -->
+              <div class="mini-card gap4">
+                <div class="row">
+                  <div class="mini-avatar av-blue" style="width:28px;height:28px;font-size:9px;"><img src="https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=200&h=200&fit=crop&q=80" style="width:100%;height:100%;object-fit:cover;" alt="Dr. Mitchell"/></div>
+                  <div class="gap4" style="flex:1;"><div class="f fw6 bright">Dr. James Mitchell</div><div class="f-xs dim">Cardiology · Mar 20, 2026</div></div>
+                  <div style="width:20px;height:20px;border-radius:6px;background:rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:center;"><svg width="9" height="9" viewBox="0 0 9 9" fill="none"><path d="M1 4.5L3.5 7 8 2" stroke="rgba(255,255,255,0.4)" stroke-width="1.2" stroke-linecap="round"/></svg></div>
+                </div>
+                <div style="border-top:1px solid rgba(255,255,255,0.07);padding-top:5px;"><div class="f-xs dim">Diagnosis: Routine cardiac checkup — all clear. Follow-up in 6 months.</div></div>
+                <div style="display:flex;gap:4px;"><div class="mini-chip chip-off" style="font-size:8px;padding:2px 7px;">ECG Report</div><div class="mini-chip chip-off" style="font-size:8px;padding:2px 7px;">Blood Panel</div></div>
+              </div>
+              <div class="mini-card gap4" style="opacity:.75;">
+                <div class="row">
+                  <div class="mini-avatar av-teal" style="width:28px;height:28px;font-size:9px;"><img src="https://images.unsplash.com/photo-1594824476967-48c8b964273f?w=200&h=200&fit=crop&q=80" style="width:100%;height:100%;object-fit:cover;" alt="Dr. Reyes"/></div>
+                  <div class="gap4" style="flex:1;"><div class="f fw6 bright">Dr. Sophia Reyes</div><div class="f-xs dim">Cardiology · Mar 10, 2026</div></div>
+                </div>
+                <div style="border-top:1px solid rgba(255,255,255,0.07);padding-top:5px;"><div class="f-xs dim">Diagnosis: Mild hypertension. Prescribed 10mg Lisinopril daily.</div></div>
+                <div style="display:flex;gap:4px;"><div class="mini-chip chip-off" style="font-size:8px;padding:2px 7px;">Prescription</div></div>
+              </div>
+              <div style="display:flex;align-items:center;gap:6px;border-radius:7px;padding:8px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);">
+                <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><rect x="1.5" y="1.5" width="10" height="10" rx="2" stroke="rgba(255,255,255,0.3)" stroke-width="1"/><path d="M4 6.5h5M4 4.5h5M4 8.5h3" stroke="rgba(255,255,255,0.3)" stroke-width="1" stroke-linecap="round"/></svg>
+                <div class="f-xs dim" style="flex:1;">Download all records</div>
+                <svg width="9" height="9" viewBox="0 0 9 9" fill="none"><path d="M1 4.5h7M5 2l2.5 2.5L5 7" stroke="rgba(255,255,255,0.3)" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </div>
+            </div>
+                        <div class="p-tabbar">
+            <div class="p-tab">
+              <svg width="18" height="18" viewBox="0 0 22 22" fill="none"><path d="M3 10.5L11 3l8 7.5V19a1 1 0 01-1 1H4a1 1 0 01-1-1v-8.5z" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M8 20v-6h6v6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+            <div class="p-tab">
+              <svg width="18" height="18" viewBox="0 0 22 22" fill="none"><rect x="2.5" y="3.5" width="17" height="16" rx="2.5" stroke="currentColor" stroke-width="1.6"/><path d="M7 1.5v4M15 1.5v4M2.5 8.5h17" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+            </div>
+            <div class="p-tab">
+              <svg width="18" height="18" viewBox="0 0 22 22" fill="none"><path d="M2 5a2 2 0 012-2h14a2 2 0 012 2v9a2 2 0 01-2 2H8l-6 4V5z" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+            <div class="p-tab p-tab--on">
+              <svg width="18" height="18" viewBox="0 0 22 22" fill="none"><circle cx="11" cy="7.5" r="4" stroke="currentColor" stroke-width="1.6" fill="currentColor" fill-opacity="0.12"/><path d="M3 20c0-4.418 3.582-8 8-8s8 3.582 8 8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+              <div class="p-tab-dot"></div>
+            </div>
+            </div>
+            <div class="p-home"><div class="p-home-bar"></div></div>
+          </div>
+          <div class="cs-screen-meta"><div class="cs-screen-num">S14</div><div class="cs-screen-label">Visit History</div></div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Design system -->
+    <div>
+      <div class="cs-eyebrow" style="margin-bottom:24px;">Design System</div>
+      <div class="cs-ds">
+
+        <!-- Colour palette -->
+        <div class="cs-ds-block cs-glass">
+          <div class="cs-ds-title">Colour Palette</div>
+          <div class="cs-colors">
+            <div class="cs-color-row">
+              <div class="cs-swatch" style="background:linear-gradient(135deg,#3A6FFF,#5B8FFF);"></div>
+              <div class="cs-color-info"><div class="cs-color-name">Primary Blue</div><div class="cs-color-hex">#3A6FFF → #5B8FFF</div><div class="cs-color-role">CTAs, active states, links</div></div>
+            </div>
+            <div class="cs-color-row">
+              <div class="cs-swatch" style="background:linear-gradient(135deg,#7B5FD0,#A78BFA);"></div>
+              <div class="cs-color-info"><div class="cs-color-name">Accent Purple</div><div class="cs-color-hex">#7B5FD0 → #A78BFA</div><div class="cs-color-role">Gradient highlights, decorative</div></div>
+            </div>
+            <div class="cs-color-row">
+              <div class="cs-swatch" style="background:linear-gradient(135deg,#1A8A6F,#3ABFA0);"></div>
+              <div class="cs-color-info"><div class="cs-color-name">Success Green</div><div class="cs-color-hex">#1A8A6F → #3ABFA0</div><div class="cs-color-role">Confirmations, payment, success</div></div>
+            </div>
+            <div class="cs-color-row">
+              <div class="cs-swatch" style="background:#FFB547;"></div>
+              <div class="cs-color-info"><div class="cs-color-name">Amber</div><div class="cs-color-hex">#FFB547</div><div class="cs-color-role">Ratings, reminders, warnings</div></div>
+            </div>
+            <div class="cs-color-row">
+              <div class="cs-swatch" style="background:#0d0d1f;border:1px solid rgba(255,255,255,0.12);"></div>
+              <div class="cs-color-info"><div class="cs-color-name">Surface Dark</div><div class="cs-color-hex">#0d0d1f</div><div class="cs-color-role">Phone backgrounds, cards</div></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Typography -->
+        <div class="cs-ds-block cs-glass">
+          <div class="cs-ds-title">Typography</div>
+          <div class="cs-type-rows">
+            <div class="cs-type-row">
+              <div class="cs-type-meta"><div class="cs-type-label">Display</div><div class="cs-type-spec">Space Grotesk · 700 · 52px</div></div>
+              <div class="cs-type-sample" style="font-family:'Space Grotesk',sans-serif;font-size:32px;font-weight:700;letter-spacing:-1px;line-height:1;">PulseCare</div>
+            </div>
+            <div class="cs-type-row">
+              <div class="cs-type-meta"><div class="cs-type-label">Heading</div><div class="cs-type-spec">Space Grotesk · 600 · 22px</div></div>
+              <div class="cs-type-sample" style="font-family:'Space Grotesk',sans-serif;font-size:22px;font-weight:600;letter-spacing:-0.5px;">Dr. James Mitchell</div>
+            </div>
+            <div class="cs-type-row">
+              <div class="cs-type-meta"><div class="cs-type-label">Body</div><div class="cs-type-spec">DM Sans · 400 · 15px</div></div>
+              <div class="cs-type-sample" style="font-size:15px;color:rgba(255,255,255,0.65);line-height:1.6;">Book in 3 taps. Stay connected after.</div>
+            </div>
+            <div class="cs-type-row">
+              <div class="cs-type-meta"><div class="cs-type-label">Caption</div><div class="cs-type-spec">DM Sans · 500 · 11px</div></div>
+              <div class="cs-type-sample" style="font-size:11px;color:rgba(255,255,255,0.38);text-transform:uppercase;letter-spacing:0.1em;">Available today</div>
+            </div>
+            <div class="cs-type-row">
+              <div class="cs-type-meta"><div class="cs-type-label">CTA</div><div class="cs-type-spec">DM Sans · 700 · 15px</div></div>
+              <div style="background:linear-gradient(135deg,#3A6FFF,#5B8FFF);border-radius:10px;padding:10px 20px;font-size:15px;font-weight:700;color:#fff;display:inline-block;">Book Appointment</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</section>
+</body>
+</html>

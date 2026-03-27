@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>S16 — Rate Your Visit</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: #08081a;
+      display: flex; align-items: center; justify-content: center;
+      min-height: 100vh;
+      font-family: 'DM Sans', sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+    .phone {
+      width: 340px; height: 736px;
+      border-radius: 36px; position: relative; overflow: hidden;
+      background: #0d0d1f;
+      box-shadow:
+        0 0 0 1px rgba(255,255,255,0.12),
+        0 0 0 2.5px rgba(0,0,0,0.8),
+        0 48px 96px rgba(0,0,0,0.8),
+        inset 0 1px 0 rgba(255,255,255,0.08);
+    }
+    .notch {
+      position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+      width: 90px; height: 24px; background: #000;
+      border-radius: 0 0 16px 16px; z-index: 20;
+    }
+    .status {
+      position: absolute; top: 0; left: 0; right: 0; height: 44px;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 12px 20px 0; z-index: 10;
+    }
+    .status-time { font-family: 'Space Grotesk',sans-serif; font-size: 13px; font-weight: 600; color: #fff; }
+    .status-icons { display: flex; align-items: center; gap: 5px; }
+    .battery {
+      width: 22px; height: 10px;
+      border: 1.5px solid rgba(255,255,255,0.45); border-radius: 2.5px;
+      padding: 1.5px; position: relative; display: flex; align-items: center;
+    }
+    .battery::after {
+      content: ''; position: absolute; right: -4px; top: 50%; transform: translateY(-50%);
+      width: 2.5px; height: 5px; background: rgba(255,255,255,0.45);
+      border-radius: 0 1.5px 1.5px 0;
+    }
+    .battery-fill { width: 65%; height: 100%; background: #3DD68C; border-radius: 1px; }
+    .body {
+      position: absolute;
+      top: 44px; left: 0; right: 0; bottom: 70px;
+      overflow-y: auto; overflow-x: hidden;
+      scrollbar-width: none;
+      padding: 0 18px;
+    }
+    .body::-webkit-scrollbar { display: none; }
+    .sticky-cta {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      padding: 10px 18px 16px;
+      background: linear-gradient(to top, #0d0d1f 70%, transparent);
+      z-index: 20;
+    }
+  </style>
+</head>
+<body>
+<div class="phone">
+  <div class="notch"></div>
+
+  <!-- Status bar -->
+  <div class="status">
+    <div class="status-time">4:38</div>
+    <div class="status-icons">
+      <svg width="30" height="10" viewBox="0 0 30 10" fill="none">
+        <rect x="0" y="6" width="2.5" height="4" rx="0.4" fill="rgba(255,255,255,0.75)"/>
+        <rect x="3.8" y="3.5" width="2.5" height="6.5" rx="0.4" fill="rgba(255,255,255,0.75)"/>
+        <rect x="7.6" y="1.5" width="2.5" height="8.5" rx="0.4" fill="rgba(255,255,255,0.55)"/>
+        <rect x="11.4" y="0" width="2.5" height="10" rx="0.4" fill="rgba(255,255,255,0.38)"/>
+        <circle cx="23" cy="9" r="1.2" fill="rgba(255,255,255,0.7)"/>
+        <path d="M20.2 6.5a3.8 3.8 0 015.6 0" stroke="rgba(255,255,255,0.7)" stroke-width="1.2" stroke-linecap="round"/>
+        <path d="M17.8 4a7.2 7.2 0 0110.4 0" stroke="rgba(255,255,255,0.7)" stroke-width="1.2" stroke-linecap="round"/>
+      </svg>
+      <div class="battery"><div class="battery-fill"></div></div>
+    </div>
+  </div>
+
+  <div class="body">
+
+    <!-- ① Top bar -->
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 0 20px;">
+      <div style="display:flex;align-items:center;gap:5px;color:rgba(255,255,255,0.55);">
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+          <path d="M11 14L6 9l5-5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <span style="font-size:13px;">Back</span>
+      </div>
+      <div style="font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:700;color:#fff;">Rate Visit</div>
+      <div style="width:48px;"></div>
+    </div>
+
+    <!-- ② Doctor card -->
+    <div style="background:rgba(91,143,255,0.07);border:1px solid rgba(91,143,255,0.18);border-radius:18px;padding:14px;margin-bottom:22px;position:relative;overflow:hidden;">
+      <div style="position:absolute;top:-24px;right:-24px;width:90px;height:90px;background:radial-gradient(circle,rgba(91,143,255,0.14),transparent 65%);border-radius:50%;pointer-events:none;"></div>
+      <div style="display:flex;align-items:center;gap:11px;">
+        <div style="width:48px;height:48px;border-radius:13px;overflow:hidden;flex-shrink:0;border:1.5px solid rgba(91,143,255,0.25);">
+          <img src="https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=200&h=200&fit=crop&q=80" style="width:100%;height:100%;object-fit:cover;display:block;" />
+        </div>
+        <div style="flex:1;">
+          <div style="font-size:10px;font-weight:600;color:rgba(110,163,255,0.75);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:2px;">Visit Completed</div>
+          <div style="font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:700;color:#fff;">Dr. James Mitchell</div>
+          <div style="font-size:11px;color:rgba(255,255,255,0.38);margin-top:1px;">Wed, 20 Mar · 2:00 PM · In-Person</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ③ Overall rating -->
+    <div style="text-align:center;margin-bottom:22px;">
+      <div style="font-family:'Space Grotesk',sans-serif;font-size:17px;font-weight:700;color:#fff;margin-bottom:4px;">How was your experience?</div>
+      <div style="font-size:12px;color:rgba(255,255,255,0.35);margin-bottom:18px;">Your feedback helps others find the right care</div>
+
+      <!-- Stars — 4 filled, 1 empty -->
+      <div style="display:flex;justify-content:center;gap:8px;margin-bottom:10px;">
+        <svg width="40" height="40" viewBox="0 0 24 24"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26" fill="#F59E0B"/></svg>
+        <svg width="40" height="40" viewBox="0 0 24 24"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26" fill="#F59E0B"/></svg>
+        <svg width="40" height="40" viewBox="0 0 24 24"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26" fill="#F59E0B"/></svg>
+        <svg width="40" height="40" viewBox="0 0 24 24"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26" fill="#F59E0B"/></svg>
+        <svg width="40" height="40" viewBox="0 0 24 24"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26" fill="rgba(255,255,255,0.1)" stroke="rgba(255,255,255,0.25)" stroke-width="0.5"/></svg>
+      </div>
+      <div style="font-size:13px;font-weight:600;color:rgba(245,158,11,0.85);">Very Good</div>
+    </div>
+
+    <!-- ④ Aspect ratings -->
+    <div style="margin-bottom:20px;">
+      <div style="font-size:11px;font-weight:600;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:12px;">Rate specific aspects</div>
+
+      <!-- Wait Time -->
+      <div style="display:flex;align-items:center;justify-content:space-between;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);border-radius:12px;padding:11px 13px;margin-bottom:8px;">
+        <div style="display:flex;align-items:center;gap:9px;">
+          <div style="width:30px;height:30px;border-radius:8px;background:rgba(91,143,255,0.12);border:1px solid rgba(91,143,255,0.2);display:flex;align-items:center;justify-content:center;">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+              <circle cx="7" cy="7" r="5.5" stroke="rgba(91,143,255,0.7)" stroke-width="1.3"/>
+              <path d="M7 4v3.2l2 1.3" stroke="rgba(91,143,255,0.7)" stroke-width="1.3" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <span style="font-size:13px;color:rgba(255,255,255,0.7);">Wait Time</span>
+        </div>
+        <div style="display:flex;gap:4px;">
+          <svg width="16" height="16" viewBox="0 0 24 24"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26" fill="#F59E0B"/></svg>
+          <svg width="16" height="16" viewBox="0 0 24 24"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26" fill="#F59E0B"/></svg>
+          <svg width="16" height="16" viewBox="0 0 24 24"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26" fill="#F59E0B"/></svg>
+          <svg width="16" height="16" viewBox="0 0 24 24"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26" fill="#F59E0B"/></svg>
+          <svg width="16" height="16" viewBox="0 0 24 24"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26" fill="rgba(255,255,255,0.12)" stroke="rgba(255,255,255,0.25)" stroke-width="0.5"/></svg>
+        </div>
+      </div>
+
+      <!-- Doctor Communication -->
+      <div style="display:flex;align-items:center;justify-content:space-between;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);border-radius:12px;padding:11px 13px;margin-bottom:8px;">
+        <div style="display:flex;align-items:center;gap:9px;">
+          <div style="width:30px;height:30px;border-radius:8px;background:rgba(61,214,140,0.1);border:1px solid rgba(61,214,140,0.2);display:flex;align-items:center;justify-content:center;">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+              <path d="M2 2h10a1 1 0 011 1v6a1 1 0 01-1 1H5l-3 3V3a1 1 0 011-1z" stroke="rgba(61,214,140,0.7)" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <span style="font-size:13px;color:rgba(255,255,255,0.7);">Communication</span>
+        </div>
+        <div style="display:flex;gap:4px;">
+          <svg width="16" height="16" viewBox="0 0 24 24"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26" fill="#F59E0B"/></svg>
+          <svg width="16" height="16" viewBox="0 0 24 24"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26" fill="#F59E0B"/></svg>
+          <svg width="16" height="16" viewBox="0 0 24 24"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26" fill="#F59E0B"/></svg>
+          <svg width="16" height="16" viewBox="0 0 24 24"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26" fill="#F59E0B"/></svg>
+          <svg width="16" height="16" viewBox="0 0 24 24"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26" fill="#F59E0B"/></svg>
+        </div>
+      </div>
+
+      <!-- Clinic Cleanliness -->
+      <div style="display:flex;align-items:center;justify-content:space-between;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);border-radius:12px;padding:11px 13px;">
+        <div style="display:flex;align-items:center;gap:9px;">
+          <div style="width:30px;height:30px;border-radius:8px;background:rgba(91,143,255,0.1);border:1px solid rgba(91,143,255,0.2);display:flex;align-items:center;justify-content:center;">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+              <path d="M7 1.5C4 1.5 2 4 2 6.5c0 3 2.5 5 5 5s5-2 5-5c0-2.5-2-5-5-5z" stroke="rgba(91,143,255,0.7)" stroke-width="1.3"/>
+              <path d="M4.5 7l1.5 1.5L9.5 5" stroke="rgba(91,143,255,0.7)" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <span style="font-size:13px;color:rgba(255,255,255,0.7);">Cleanliness</span>
+        </div>
+        <div style="display:flex;gap:4px;">
+          <svg width="16" height="16" viewBox="0 0 24 24"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26" fill="#F59E0B"/></svg>
+          <svg width="16" height="16" viewBox="0 0 24 24"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26" fill="#F59E0B"/></svg>
+          <svg width="16" height="16" viewBox="0 0 24 24"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26" fill="#F59E0B"/></svg>
+          <svg width="16" height="16" viewBox="0 0 24 24"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26" fill="rgba(255,255,255,0.12)" stroke="rgba(255,255,255,0.25)" stroke-width="0.5"/></svg>
+          <svg width="16" height="16" viewBox="0 0 24 24"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26" fill="rgba(255,255,255,0.12)" stroke="rgba(255,255,255,0.25)" stroke-width="0.5"/></svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- ⑤ Written feedback -->
+    <div style="margin-bottom:16px;">
+      <div style="font-size:11px;font-weight:600;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:10px;">Leave a comment</div>
+      <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:14px;padding:13px;min-height:80px;">
+        <div style="font-size:13px;color:rgba(255,255,255,0.65);line-height:1.6;">Dr. Mitchell was very thorough and easy to talk to. Explained everything clearly and didn't rush at all.</div>
+        <div style="font-size:11px;color:rgba(255,255,255,0.22);margin-top:8px;text-align:right;">82 / 300</div>
+      </div>
+    </div>
+
+    <!-- ⑥ Would you recommend? -->
+    <div style="margin-bottom:12px;">
+      <div style="font-size:13px;color:rgba(255,255,255,0.55);margin-bottom:10px;">Would you recommend Dr. Mitchell?</div>
+      <div style="display:flex;gap:8px;">
+        <div style="flex:1;padding:10px;background:rgba(61,214,140,0.12);border:1.5px solid rgba(61,214,140,0.35);border-radius:12px;text-align:center;">
+          <div style="font-size:18px;margin-bottom:2px;">👍</div>
+          <div style="font-size:12px;font-weight:600;color:rgba(61,214,140,0.85);">Yes, definitely</div>
+        </div>
+        <div style="flex:1;padding:10px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.09);border-radius:12px;text-align:center;">
+          <div style="font-size:18px;margin-bottom:2px;">👎</div>
+          <div style="font-size:12px;color:rgba(255,255,255,0.35);">Not really</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="height:10px;"></div>
+
+  </div>
+
+  <!-- Sticky CTA -->
+  <div class="sticky-cta">
+    <div style="padding:14px;background:linear-gradient(135deg,#5B8FFF,#7B6FFF);border-radius:14px;font-size:14px;font-weight:600;color:#fff;text-align:center;cursor:pointer;box-shadow:0 8px 24px rgba(91,143,255,0.3);">
+      Submit Review
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

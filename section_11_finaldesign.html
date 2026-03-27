@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PulseCare — Section 11: Final Design</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: #05050E;
+      color: #fff;
+      font-family: 'DM Sans', sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .fd-section {
+      padding: 120px 72px;
+      position: relative;
+      overflow: hidden;
+    }
+    .fd-grid-bg {
+      position: absolute; inset: 0; z-index: 0; pointer-events: none;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.018) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.018) 1px, transparent 1px);
+      background-size: 64px 64px;
+    }
+    .fd-inner {
+      position: relative; z-index: 1;
+      max-width: 1200px; margin: 0 auto;
+    }
+
+    /* Header */
+    .fd-header {
+      display: flex; align-items: flex-end; justify-content: space-between;
+      margin-bottom: 72px;
+    }
+    .fd-eyebrow {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-size: 11px; font-weight: 500;
+      text-transform: uppercase; letter-spacing: 0.12em;
+      color: rgba(160,190,255,0.7); margin-bottom: 12px;
+    }
+    .fd-eyebrow::before {
+      content: ''; display: block; width: 24px; height: 1px;
+      background: rgba(91,143,255,0.6);
+    }
+    .fd-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 52px; font-weight: 700;
+      letter-spacing: -2px; line-height: 1; color: #fff;
+    }
+    .fd-title span {
+      background: linear-gradient(135deg, #5B8FFF 0%, #A78BFA 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .fd-ghost-num {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 80px; font-weight: 700;
+      color: rgba(255,255,255,0.04);
+      letter-spacing: -4px; user-select: none;
+    }
+
+    /* Screen count pill */
+    .fd-count {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 8px 16px;
+      background: rgba(91,143,255,0.08);
+      border: 1px solid rgba(91,143,255,0.18);
+      border-radius: 100px;
+      font-size: 12px; color: rgba(140,180,255,0.7);
+      margin-top: 16px;
+    }
+
+    /* Phase block */
+    .fd-phase {
+      margin-bottom: 72px;
+    }
+    .fd-phase-header {
+      display: flex; align-items: center; gap: 14px;
+      margin-bottom: 32px;
+    }
+    .fd-phase-dot {
+      width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0;
+    }
+    .fd-phase-label {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 13px; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.12em;
+    }
+    .fd-phase-line {
+      flex: 1; height: 1px; background: rgba(255,255,255,0.06);
+    }
+    .fd-phase-count {
+      font-size: 11px; color: rgba(255,255,255,0.25);
+    }
+
+    /* 3-column screen grid */
+    .fd-screens {
+      display: grid;
+      grid-template-columns: repeat(3, 340px);
+      gap: 40px 32px;
+      justify-content: start;
+    }
+
+    /* Individual screen card */
+    .fd-card {
+      display: flex; flex-direction: column; gap: 14px;
+    }
+    .fd-card__frame {
+      width: 340px;
+      border-radius: 36px;
+      overflow: hidden;
+      box-shadow:
+        0 0 0 1px rgba(255,255,255,0.1),
+        0 0 0 2.5px rgba(0,0,0,0.7),
+        0 32px 64px rgba(0,0,0,0.6);
+      flex-shrink: 0;
+    }
+    .fd-card__frame iframe {
+      display: block;
+      width: 340px;
+      border: none;
+      /* height set by JS */
+    }
+    .fd-card__meta {
+      display: flex; flex-direction: column; gap: 6px;
+    }
+    .fd-card__label {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 13px; font-weight: 600; color: rgba(255,255,255,0.7);
+    }
+    .fd-card__num {
+      font-size: 11px; color: rgba(255,255,255,0.25);
+      font-family: 'Space Grotesk', sans-serif; font-weight: 500;
+    }
+
+    /* Design note annotation */
+    .fd-fix {
+      display: flex; align-items: flex-start; gap: 8px;
+      padding: 10px 12px;
+      background: rgba(91,143,255,0.05);
+      border: 1px solid rgba(91,143,255,0.14);
+      border-radius: 10px;
+    }
+    .fd-fix__icon {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: rgba(140,180,255,0.5);
+      flex-shrink: 0; margin-top: 5px;
+    }
+    .fd-fix__text {
+      font-size: 11px; color: rgba(140,180,255,0.6); line-height: 1.6;
+    }
+    .fd-fix__text strong { color: rgba(180,210,255,0.8); font-weight: 600; }
+
+    /* Flow arrow between phases */
+    .fd-flow-arrow {
+      display: flex; align-items: center; justify-content: center;
+      gap: 10px; margin: -20px 0 52px;
+      font-size: 11px; font-weight: 500; text-transform: uppercase;
+      letter-spacing: 0.1em; color: rgba(255,255,255,0.18);
+    }
+    .fd-flow-arrow svg { opacity: 0.3; }
+  </style>
+  <script src="https://mcp.figma.com/mcp/html-to-design/capture.js" async></script>
+</head>
+<body>
+
+<section class="fd-section">
+  <div class="fd-grid-bg"></div>
+  <div class="fd-inner">
+
+    <!-- Header -->
+    <div class="fd-header">
+      <div>
+        <div class="fd-eyebrow">11 — Final Design</div>
+        <h2 class="fd-title">The Full <span>Experience</span></h2>
+        <div class="fd-count">
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><rect x="1" y="1" width="10" height="10" rx="2" stroke="rgba(140,180,255,0.6)" stroke-width="1.2"/><path d="M4 6h4M6 4v4" stroke="rgba(140,180,255,0.6)" stroke-width="1.2" stroke-linecap="round"/></svg>
+          6 phases · 18 screens · 6 usability fixes applied
+        </div>
+      </div>
+      <div class="fd-ghost-num">11</div>
+    </div>
+
+    <!-- ─────────────────────────────────────────── -->
+    <!-- PHASE 1 — AUTH -->
+    <!-- ─────────────────────────────────────────── -->
+    <div class="fd-phase">
+      <div class="fd-phase-header">
+        <div class="fd-phase-dot" style="background:#6B7280;box-shadow:0 0 8px rgba(107,114,128,0.5);"></div>
+        <div class="fd-phase-label" style="color:rgba(200,200,210,0.6);">Phase 1 — Auth</div>
+        <div class="fd-phase-line"></div>
+        <div class="fd-phase-count">S01 – S03</div>
+      </div>
+
+      <div class="fd-screens">
+
+        <!-- S01 Splash -->
+        <div class="fd-card">
+          <div class="fd-card__frame">
+            <iframe src="screens/s01_splash.html" scrolling="no" data-screen></iframe>
+          </div>
+          <div class="fd-card__meta">
+            <div class="fd-card__num">S01</div>
+            <div class="fd-card__label">Splash</div>
+          </div>
+        </div>
+
+        <!-- S02 Sign Up -->
+        <div class="fd-card">
+          <div class="fd-card__frame">
+            <iframe src="screens/s02_signup.html" scrolling="no" data-screen></iframe>
+          </div>
+          <div class="fd-card__meta">
+            <div class="fd-card__num">S02</div>
+            <div class="fd-card__label">Sign Up</div>
+          </div>
+        </div>
+
+        <!-- S03 Login -->
+        <div class="fd-card">
+          <div class="fd-card__frame">
+            <iframe src="screens/s03_login.html" scrolling="no" data-screen></iframe>
+          </div>
+          <div class="fd-card__meta">
+            <div class="fd-card__num">S03</div>
+            <div class="fd-card__label">Login</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="fd-flow-arrow">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 2v12M3 10l5 5 5-5" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      User logs in
+    </div>
+
+    <!-- ─────────────────────────────────────────── -->
+    <!-- PHASE 2 — HOME (EMPTY) -->
+    <!-- ─────────────────────────────────────────── -->
+    <div class="fd-phase">
+      <div class="fd-phase-header">
+        <div class="fd-phase-dot" style="background:#5B8FFF;box-shadow:0 0 8px rgba(91,143,255,0.5);"></div>
+        <div class="fd-phase-label" style="color:rgba(140,180,255,0.7);">Phase 2 — Home</div>
+        <div class="fd-phase-line"></div>
+        <div class="fd-phase-count">S04</div>
+      </div>
+
+      <div class="fd-screens">
+
+        <!-- S04 Home Empty -->
+        <div class="fd-card">
+          <div class="fd-card__frame">
+            <iframe src="screens/s04_home_empty.html" scrolling="no" data-screen></iframe>
+          </div>
+          <div class="fd-card__meta">
+            <div class="fd-card__num">S04</div>
+            <div class="fd-card__label">Home — No Appointment</div>
+          </div>
+          <div class="fd-fix">
+            <div class="fd-fix__icon"></div>
+            <div class="fd-fix__text">Home screen adapts to user state — a clear prompt guides first-time users toward booking without any dead ends</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="fd-flow-arrow">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 2v12M3 10l5 5 5-5" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Taps "Find a Doctor & Book"
+    </div>
+
+    <!-- ─────────────────────────────────────────── -->
+    <!-- PHASE 3 — DISCOVER -->
+    <!-- ─────────────────────────────────────────── -->
+    <div class="fd-phase">
+      <div class="fd-phase-header">
+        <div class="fd-phase-dot" style="background:#A78BFA;box-shadow:0 0 8px rgba(167,139,250,0.5);"></div>
+        <div class="fd-phase-label" style="color:rgba(200,180,255,0.7);">Phase 3 — Discover</div>
+        <div class="fd-phase-line"></div>
+        <div class="fd-phase-count">S05 – S07</div>
+      </div>
+
+      <div class="fd-screens">
+
+        <!-- S05 Discover -->
+        <div class="fd-card">
+          <div class="fd-card__frame">
+            <iframe src="screens/s05_discover.html" scrolling="no" data-screen></iframe>
+          </div>
+          <div class="fd-card__meta">
+            <div class="fd-card__num">S05</div>
+            <div class="fd-card__label">Find a Doctor</div>
+          </div>
+        </div>
+
+        <!-- S06 Results -->
+        <div class="fd-card">
+          <div class="fd-card__frame">
+            <iframe src="screens/s06_results.html" scrolling="no" data-screen></iframe>
+          </div>
+          <div class="fd-card__meta">
+            <div class="fd-card__num">S06</div>
+            <div class="fd-card__label">Search Results</div>
+          </div>
+          <div class="fd-fix">
+            <div class="fd-fix__icon"></div>
+            <div class="fd-fix__text">Filters are clearly labelled by dimension, making it easy to narrow results by specialty, availability, insurance or distance</div>
+          </div>
+        </div>
+
+        <!-- S07 Doctor Profile -->
+        <div class="fd-card">
+          <div class="fd-card__frame">
+            <iframe src="screens/s07_profile.html" scrolling="no" data-screen></iframe>
+          </div>
+          <div class="fd-card__meta">
+            <div class="fd-card__num">S07</div>
+            <div class="fd-card__label">Doctor Profile</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="fd-flow-arrow">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 2v12M3 10l5 5 5-5" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Taps "Book Appointment"
+    </div>
+
+    <!-- ─────────────────────────────────────────── -->
+    <!-- PHASE 4 — BOOK -->
+    <!-- ─────────────────────────────────────────── -->
+    <div class="fd-phase">
+      <div class="fd-phase-header">
+        <div class="fd-phase-dot" style="background:#3DD68C;box-shadow:0 0 8px rgba(61,214,140,0.5);"></div>
+        <div class="fd-phase-label" style="color:rgba(100,220,160,0.7);">Phase 4 — Book</div>
+        <div class="fd-phase-line"></div>
+        <div class="fd-phase-count">S08 – S11</div>
+      </div>
+
+      <div class="fd-screens">
+
+        <!-- S08 Slots -->
+        <div class="fd-card">
+          <div class="fd-card__frame">
+            <iframe src="screens/s08_slots.html" scrolling="no" data-screen></iframe>
+          </div>
+          <div class="fd-card__meta">
+            <div class="fd-card__num">S08</div>
+            <div class="fd-card__label">Select Slot</div>
+          </div>
+          <div class="fd-fix">
+            <div class="fd-fix__icon"></div>
+            <div class="fd-fix__text">A 2-step indicator makes the date → time sequence explicit, so users always know where they are in the booking flow</div>
+          </div>
+        </div>
+
+        <!-- S09 Summary -->
+        <div class="fd-card">
+          <div class="fd-card__frame">
+            <iframe src="screens/s09_summary.html" scrolling="no" data-screen></iframe>
+          </div>
+          <div class="fd-card__meta">
+            <div class="fd-card__num">S09</div>
+            <div class="fd-card__label">Booking Summary</div>
+          </div>
+        </div>
+
+        <!-- S10 Payment -->
+        <div class="fd-card">
+          <div class="fd-card__frame">
+            <iframe src="screens/s10_payment.html" scrolling="no" data-screen></iframe>
+          </div>
+          <div class="fd-card__meta">
+            <div class="fd-card__num">S10</div>
+            <div class="fd-card__label">Payment</div>
+          </div>
+          <div class="fd-fix">
+            <div class="fd-fix__icon"></div>
+            <div class="fd-fix__text">The full amount is shown at the top of the payment screen so users can make an informed decision before entering any details</div>
+          </div>
+        </div>
+
+        <!-- S11 Confirmed -->
+        <div class="fd-card">
+          <div class="fd-card__frame">
+            <iframe src="screens/s11_confirmed.html" scrolling="no" data-screen></iframe>
+          </div>
+          <div class="fd-card__meta">
+            <div class="fd-card__num">S11</div>
+            <div class="fd-card__label">Appointment Confirmed</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="fd-flow-arrow">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 2v12M3 10l5 5 5-5" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Returns to home — appointment now visible
+    </div>
+
+    <!-- ─────────────────────────────────────────── -->
+    <!-- PHASE 5 — PRE-VISIT -->
+    <!-- ─────────────────────────────────────────── -->
+    <div class="fd-phase">
+      <div class="fd-phase-header">
+        <div class="fd-phase-dot" style="background:#F59E0B;box-shadow:0 0 8px rgba(245,158,11,0.5);"></div>
+        <div class="fd-phase-label" style="color:rgba(255,200,80,0.7);">Phase 5 — Pre-Visit</div>
+        <div class="fd-phase-line"></div>
+        <div class="fd-phase-count">S12 – S15</div>
+      </div>
+
+      <div class="fd-screens">
+
+        <!-- S12 Home Booked -->
+        <div class="fd-card">
+          <div class="fd-card__frame">
+            <iframe src="screens/s12_home_booked.html" scrolling="no" data-screen></iframe>
+          </div>
+          <div class="fd-card__meta">
+            <div class="fd-card__num">S12</div>
+            <div class="fd-card__label">Home — Appointment Booked</div>
+          </div>
+          <div class="fd-fix">
+            <div class="fd-fix__icon"></div>
+            <div class="fd-fix__text">Home surfaces contextual shortcuts as content cards — keeping navigation clean and the bottom bar as the single wayfinding system</div>
+          </div>
+        </div>
+
+        <!-- S13 Appointments -->
+        <div class="fd-card">
+          <div class="fd-card__frame">
+            <iframe src="screens/s13_appointments.html" scrolling="no" data-screen></iframe>
+          </div>
+          <div class="fd-card__meta">
+            <div class="fd-card__num">S13</div>
+            <div class="fd-card__label">My Appointments</div>
+          </div>
+        </div>
+
+        <!-- S14 Detail -->
+        <div class="fd-card">
+          <div class="fd-card__frame">
+            <iframe src="screens/s14_detail.html" scrolling="no" data-screen></iframe>
+          </div>
+          <div class="fd-card__meta">
+            <div class="fd-card__num">S14</div>
+            <div class="fd-card__label">Appointment Detail</div>
+          </div>
+        </div>
+
+        <!-- S15 Checklist -->
+        <div class="fd-card">
+          <div class="fd-card__frame">
+            <iframe src="screens/s15_checklist.html" scrolling="no" data-screen></iframe>
+          </div>
+          <div class="fd-card__meta">
+            <div class="fd-card__num">S15</div>
+            <div class="fd-card__label">Pre-Visit Checklist</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="fd-flow-arrow">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 2v12M3 10l5 5 5-5" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      After the visit
+    </div>
+
+    <!-- ─────────────────────────────────────────── -->
+    <!-- PHASE 6 — POST-VISIT -->
+    <!-- ─────────────────────────────────────────── -->
+    <div class="fd-phase">
+      <div class="fd-phase-header">
+        <div class="fd-phase-dot" style="background:#F87171;box-shadow:0 0 8px rgba(248,113,113,0.5);"></div>
+        <div class="fd-phase-label" style="color:rgba(255,160,160,0.7);">Phase 6 — Post-Visit</div>
+        <div class="fd-phase-line"></div>
+        <div class="fd-phase-count">S16 – S18</div>
+      </div>
+
+      <div class="fd-screens">
+
+        <!-- S16 Chat -->
+        <div class="fd-card">
+          <div class="fd-card__frame">
+            <iframe src="screens/s16_chat.html" scrolling="no" data-screen></iframe>
+          </div>
+          <div class="fd-card__meta">
+            <div class="fd-card__num">S16</div>
+            <div class="fd-card__label">Chat with Doctor</div>
+          </div>
+        </div>
+
+        <!-- S17 Rate -->
+        <div class="fd-card">
+          <div class="fd-card__frame">
+            <iframe src="screens/s17_rate.html" scrolling="no" data-screen></iframe>
+          </div>
+          <div class="fd-card__meta">
+            <div class="fd-card__num">S17</div>
+            <div class="fd-card__label">Rate Your Visit</div>
+          </div>
+        </div>
+
+        <!-- S18 Profile -->
+        <div class="fd-card">
+          <div class="fd-card__frame">
+            <iframe src="screens/s18_profile.html" scrolling="no" data-screen></iframe>
+          </div>
+          <div class="fd-card__meta">
+            <div class="fd-card__num">S18</div>
+            <div class="fd-card__label">Profile</div>
+          </div>
+          <div class="fd-fix">
+            <div class="fd-fix__icon"></div>
+            <div class="fd-fix__text">Each tab serves a distinct purpose — Profile is for account and settings, past visits live inside Appointments where the full context is available</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<script>
+  document.querySelectorAll('iframe[data-screen]').forEach(function(iframe) {
+    iframe.style.height = '736px';
+  });
+</script>
+
+</body>
+</html>

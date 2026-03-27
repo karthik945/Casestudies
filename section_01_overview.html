@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PulseCare — Section 01: Overview</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: #05050E;
+      color: #fff;
+      font-family: 'DM Sans', sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .cs-glass {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+    }
+
+    /* ══ HERO ══ */
+    .cs-hero {
+      position: relative;
+      min-height: 100vh;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 80px 72px;
+    }
+
+    /* Glows */
+    .cs-glows { position: absolute; inset: 0; pointer-events: none; z-index: 0; }
+    .cs-glow { position: absolute; border-radius: 50%; filter: blur(110px); }
+    .cs-glow--blue {
+      width: 700px; height: 700px;
+      background: radial-gradient(circle, rgba(55,100,255,0.22) 0%, transparent 65%);
+      top: -200px; left: -160px;
+    }
+    .cs-glow--purple {
+      width: 480px; height: 480px;
+      background: radial-gradient(circle, rgba(110,60,255,0.14) 0%, transparent 65%);
+      bottom: -80px; right: 160px;
+    }
+
+    .cs-grid {
+      position: absolute; inset: 0; z-index: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+      background-size: 64px 64px;
+    }
+
+    /* ══ MAIN GRID ══ */
+    .cs-hero__inner {
+      position: relative; z-index: 1;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: center;
+      max-width: 1200px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    /* LEFT */
+    .cs-hero__left { display: flex; flex-direction: column; gap: 32px; }
+
+    .cs-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 6px 14px 6px 10px;
+      border-radius: 100px;
+      background: rgba(65,120,255,0.10);
+      border: 1px solid rgba(65,120,255,0.25);
+      width: fit-content;
+    }
+    .cs-badge__dot {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: #5B8FFF;
+      box-shadow: 0 0 10px #5B8FFF;
+    }
+    .cs-badge span {
+      font-size: 11px; font-weight: 500;
+      text-transform: uppercase; letter-spacing: 0.10em;
+      color: rgba(160,190,255,0.85);
+    }
+
+    /* Title — Space Grotesk, bold, clean */
+    .cs-hero__title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 96px;
+      font-weight: 700;
+      line-height: 0.90;
+      letter-spacing: -4px;
+    }
+    .cs-t-white {
+      color: #ffffff;
+    }
+    .cs-t-blue {
+      background: linear-gradient(135deg, #6FA3FF 0%, #A78BFA 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .cs-hero__tagline {
+      font-size: 15px; font-weight: 300;
+      color: rgba(255,255,255,0.35);
+      letter-spacing: 0.03em;
+      line-height: 1.6;
+    }
+
+    /* Two callout boxes side by side */
+    .cs-callouts {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    .cs-callout {
+      border-radius: 14px;
+      padding: 18px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .cs-callout__tag {
+      font-size: 10px; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.12em;
+      display: flex; align-items: center; gap: 6px;
+    }
+    .cs-callout__tag::before {
+      content: '';
+      width: 5px; height: 5px; border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .cs-callout--problem .cs-callout__tag { color: rgba(255,120,90,0.85); }
+    .cs-callout--problem .cs-callout__tag::before { background: rgba(255,120,90,0.85); }
+    .cs-callout--goal .cs-callout__tag { color: rgba(80,200,140,0.85); }
+    .cs-callout--goal .cs-callout__tag::before { background: rgba(80,200,140,0.85); }
+
+    .cs-callout__text {
+      font-size: 13px; font-weight: 400;
+      color: rgba(255,255,255,0.55);
+      line-height: 1.65;
+    }
+
+    /* RIGHT */
+    .cs-hero__right {
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 560px;
+    }
+
+    .cs-phone-glow {
+      position: absolute;
+      width: 300px; height: 300px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(65,120,255,0.28) 0%, transparent 70%);
+      filter: blur(50px);
+    }
+
+    .cs-phone {
+      position: relative; z-index: 1;
+      width: 260px; height: 530px;
+      border-radius: 40px;
+      border: 1.5px solid rgba(255,255,255,0.11);
+      box-shadow:
+        0 0 0 5px rgba(255,255,255,0.02),
+        0 32px 80px rgba(0,0,0,0.65),
+        0 0 60px rgba(65,120,255,0.18),
+        inset 0 1px 0 rgba(255,255,255,0.09);
+      overflow: hidden;
+    }
+    .cs-phone iframe {
+      width: 340px; height: 736px;
+      border: none; display: block;
+      transform: scale(0.7647);
+      transform-origin: top left;
+    }
+    .cs-phone::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0; height: 45%;
+      background: linear-gradient(180deg, rgba(65,120,255,0.07) 0%, transparent 100%);
+    }
+    .cs-phone__notch {
+      position: absolute; top: 14px;
+      width: 88px; height: 24px;
+      background: rgba(0,0,0,0.65);
+      border-radius: 100px;
+    }
+    .cs-phone__inner {
+      position: relative; z-index: 1;
+      display: flex; flex-direction: column;
+      align-items: center; gap: 10px;
+      padding: 20px; text-align: center;
+    }
+    .cs-phone__icon {
+      width: 48px; height: 48px;
+      border-radius: 14px;
+      background: rgba(65,120,255,0.16);
+      border: 1px solid rgba(65,120,255,0.28);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .cs-phone__icon svg {
+      width: 22px; height: 22px;
+      stroke: #7AAAFF; fill: none; stroke-width: 1.5;
+    }
+    .cs-phone__placeholder-text {
+      font-size: 10px;
+      color: rgba(255,255,255,0.15);
+      line-height: 1.5; max-width: 160px;
+    }
+
+    /* Stat cards */
+    .cs-stat {
+      position: absolute;
+      border-radius: 14px;
+      padding: 14px 18px;
+      min-width: 130px;
+      z-index: 2;
+    }
+    .cs-stat--1 { top: 14%; right: -20px; }
+    .cs-stat--2 { bottom: 20%; left: -30px; }
+    .cs-stat--3 { bottom: 42%; right: -24px; }
+
+    .cs-stat__bar {
+      width: 24px; height: 2px;
+      background: linear-gradient(90deg, #5B8FFF, #A78BFA);
+      border-radius: 2px; margin-bottom: 8px;
+    }
+    .cs-stat__num {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 26px; font-weight: 700; line-height: 1;
+      color: #fff; margin-bottom: 4px;
+    }
+    .cs-stat__label {
+      font-size: 11px; color: rgba(255,255,255,0.35);
+    }
+
+    /* Feature pills */
+    .cs-pill {
+      position: absolute;
+      display: flex; align-items: center; gap: 7px;
+      padding: 7px 13px;
+      border-radius: 100px;
+      border: 1px solid rgba(255,255,255,0.07);
+      background: rgba(255,255,255,0.035);
+      backdrop-filter: blur(12px);
+      font-size: 11px;
+      color: rgba(255,255,255,0.45);
+      white-space: nowrap; z-index: 2;
+    }
+    .cs-pill__dot { width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0; }
+    .cs-pill--1 { top: 6%; left: -8%; }
+    .cs-pill--2 { bottom: 7%; right: 2%; }
+
+    /* META STRIP */
+    .cs-meta-strip {
+      position: relative; z-index: 1;
+      max-width: 1200px; margin: 48px auto 0;
+      width: 100%;
+      border-radius: 16px;
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      overflow: hidden;
+    }
+    .cs-meta-item {
+      padding: 20px 22px;
+      border-right: 1px solid rgba(255,255,255,0.05);
+      display: flex; flex-direction: column; gap: 5px;
+    }
+    .cs-meta-item:last-child { border-right: none; }
+    .cs-meta-item__accent {
+      width: 18px; height: 2px;
+      background: linear-gradient(90deg, #5B8FFF, transparent);
+      border-radius: 2px; margin-bottom: 4px;
+    }
+    .cs-meta-item__label {
+      font-size: 10px; font-weight: 500;
+      text-transform: uppercase; letter-spacing: 0.10em;
+      color: rgba(255,255,255,0.22);
+    }
+    .cs-meta-item__value {
+      font-size: 13px; font-weight: 500;
+      color: rgba(255,255,255,0.75);
+    }
+
+    .cs-divider {
+      position: relative; z-index: 1;
+      max-width: 1200px; margin: 0 auto; width: 100%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.07) 30%, rgba(255,255,255,0.07) 70%, transparent);
+    }
+  </style>
+  <script src="https://mcp.figma.com/mcp/html-to-design/capture.js" async></script>
+</head>
+<body>
+
+<section class="cs-hero" id="cs-overview">
+
+  <div class="cs-glows">
+    <div class="cs-glow cs-glow--blue"></div>
+    <div class="cs-glow cs-glow--purple"></div>
+  </div>
+  <div class="cs-grid"></div>
+
+  <div class="cs-hero__inner">
+
+    <!-- LEFT -->
+    <div class="cs-hero__left">
+
+      <div class="cs-badge">
+        <div class="cs-badge__dot"></div>
+        <span>Healthcare · UX/UI Case Study · 2025</span>
+      </div>
+
+      <h1 class="cs-hero__title">
+        <span class="cs-t-white">Pulse</span><br>
+        <span class="cs-t-blue">Care</span>
+      </h1>
+
+      <p class="cs-hero__tagline">
+        A mobile app for booking medical appointments<br>
+        designed around patient-centered user flows
+      </p>
+
+      <div class="cs-callouts">
+        <div class="cs-callout cs-callout--problem cs-glass">
+          <span class="cs-callout__tag">The Problem</span>
+          <p class="cs-callout__text">Patients abandon the booking flow due to cluttered UX, lack of doctor transparency, and zero post-visit communication.</p>
+        </div>
+        <div class="cs-callout cs-callout--goal cs-glass">
+          <span class="cs-callout__tag">The Goal</span>
+          <p class="cs-callout__text">Reduce drop-off, build trust through clear doctor profiles, and make PulseCare a platform patients return to.</p>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- RIGHT -->
+    <div class="cs-hero__right">
+
+      <div class="cs-phone-glow"></div>
+
+      <div class="cs-pill cs-pill--1">
+        <div class="cs-pill__dot" style="background:#5B8FFF;box-shadow:0 0 6px #5B8FFF;"></div>
+        Book in under 60 seconds
+      </div>
+      <div class="cs-pill cs-pill--2">
+        <div class="cs-pill__dot" style="background:#5BC98A;box-shadow:0 0 6px #5BC98A;"></div>
+        Real-time availability
+      </div>
+
+      <div class="cs-phone">
+        <iframe src="screens/s12_home_booked.html" scrolling="no" frameborder="0"></iframe>
+      </div>
+
+      <div class="cs-stat cs-glass cs-stat--1">
+        <div class="cs-stat__bar"></div>
+        <div class="cs-stat__num">–62%</div>
+        <div class="cs-stat__label">Drop-off Rate</div>
+      </div>
+      <div class="cs-stat cs-glass cs-stat--2">
+        <div class="cs-stat__bar"></div>
+        <div class="cs-stat__num">4.8★</div>
+        <div class="cs-stat__label">Satisfaction</div>
+      </div>
+      <div class="cs-stat cs-glass cs-stat--3">
+        <div class="cs-stat__bar"></div>
+        <div class="cs-stat__num">500+</div>
+        <div class="cs-stat__label">Verified Doctors</div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="cs-divider" style="margin-top: 48px;"></div>
+
+  <div class="cs-meta-strip cs-glass">
+    <div class="cs-meta-item">
+      <div class="cs-meta-item__accent"></div>
+      <span class="cs-meta-item__label">Role</span>
+      <span class="cs-meta-item__value">Lead UX/UI Designer</span>
+    </div>
+    <div class="cs-meta-item">
+      <div class="cs-meta-item__accent"></div>
+      <span class="cs-meta-item__label">Platform</span>
+      <span class="cs-meta-item__value">iOS Mobile App</span>
+    </div>
+    <div class="cs-meta-item">
+      <div class="cs-meta-item__accent"></div>
+      <span class="cs-meta-item__label">Industry</span>
+      <span class="cs-meta-item__value">Healthcare · USA</span>
+    </div>
+    <div class="cs-meta-item">
+      <div class="cs-meta-item__accent"></div>
+      <span class="cs-meta-item__label">Duration</span>
+      <span class="cs-meta-item__value">10 Weeks</span>
+    </div>
+    <div class="cs-meta-item">
+      <div class="cs-meta-item__accent"></div>
+      <span class="cs-meta-item__label">Year</span>
+      <span class="cs-meta-item__value">2025</span>
+    </div>
+    <div class="cs-meta-item">
+      <div class="cs-meta-item__accent"></div>
+      <span class="cs-meta-item__label">Tools</span>
+      <span class="cs-meta-item__value">Figma · Maze · FigJam</span>
+    </div>
+  </div>
+
+</section>
+
+</body>
+</html>
