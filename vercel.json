@@ -1,6 +1,6 @@
 {
   "rewrites": [
-    { "source": "/",           "destination": "/prototype.html" },
+    { "source": "/",           "destination": "/app.html" },
     { "source": "/case-study", "destination": "/pulsecare_casestudy.html" },
     { "source": "/prototype",  "destination": "/prototype.html" }
   ]
