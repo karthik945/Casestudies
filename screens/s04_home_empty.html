@@ -67,6 +67,7 @@
     .tab--on { color: #5B8FFF; }
     .tab-dot { width: 4px; height: 4px; border-radius: 50%; background: currentColor; opacity: 0.8; }
   </style>
+  <script src="https://mcp.figma.com/mcp/html-to-design/capture.js" async></script>
 </head>
 <body>
 <div class="phone">
@@ -243,5 +244,30 @@
   </div>
 
 </div>
+<script>
+(function(){
+  function go(screen){
+    if(window.parent!==window)
+      window.parent.postMessage({navigate:screen},"*");
+    else
+      window.location.href=screen;
+  }
+  function wire(el,screen){
+    if(el&&screen){
+      el.style.cursor="pointer";
+      el.addEventListener("click",function(e){e.stopPropagation();go(screen);});
+    }
+  }
+  document.addEventListener("DOMContentLoaded",function(){
+    document.querySelectorAll("[style*='Book']").forEach(function(el){wire(el,"s06_results.html");});
+    document.querySelectorAll(".book-btn,[class*=book]").forEach(function(el){wire(el,"s06_results.html");});
+    var sb=document.querySelector(".search-bar,input[type=search],input[type=text],[class*=search]"); wire(sb,"s05_discover.html");
+    // Make inputs focusable
+    document.querySelectorAll("input,textarea").forEach(function(el){
+      el.removeAttribute("readonly");el.removeAttribute("disabled");
+    });
+  });
+})();
+</script>
 </body>
 </html>

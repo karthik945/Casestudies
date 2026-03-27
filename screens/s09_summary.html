@@ -72,6 +72,7 @@
     .row-label { font-size: 12px; color: rgba(255,255,255,0.38); }
     .row-value { font-size: 13px; font-weight: 500; color: rgba(255,255,255,0.8); text-align: right; }
   </style>
+  <script src="https://mcp.figma.com/mcp/html-to-design/capture.js" async></script>
 </head>
 <body>
 <div class="phone">
@@ -240,5 +241,28 @@
   </div>
 
 </div>
+<script>
+(function(){
+  function go(screen){
+    if(window.parent!==window)
+      window.parent.postMessage({navigate:screen},"*");
+    else
+      window.location.href=screen;
+  }
+  function wire(el,screen){
+    if(el&&screen){
+      el.style.cursor="pointer";
+      el.addEventListener("click",function(e){e.stopPropagation();go(screen);});
+    }
+  }
+  document.addEventListener("DOMContentLoaded",function(){
+    var stk=document.querySelector(".sticky-cta"); wire(stk,"s10_payment.html");
+    // Make inputs focusable
+    document.querySelectorAll("input,textarea").forEach(function(el){
+      el.removeAttribute("readonly");el.removeAttribute("disabled");
+    });
+  });
+})();
+</script>
 </body>
 </html>

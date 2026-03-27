@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>PulseCare — Interactive Prototype</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    body{
+      background:#05050E;
+      min-height:100vh;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      font-family:'DM Sans',sans-serif;
+      color:#fff;
+      padding:24px 16px 40px;
+    }
+
+    /* Top bar */
+    .top-bar{
+      position:fixed;top:0;left:0;right:0;
+      height:52px;
+      background:rgba(5,5,14,0.92);
+      backdrop-filter:blur(20px);
+      border-bottom:1px solid rgba(255,255,255,0.07);
+      display:flex;align-items:center;justify-content:space-between;
+      padding:0 24px;z-index:100;
+    }
+    .top-bar__logo{
+      font-family:'Space Grotesk',sans-serif;
+      font-size:16px;font-weight:700;
+      background:linear-gradient(135deg,#6FA3FF,#A78BFA);
+      -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+    }
+    .top-bar__screen-name{
+      font-size:11px;font-weight:500;
+      text-transform:uppercase;letter-spacing:0.1em;
+      color:rgba(255,255,255,0.3);
+    }
+    .top-bar__case-study{
+      font-size:12px;font-weight:500;
+      color:rgba(91,143,255,0.8);
+      text-decoration:none;
+      border:1px solid rgba(91,143,255,0.25);
+      border-radius:100px;
+      padding:5px 14px;
+      transition:all 0.2s;
+    }
+    .top-bar__case-study:hover{background:rgba(91,143,255,0.1);color:#7AAAFF;}
+
+    /* Phone shell */
+    .phone-wrap{
+      margin-top:68px;
+      position:relative;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      gap:24px;
+    }
+    .phone{
+      width:375px;
+      height:812px;
+      border-radius:52px;
+      border:2px solid rgba(255,255,255,0.13);
+      box-shadow:
+        0 0 0 6px rgba(255,255,255,0.03),
+        0 48px 120px rgba(0,0,0,0.8),
+        0 0 80px rgba(65,120,255,0.12);
+      overflow:hidden;
+      position:relative;
+      background:#0a0a18;
+    }
+    .phone__glow{
+      position:absolute;inset:0;pointer-events:none;z-index:0;
+      background:radial-gradient(ellipse at 50% 0%,rgba(65,120,255,0.12) 0%,transparent 60%);
+    }
+    .phone iframe{
+      width:375px;height:812px;
+      border:none;display:block;
+      position:relative;z-index:1;
+    }
+
+    /* Nav controls */
+    .nav-controls{
+      display:flex;align-items:center;gap:16px;
+    }
+    .nav-btn{
+      width:44px;height:44px;border-radius:50%;
+      background:rgba(255,255,255,0.05);
+      border:1px solid rgba(255,255,255,0.10);
+      display:flex;align-items:center;justify-content:center;
+      cursor:pointer;transition:all 0.2s;
+      color:rgba(255,255,255,0.55);
+      user-select:none;
+    }
+    .nav-btn:hover{background:rgba(255,255,255,0.10);color:#fff;border-color:rgba(255,255,255,0.2);}
+    .nav-btn:active{transform:scale(0.93);}
+    .nav-btn svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;}
+
+    /* Flow dots */
+    .flow-dots{
+      display:flex;gap:6px;align-items:center;
+    }
+    .flow-dot{
+      width:6px;height:6px;border-radius:50%;
+      background:rgba(255,255,255,0.12);
+      transition:all 0.25s;cursor:pointer;
+    }
+    .flow-dot.active{
+      width:20px;border-radius:3px;
+      background:linear-gradient(90deg,#5B8FFF,#A78BFA);
+    }
+    .flow-dot:hover{background:rgba(255,255,255,0.3);}
+
+    /* Screen label */
+    .screen-label{
+      font-size:11px;color:rgba(255,255,255,0.22);
+      font-weight:500;letter-spacing:0.05em;
+      text-align:center;
+    }
+
+    /* Restart button */
+    .restart-btn{
+      display:flex;align-items:center;gap:8px;
+      font-size:11px;font-weight:500;
+      color:rgba(255,255,255,0.25);
+      cursor:pointer;padding:6px 10px;border-radius:8px;
+      transition:all 0.2s;
+      background:none;border:none;
+    }
+    .restart-btn:hover{color:rgba(255,255,255,0.6);background:rgba(255,255,255,0.05);}
+    .restart-btn svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+  </style>
+</head>
+<body>
+
+<div class="top-bar">
+  <div class="top-bar__logo">PulseCare</div>
+  <div class="top-bar__screen-name" id="screenLabel">Splash</div>
+  <a href="pulsecare_casestudy.html" class="top-bar__case-study">View Case Study</a>
+</div>
+
+<div class="phone-wrap">
+  <div class="phone">
+    <div class="phone__glow"></div>
+    <iframe id="screen" src="screens/s01_splash.html" allow="*"></iframe>
+  </div>
+
+  <div class="nav-controls">
+    <button class="nav-btn" id="prevBtn" onclick="navigate(-1)" title="Previous">
+      <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+    </button>
+    <div class="flow-dots" id="flowDots"></div>
+    <button class="nav-btn" id="nextBtn" onclick="navigate(1)" title="Next">
+      <svg viewBox="0 0 24 24"><polyline points="9 6 15 12 9 18"/></svg>
+    </button>
+  </div>
+
+  <div style="display:flex;align-items:center;gap:16px;">
+    <div class="screen-label" id="screenCount"></div>
+    <button class="restart-btn" onclick="goToScreen(0)">
+      <svg viewBox="0 0 24 24"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.41"/></svg>
+      Restart
+    </button>
+  </div>
+</div>
+
+<script>
+const SCREENS = [
+  { file: 'screens/s01_splash.html',       label: 'Splash' },
+  { file: 'screens/s02_signup.html',        label: 'Sign Up' },
+  { file: 'screens/s03_login.html',         label: 'Log In' },
+  { file: 'screens/s04_home_empty.html',    label: 'Home — Empty' },
+  { file: 'screens/s05_discover.html',      label: 'Discover' },
+  { file: 'screens/s06_results.html',       label: 'Search Results' },
+  { file: 'screens/s07_profile.html',       label: 'Doctor Profile' },
+  { file: 'screens/s08_slots.html',         label: 'Book a Slot' },
+  { file: 'screens/s09_summary.html',       label: 'Booking Summary' },
+  { file: 'screens/s10_payment.html',       label: 'Payment' },
+  { file: 'screens/s11_confirmed.html',     label: 'Confirmed' },
+  { file: 'screens/s12_home_booked.html',   label: 'Home — Booked' },
+  { file: 'screens/s13_appointments.html',  label: 'Appointments' },
+  { file: 'screens/s14_detail.html',        label: 'Appointment Detail' },
+  { file: 'screens/s15_checklist.html',     label: 'Pre-visit Checklist' },
+  { file: 'screens/s16_chat.html',          label: 'Message Doctor' },
+  { file: 'screens/s17_rate.html',          label: 'Rate Visit' },
+  { file: 'screens/s18_profile.html',       label: 'Profile' },
+];
+
+let current = 0;
+
+// Read hash on load
+const hash = location.hash.replace('#','');
+if(hash){
+  const idx = SCREENS.findIndex(s=>s.file.includes(hash));
+  if(idx>=0) current = idx;
+}
+
+function goToScreen(idx){
+  if(idx<0||idx>=SCREENS.length)return;
+  current = idx;
+  const s = SCREENS[current];
+  document.getElementById('screen').src = s.file;
+  document.getElementById('screenLabel').textContent = s.label;
+  document.getElementById('screenCount').textContent = `${current+1} / ${SCREENS.length}`;
+  location.hash = s.file.split('/').pop().replace('.html','');
+  renderDots();
+}
+
+function navigate(dir){
+  goToScreen(current + dir);
+}
+
+function renderDots(){
+  const wrap = document.getElementById('flowDots');
+  wrap.innerHTML='';
+  SCREENS.forEach((s,i)=>{
+    const d = document.createElement('div');
+    d.className='flow-dot'+(i===current?' active':'');
+    d.title = s.label;
+    d.onclick = ()=>goToScreen(i);
+    wrap.appendChild(d);
+  });
+}
+
+// Listen for navigation messages from screens
+window.addEventListener('message', e => {
+  if(e.data && e.data.navigate){
+    const target = e.data.navigate;
+    const idx = SCREENS.findIndex(s=>s.file.endsWith(target));
+    if(idx>=0) goToScreen(idx);
+    else navigate(1); // fallback: go next
+  }
+});
+
+// Keyboard shortcuts
+document.addEventListener('keydown', e => {
+  if(e.key==='ArrowRight'||e.key==='ArrowDown') navigate(1);
+  if(e.key==='ArrowLeft'||e.key==='ArrowUp') navigate(-1);
+});
+
+goToScreen(current);
+</script>
+</body>
+</html>

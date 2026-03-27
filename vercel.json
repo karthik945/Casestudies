@@ -1,5 +1,7 @@
 {
   "rewrites": [
-    { "source": "/", "destination": "/pulsecare_casestudy.html" }
+    { "source": "/",           "destination": "/prototype.html" },
+    { "source": "/case-study", "destination": "/pulsecare_casestudy.html" },
+    { "source": "/prototype",  "destination": "/prototype.html" }
   ]
 }

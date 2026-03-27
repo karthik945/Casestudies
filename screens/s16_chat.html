@@ -85,6 +85,7 @@
       gap: 10px;
     }
   </style>
+  <script src="https://mcp.figma.com/mcp/html-to-design/capture.js" async></script>
 </head>
 <body>
 <div class="phone">
@@ -242,5 +243,28 @@
   </div>
 
 </div>
+<script>
+(function(){
+  function go(screen){
+    if(window.parent!==window)
+      window.parent.postMessage({navigate:screen},"*");
+    else
+      window.location.href=screen;
+  }
+  function wire(el,screen){
+    if(el&&screen){
+      el.style.cursor="pointer";
+      el.addEventListener("click",function(e){e.stopPropagation();go(screen);});
+    }
+  }
+  document.addEventListener("DOMContentLoaded",function(){
+    wire(document.querySelector(".btn-primary,.sticky-cta"),"s17_rate.html");
+    // Make inputs focusable
+    document.querySelectorAll("input,textarea").forEach(function(el){
+      el.removeAttribute("readonly");el.removeAttribute("disabled");
+    });
+  });
+})();
+</script>
 </body>
 </html>
