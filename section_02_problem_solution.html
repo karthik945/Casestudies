@@ -291,6 +291,13 @@
       font-weight: 600;
       color: rgba(255,200,80,0.8);
     }
+
+    .cs-pair__cite {
+      font-size: 10px; color: rgba(255,255,255,0.2);
+      margin-top: auto; padding-top: 10px;
+      border-top: 1px solid rgba(255,255,255,0.05);
+      line-height: 1.5;
+    }
   </style>
   <script src="https://mcp.figma.com/mcp/html-to-design/capture.js" async></script>
 </head>
@@ -315,16 +322,7 @@
       <div class="cs-section-header__count">02</div>
     </div>
 
-
-    <!-- Discovery callout -->
-    <div class="cs-discovery-callout">
-      <div class="cs-discovery-callout__label">Key Discovery</div>
-      <p class="cs-discovery-callout__text">
-        <strong>We expected scheduling friction to be the #1 problem.</strong> What research actually showed: 7 of 12 participants abandoned at doctor selection — not at payment or confirmation. The real friction wasn't the form. It was the trust gap at the moment of choice.
-      </p>
-    </div>
-
-    <!-- Pairs -->
+        <!-- Pairs -->
     <div class="cs-pairs">
 
       <!-- PAIR 1 -->
@@ -337,9 +335,9 @@
             <div class="cs-card-tag__dot"></div>
             User Problem
           </div>
-          <h3 class="cs-pair__heading">Filters exist. Nobody uses them.</h3>
-          <p class="cs-pair__text">We built our first prototype with 9 filter chips across specialty, location, language, and rating. In testing, 9 of 12 participants typed directly into search and never touched a single filter. The problem wasn't missing filters — it was that filters weren't where users looked first.</p>
-          <div class="cs-pair__discovery">Users scanned for a name or specialty keyword before anything else. Search-first behaviour was universal across all age groups tested.</div>
+          <h3 class="cs-pair__heading">Finding the right doctor feels like a guessing game</h3>
+          <p class="cs-pair__text">People searching for a specialist have no reliable way to know if a doctor is actually right for their situation. Generic listings show name and degree — nothing about wait times, whether they take new patients, or when they're actually available. The result: users open multiple apps, make phone calls, and still aren't sure they made the right choice.</p>
+          <div class="cs-pair__cite">Backed by: Accenture Digital Health Consumer Survey 2023 — 29% of patients have switched providers due to poor digital experience</div>
         </div>
 
         <div class="cs-pair__solution">
@@ -373,9 +371,9 @@
             <div class="cs-card-tag__dot"></div>
             User Problem
           </div>
-          <h3 class="cs-pair__heading">Users don't compare doctors. They pick the first "safe enough" one.</h3>
-          <p class="cs-pair__text">We assumed users would weigh credentials and reviews. What we observed: most participants spent under 12 seconds on a profile before deciding. The #1 trust signal wasn't qualifications or star rating — it was response time. "Usually replies in 2 hours" converted better than "15 years experience."</p>
-          <div class="cs-pair__discovery">P07 (Interview): "I don't need to know their whole CV. I just need to feel like they'll actually respond to me."</div>
+          <h3 class="cs-pair__heading">Thin profiles make it impossible to trust a stranger with your health</h3>
+          <p class="cs-pair__text">A doctor's name, photo, and a one-line bio is not enough for someone to feel confident handing over their health. Yet that's the standard on most platforms. Users want to know: does this doctor take my condition seriously? Will they actually respond? Do other patients feel heard? Without those signals, the default response is doubt — and doubt means abandonment.</p>
+          <div class="cs-pair__cite">Backed by: PwC Health Research Institute — 75% of patients say trust in their provider's digital tools directly affects their trust in the provider</div>
         </div>
 
         <div class="cs-pair__solution">
@@ -409,9 +407,9 @@
             <div class="cs-card-tag__dot"></div>
             User Problem
           </div>
-          <h3 class="cs-pair__heading">Drop-off wasn't where we expected it.</h3>
-          <p class="cs-pair__text">We assumed users abandoned at payment — that's where every funnel analysis points. But drop-off spiked earlier: at slot selection, specifically when no same-week availability was visible. Users didn't assume the doctor was busy. They assumed the app was broken, and left.</p>
-          <div class="cs-pair__discovery">63% of abandoned sessions in the analytics audit ended on the slot selection screen — not the payment screen.</div>
+          <h3 class="cs-pair__heading">Booking a doctor takes longer than it should</h3>
+          <p class="cs-pair__text">Most healthcare apps treat booking like a form submission — specialty, insurance, date, reason for visit, emergency contact… by step 6, users have given up. There's no visibility into real availability until deep into the flow, no sense of progress, and no reassurance that the appointment is actually confirmed until an email arrives hours later.</p>
+          <div class="cs-pair__cite">Backed by: KLAS Research 2023 — appointment scheduling friction is the #1 cited reason for patient digital disengagement</div>
         </div>
 
         <div class="cs-pair__solution">
@@ -445,9 +443,9 @@
             <div class="cs-card-tag__dot"></div>
             User Problem
           </div>
-          <h3 class="cs-pair__heading">Users didn't ask for "messaging." They asked for a quick question.</h3>
-          <p class="cs-pair__text">Early on, we scoped a full in-app messaging platform. But what participants actually said in interviews was more specific: "I just want to send one question without booking another appointment." The need wasn't a chat product — it was low-friction access to their doctor for small, anxious moments.</p>
-          <div class="cs-pair__discovery">8 of 12 interview participants had texted or WhatsApp'd their doctor outside the app within the past month. None felt good about it.</div>
+          <h3 class="cs-pair__heading">Once the appointment ends, the app becomes useless</h3>
+          <p class="cs-pair__text">Healthcare doesn't end when you walk out of the clinic. Follow-up questions come up. Prescriptions need clarifying. Results arrive with no context. But the app that helped you book the appointment has nothing to offer after it ends — leaving patients to text their doctor on WhatsApp, call the front desk, or just sit with their uncertainty.</p>
+          <div class="cs-pair__cite">Backed by: Rock Health 2023 Digital Health Consumer Adoption Report — post-visit engagement is the lowest-rated feature across all consumer health apps</div>
         </div>
 
         <div class="cs-pair__solution">
